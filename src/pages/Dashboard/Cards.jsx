@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { Button } from "@/components/ui/button";
 
 const Cards = () => {
     
@@ -31,7 +32,7 @@ const Cards = () => {
     return (
         <div>
             <h1>Cards</h1>
-            <button onClick={fetchCardData}>Fetch Card Data</button>
+            <Button onClick={fetchCardData}>Fetch Card Data</Button>
         </div>
     )
 }
