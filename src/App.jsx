@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 import Header from './components/Header'
-import Hero from './components/Hero'
 import Profile from './pages/Dashboard/Profile'
 import Cards from './pages/Dashboard/Cards'
+import LandingPage from './components/LandingPage'
 
 const App = () => {
 
@@ -14,7 +14,7 @@ const App = () => {
           path="/"
           element={
             <>
-              <Hero />
+              <LandingPage />
             </>
           }
         />
