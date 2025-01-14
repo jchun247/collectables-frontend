@@ -1,14 +1,17 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { Input } from "@/components/ui/input";
 import FilterSortBy from './FilterSortBy';
 import FilterSidebar from './FilterSidebar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import PropTypes from 'prop-types';
 
 
-const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, sortBy, setSortBy, filters, setFilters }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, 
+    // sortBy, setSortBy, 
+    filters, setFilters }) => {
+    // const [isOpen, setIsOpen] = useState(false);
     const activeFiltersCount = Object.values(filters).reduce(
       (count, category) => count + Object.values(category).filter(Boolean).length,
       0
@@ -58,6 +61,13 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, sortBy, setSortBy,
             </div>
         </div>
   )
+}
+
+SearchAndFilterHeader.propTypes = {
+    searchQuery: PropTypes.string.isRequired,
+    setSearchQuery: PropTypes.func.isRequired,
+    filters: PropTypes.object.isRequired,
+    setFilters: PropTypes.func.isRequired,
 }
 
 export default SearchAndFilterHeader;
