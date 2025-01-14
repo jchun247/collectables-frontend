@@ -1,5 +1,5 @@
-import React from 'react'
 import FilterSection from './FilterSection';
+import PropTypes from 'prop-types';
 
 const FilterSidebar = ({ filters, setFilters }) => {
 
@@ -32,7 +32,7 @@ const FilterSidebar = ({ filters, setFilters }) => {
     }
 
     return (
-        <div className="space-y-6 py-4">
+        <div className="space-y-2 py-4">
             <FilterSection title="Game" options={filterOptions.game} category="game" 
             filters={filters} handleFilterChange={handleFilterChange} />
             <FilterSection title="Condition" options={filterOptions.condition} category="condition" 
@@ -41,6 +41,11 @@ const FilterSidebar = ({ filters, setFilters }) => {
              filters={filters} handleFilterChange={handleFilterChange} />
         </div>
     )
+}
+
+FilterSidebar.propTypes = {
+    filters: PropTypes.object.isRequired,
+    setFilters: PropTypes.func.isRequired
 }
 
 export default FilterSidebar

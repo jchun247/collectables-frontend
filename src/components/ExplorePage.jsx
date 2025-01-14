@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { CardSkeleton } from "@/components/ui/cardskeleton";
 import SearchAndFilterHeader from './SearchAndFilterHeader';
 
 const ExplorePage = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortBy, setSortBy] = useState("name");
+    // const [sortBy, setSortBy] = useState("name");
     const [filters, setFilters] = useState({
         game: [],
         productType: [],
@@ -16,7 +16,8 @@ const ExplorePage = () => {
         <div className="container mx-auto px-4 py-8">
             <SearchAndFilterHeader 
                 searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
-                sortBy={sortBy} setSortBy={setSortBy} filters={filters} setFilters={setFilters} 
+                // sortBy={sortBy} setSortBy={setSortBy} 
+                filters={filters} setFilters={setFilters} 
             />
 
             { /* Card Grid */ }
