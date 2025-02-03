@@ -2,9 +2,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import PropTypes from "prop-types";
 
-const FilterSection = ({ title, options, category, filters, handleFilterChange }) => {
+const CheckBoxFilterSection = ({ title, options, category, filters, handleFilterChange }) => {
     return (
-        <Accordion type="single" collapsible>
+        <Accordion type="single" defaultValue="item-1" collapsible>
             <AccordionItem value="item-1">
                 <AccordionTrigger className="font-bold">{title}</AccordionTrigger>
                 <AccordionContent>
@@ -31,7 +31,7 @@ const FilterSection = ({ title, options, category, filters, handleFilterChange }
     )
 }
 
-FilterSection.propTypes = {
+CheckBoxFilterSection.propTypes = {
     title: PropTypes.string.isRequired,
     options: PropTypes.array.isRequired,
     category: PropTypes.string.isRequired,
@@ -39,4 +39,4 @@ FilterSection.propTypes = {
     handleFilterChange: PropTypes.func.isRequired,
 }
 
-export default FilterSection;
+export default CheckBoxFilterSection;

@@ -9,13 +9,14 @@ import PropTypes from 'prop-types';
 
 
 const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, 
-    // sortBy, setSortBy, 
+    sortBy, setSortBy, 
     filters, setFilters }) => {
     // const [isOpen, setIsOpen] = useState(false);
-    const activeFiltersCount = Object.values(filters).reduce(
-      (count, category) => count + Object.values(category).filter(Boolean).length,
-      0
-    );
+
+    // const activeFiltersCount = Object.values(filters).reduce(
+    //   (count, category) => count + Object.values(category).filter(Boolean).length,
+    //   0
+    // );
   
     return (
         <div className="mb-8 space-y-4">
@@ -34,8 +35,7 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                 </div>
 
                 <div className="flex gap-4">
-                    {/* defaults to sorting by name */}
-                    <FilterSortBy name="name"/>
+                    <FilterSortBy sortBy={sortBy} setSortBy={setSortBy} />
 
                     {/* Filter sidebar button*/}
                     <Sheet>
@@ -43,11 +43,11 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                             <Button variant="outline" className="flex gap-2">
                                 <SlidersHorizontal className="h-4 w-4" />
                                 Filters
-                                {activeFiltersCount > 0 && (
+                                {/* {activeFiltersCount > 0 && (
                                     <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
                                         {activeFiltersCount}
                                     </span>
-                                )}
+                                )} */}
                             </Button>
                         </SheetTrigger>
                         <SheetContent className="w-[300px] sm:w-[400px]">
@@ -66,6 +66,8 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
 SearchAndFilterHeader.propTypes = {
     searchQuery: PropTypes.string.isRequired,
     setSearchQuery: PropTypes.func.isRequired,
+    sortBy: PropTypes.string.isRequired,
+    setSortBy: PropTypes.func.isRequired,
     filters: PropTypes.object.isRequired,
     setFilters: PropTypes.func.isRequired,
 }
