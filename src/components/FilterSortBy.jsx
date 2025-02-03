@@ -1,10 +1,10 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowUpDown } from "lucide-react";
 import PropTypes from "prop-types";
-import { useState } from "react";
+// import { useState } from "react";
 
-const FilterSortBy = ({ name }) => {
-    const [sortBy, setSortBy] = useState(name);
+const FilterSortBy = ({ sortBy, setSortBy }) => {
+    // const [sortBy, setSortBy] = useState(name);
 
     const filterOptions = {
         'name': 'Name (A-Z)',
@@ -20,7 +20,7 @@ const FilterSortBy = ({ name }) => {
                     <SelectValue>
                         <div className="flex items-center gap-2">
                             <ArrowUpDown className="h-4 w-4 transition-transform group-hover:scale-110" />
-                            {sortBy ? `Sort by: ${filterOptions[sortBy]}` : 'Sort by...'}
+                            {sortBy ? `${filterOptions[sortBy]}` : 'Sort by...'}
                         </div>
                     </SelectValue>
                 </SelectTrigger>
@@ -37,10 +37,10 @@ const FilterSortBy = ({ name }) => {
                             className="transition-colors hover:bg-primary hover:text-primary-foreground"
                         >
                             <div className="flex items-center gap-2 group">
-                            <ArrowUpDown className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:rotate-180" />
-                            <span className="transition-transform duration-200 group-hover:translate-x-1">
-                                Sort by: {option.label}
-                            </span>
+                                <ArrowUpDown className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:rotate-180" />
+                                <span className="transition-transform duration-200 group-hover:translate-x-1">
+                                    {option.label}
+                                </span>
                             </div>
                         </SelectItem>
                     ))}
@@ -51,7 +51,8 @@ const FilterSortBy = ({ name }) => {
 }
 
 FilterSortBy.propTypes = {
-    name: PropTypes.string.isRequired,
+    sortBy: PropTypes.string.isRequired,
+    setSortBy: PropTypes.func.isRequired,
 }
 
 export default FilterSortBy;
