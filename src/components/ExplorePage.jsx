@@ -73,7 +73,8 @@ const ExplorePage = () => {
             <SearchAndFilterHeader 
                 searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
                 sortBy={sortOption} setSortBy={setSortOption} 
-                filters={filters} setFilters={setFilters} 
+                filters={filters} setFilters={setFilters}
+                fetchCards={fetchCards}
             />
 
             { /* Error State */}
@@ -95,7 +96,6 @@ const ExplorePage = () => {
             { /* Cards Grid*/ }
             {!loading && !error && (
                 <>
-                    <Button onClick={() => fetchCards(0, true)}>Test</Button>
                     {/* Render cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
                         {cards.map((card, index) =>
