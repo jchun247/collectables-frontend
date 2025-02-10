@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
-import SearchAndFilterHeader from './SearchAndFilterHeader';
-import LoadingCardGrid from './LoadingCardGrid';
+import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
+import LoadingCardGrid from '../components/LoadingCardGrid';
 import { Button } from "@/components/ui/button";
-import RenderCard from './RenderCard';
+import RenderCard from '../components/RenderCard';
 
 import { useAuth0 } from "@auth0/auth0-react";
 
@@ -33,7 +33,7 @@ const ExplorePage = () => {
 
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-const fetchCards = async (pageNum = 0, isInitial = true) => {
+    const fetchCards = async (pageNum = 0, isInitial = true) => {
         if (isAuthenticated) {
             if (isInitial) {
                 setLoading(true);
