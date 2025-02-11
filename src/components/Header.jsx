@@ -5,7 +5,7 @@ import { Menu, User, X } from "lucide-react";
 import { useState } from "react";
 
 const Header = () => {
-    const { loginWithRedirect, logout, isAuthenticated, user, isLoading } = useAuth0();
+    const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -29,17 +29,17 @@ const Header = () => {
                     <nav className="hidden md:flex items-center">
                         <ul className="flex items-center space-x-8">
                             <li>
-                                <Link to="/explore" className="text-sm font-medium hover:text-primary">
+                                <Link to="/explore" className="text-md font-medium hover:text-primary">
                                     Explore
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/portfolio" className="text-sm font-medium hover:text-primary">
+                                <Link to="/portfolio" className="text-md font-medium hover:text-primary">
                                     Portfolio
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/community" className="text-sm font-medium hover:text-primary">
+                                <Link to="/community" className="text-md font-medium hover:text-primary">
                                     Community
                                 </Link>
                             </li>
@@ -52,7 +52,7 @@ const Header = () => {
                             <>
                                 <Link
                                     to="/profile"
-                                    className="text-sm font-medium hover:text-primary flex items-center gap-2"
+                                    className="text-md font-medium hover:text-primary flex items-center gap-2"
                                 >
                                     <User className="h-4 w-4" />
                                     {user?.name}
