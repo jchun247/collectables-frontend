@@ -1,13 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 const RenderCard = ({ card }) => {
 
     return (
-        <Card
-            key={card.id}
-            className="hover:border-primary transition-colors"
-        >
+        <Link to={`/cards/${card.id}`}>
+            <Card
+                key={card.id}
+                className="hover:border-primary transition-colors cursor-pointer"
+            >
             <CardContent>
                 <div className="aspect-[3/4] relative rounded-lg overflow-hidden my-4">
                     <img 
@@ -33,7 +35,8 @@ const RenderCard = ({ card }) => {
                     </div>
                 </div>
             </CardContent>
-        </Card>
+            </Card>
+        </Link>
     )
 }
 
