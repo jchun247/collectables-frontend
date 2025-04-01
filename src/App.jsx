@@ -4,6 +4,7 @@ import Profile from './pages/Dashboard/Profile'
 import LandingPage from './components/LandingPage'
 import ExplorePage from './pages/ExplorePage';
 import CardDetails from './pages/CardDetails';
+import UserPortfolio from './pages/UserPortfolio';
 
 const App = () => {
 
@@ -11,9 +12,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       <Header />
       <Routes>
-        <Route 
-          path="/"
-          element={
+        <Route path="/" element={
             <>
               <LandingPage />
             </>
@@ -21,6 +20,7 @@ const App = () => {
         />
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
+        <Route path="/portfolio" element={<UserPortfolio />}/>
         <Route path="/cards/:id" element={<CardDetails />}/>
         <Route path="/login" />
         <Route path="/signup" />
