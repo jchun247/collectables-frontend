@@ -9,7 +9,7 @@ import UserPortfolio from './pages/UserPortfolio';
 const App = () => {
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-background text-foreground">
       <Header />
       <Routes>
         <Route path="/" element={
