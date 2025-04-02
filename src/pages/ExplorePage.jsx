@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,8 @@ import RenderCard from '../components/RenderCard';
 
 import { useAuth0 } from "@auth0/auth0-react";
 
-
 const ExplorePage = () => {
+    const PAGE_SIZE = 10; // Match backend pagination size
 
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
@@ -25,6 +25,7 @@ const ExplorePage = () => {
     const [loading, setLoading] = useState(null);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [currentPage, setCurrentPage] = useState(0);
 
     // Reference for the intersection observer
     const observer = useRef();
@@ -33,7 +34,7 @@ const ExplorePage = () => {
 
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    const fetchCards = async (pageNum = 0, isInitial = true) => {
+    const fetchCards = useCallback(async (pageNum = 0, isInitial = true) => {
         if (isAuthenticated) {
             if (isInitial) {
                 setLoading(true);
@@ -65,10 +66,12 @@ const ExplorePage = () => {
                 const data = await response.json();
                 if (isInitial) {
                     setCards(data.items);
+                    setCurrentPage(0);
                 } else {
                     setCards(prev => [...prev, ...data.items]);
+                    setCurrentPage(pageNum);
                 }
-                setHasMore(data.items.length === 12); // Assuming 12 is the page size
+                setHasMore(data.items.length > 0 && data.items.length === PAGE_SIZE);
                 setError(null);
             } catch (error) {
                 setError(error);
@@ -79,7 +82,7 @@ const ExplorePage = () => {
         } else {
             setError("You are not authenticated. Please login to view cards.");
         }
-    }
+    }, [isAuthenticated, getAccessTokenSilently, sortOption, searchQuery, filters, apiBaseUrl, PAGE_SIZE]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -92,32 +95,36 @@ const ExplorePage = () => {
         const handleObserver = (entries) => {
             const [target] = entries;
             if (target.isIntersecting && hasMore && !loading && !isLoadingMore) {
-                fetchCards(Math.ceil(cards.length / 12), false);
+                fetchCards(currentPage + 1, false);
             }
         };
 
         const observerInstance = new IntersectionObserver(handleObserver, options);
         observer.current = observerInstance;
 
+        // Always disconnect from the previous observation
+        if (observer.current) {
+            observer.current.disconnect();
+        }
+
+        // Observe the new last card element
+        if (lastCardRef.current) {
+            observer.current.observe(lastCardRef.current);
+        }
+
         return () => {
-            if (observerInstance) {
-                observerInstance.disconnect();
+            if (observer.current) {
+                observer.current.disconnect();
             }
         };
-    }, [hasMore, loading, isLoadingMore, cards.length]);
-
-    // Attach observer to last card
-    useEffect(() => {
-        if (lastCardRef.current) {
-            observer.current?.observe(lastCardRef.current);
-        }
-    }, [cards]);
+    }, [hasMore, loading, isLoadingMore, currentPage, fetchCards]);
 
     // Effect for search/filter changes
     useEffect(() => {
         setCards([]);
+        setCurrentPage(0);
         fetchCards(0, true);
-    }, [searchQuery, sortOption, filters, isAuthenticated])
+    }, [searchQuery, sortOption, filters, isAuthenticated, fetchCards])
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -142,13 +149,13 @@ const ExplorePage = () => {
             )}
 
             { /* Initial Loading State with Card Skeleton Grid */ }
-            {loading && !error && <LoadingCardGrid count={12}/>}
+            {loading && !error && <LoadingCardGrid count={PAGE_SIZE}/>}
 
             { /* Cards Grid*/ }
             {!loading && !error && (
                 <>
                     {/* Render cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
                         {cards.map((card, index) => (
                             <div 
                                 key={`${card.name}-${index}`}
@@ -157,7 +164,16 @@ const ExplorePage = () => {
                                 <RenderCard card={card} index={index} />
                             </div>
                         ))}
-                        {isLoadingMore && <LoadingCardGrid count={4}/>}
+                        {/* Display loading skeletons  */}
+                {isLoadingMore && (
+                            <>
+                                {[...Array(Math.min(PAGE_SIZE, 5))].map((_, i) => (
+                                    <div key={`loading-${i}`}>
+                                        <LoadingCardGrid count={1} />
+                                    </div>
+                                ))}
+                            </>
+                        )}
                     </div>
 
                     {/* No Results State*/}
@@ -170,7 +186,7 @@ const ExplorePage = () => {
                     {/* End of results state */}
                     {!hasMore && cards.length > 0 && (
                         <div className="text-center py-8">
-                        <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
+                            <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
                         </div>
                     )}
                 </>

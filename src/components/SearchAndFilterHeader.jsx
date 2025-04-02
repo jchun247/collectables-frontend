@@ -1,4 +1,5 @@
-// import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import debounce from 'lodash/debounce'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { Input } from "@/components/ui/input";
 import FilterSortBy from './FilterSortBy';
@@ -12,7 +13,24 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
     sortBy, setSortBy, 
     filters, setFilters,
     fetchCards }) => {
-    // const [isOpen, setIsOpen] = useState(false);
+    
+    const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+
+    // Create a stable debounced function for API calls
+    const debouncedSearchUpdate = useCallback(
+        debounce((value) => {
+            setSearchQuery(value);
+        }, 500),
+        [setSearchQuery]
+    );
+
+    // Handle search input changes
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setLocalSearchQuery(value); // Update local state immediately
+        debouncedSearchUpdate(value); // Debounce the update to parent
+    };
+
 
     const activeFiltersCount = Object.entries(filters).reduce((count, [category, value]) => {
       if (category === 'game') {
@@ -34,20 +52,20 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                     <div className="relative flex-grow">
                         <Input
                             placeholder="Search any card..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    fetchCards(0, true);
-                                }
-                            }}
+                            value={localSearchQuery}
+                            onChange={handleSearchChange}
                             className="bg-background rounded-r-none"
                         />
                     </div>
                     <Button 
                         variant="outline" 
                         className="rounded-l-none border-l-0"
-                        onClick={() => fetchCards(0, true)}
+                        onClick={() => {
+                            // For explicit search button click, update both states immediately
+                            setLocalSearchQuery(localSearchQuery);
+                            setSearchQuery(localSearchQuery);
+                            fetchCards(0, true);
+                        }}
                     >
                         <Search className="h-4 w-4" />
                     </Button>
