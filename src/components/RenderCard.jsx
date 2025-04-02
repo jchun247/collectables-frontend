@@ -8,30 +8,44 @@ const RenderCard = ({ card }) => {
         <Link to={`/cards/${card.id}`}>
             <Card
                 key={card.id}
-                className="hover:border-primary transition-colors cursor-pointer"
+                className="relative group cursor-pointer overflow-hidden"
             >
-            <CardContent>
-                <div className="aspect-[3/4] relative rounded-lg overflow-hidden my-4">
+                <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10" />
+            <CardContent className="p-0">
+                <div className="relative rounded-lg overflow-hidden">
                     <img 
-                        src={card.imageUrl}
+                        src={card.images[0].url}
                         alt={card.name}
                         className="object-cover w-full h-full"
                     />
                 </div>
-                <div className="space-y-1">
-                    <div className="flex items-center">
-                        <span className="text-lg font-bold">{card.name}</span>
-                        <span className="px-1 text-lg font-bold">-</span>
-                        <span className="text-lg font-bold">{card.setNumber}</span>
-                    </div>
-                    <div className="flex">
-                        <span className="text-md font-medium">{card.setCode}</span>
-                    </div>
-                    <div className="flex">
-                        <span className="text-md font-medium">{card.rarity}</span>
-                    </div>
-                    <div className="flex">
-                        <span className="text-xl font-bold">${card.prices[0].price}</span>
+                <div className="p-4 h-[140px]">
+                    <div className="h-full flex flex-col justify-between">
+                        <div>
+                            <h3 className="text-lg font-semibold tracking-tight leading-none truncate" title={card.name}>
+                                {card.name}
+                            </h3>
+                            <p className="text-sm font-medium mt-0.5">#{card.setNumber}</p>
+                            <button 
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    // Link handler will be added later
+                                }}
+                                className="block text-left w-full relative z-20"
+                            >
+                                <p className="text-sm text-muted-foreground truncate mt-1 hover:text-muted-foreground/80 hover:underline" title={card.setName}>
+                                    {card.setName}
+                                </p>
+                            </button>
+                        </div>
+                        <div className="flex items-center justify-between mt-auto">
+                            <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                                {card.rarity}
+                            </span>
+                            <span className="text-lg font-semibold text-green-500">
+                                ${card.prices[0].price}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </CardContent>
