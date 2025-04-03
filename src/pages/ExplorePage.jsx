@@ -7,7 +7,7 @@ import RenderCard from '../components/RenderCard';
 import { useAuth0 } from "@auth0/auth0-react";
 
 const ExplorePage = () => {
-    const PAGE_SIZE = 10; // Match backend pagination size
+    const PAGE_SIZE = 15; // Match backend pagination size
 
     const { isAuthenticated, getAccessTokenSilently } = useAuth0();
 
