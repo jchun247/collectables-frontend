@@ -22,10 +22,10 @@ const RenderCard = ({ card }) => {
                 <div className="p-4 h-[140px]">
                     <div className="h-full flex flex-col justify-between">
                         <div>
-                            <h3 className="text-lg font-semibold tracking-tight leading-none truncate" title={card.name}>
+                            <h3 className="pb-1 text-lg font-semibold tracking-tight leading-none truncate" title={card.name}>
                                 {card.name}
                             </h3>
-                            <p className="text-sm font-medium mt-0.5">#{card.setNumber}</p>
+                            <p className="text-sm font-medium mt-0.5">{card.setNumber}</p>
                             <button 
                                 onClick={(e) => {
                                     e.preventDefault();
