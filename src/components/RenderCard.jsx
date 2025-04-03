@@ -1,8 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Skeleton } from "@/components/ui/skeleton";
 
 const RenderCard = ({ card }) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     return (
         <Link to={`/cards/${card.id}`}>
@@ -12,12 +15,26 @@ const RenderCard = ({ card }) => {
             >
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10" />
             <CardContent className="p-0">
-                <div className="relative rounded-lg overflow-hidden">
-                    <img 
-                        src={card.images[0].url}
-                        alt={card.name}
-                        className="object-cover w-full h-full"
-                    />
+                <div className="relative rounded-lg overflow-hidden bg-muted/10">
+                    <div className="aspect-[2.5/3.5]"> {/* Standard card aspect ratio */}
+                        {!imageLoaded && (
+                            <Skeleton className="absolute inset-0 w-full h-full" />
+                        )}
+                        <img 
+                            src={card.images[0].url}
+                            alt={card.name}
+                            loading="lazy"
+                            decoding="async"
+                            onLoad={() => setImageLoaded(true)}
+                            onError={(e) => {
+                                setImageLoaded(true);
+                                e.target.src = "/placeholder-card.png"; // Fallback image
+                            }}
+                            className={`object-cover w-full h-full transition-opacity duration-300 ${
+                                imageLoaded ? 'opacity-100' : 'opacity-0'
+                            }`}
+                        />
+                    </div>
                 </div>
                 <div className="p-4 h-[140px]">
                     <div className="h-full flex flex-col justify-between">
