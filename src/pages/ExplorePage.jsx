@@ -23,6 +23,7 @@ const ExplorePage = () => {
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
+    const [isRetrying, setIsRetrying] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
@@ -62,6 +63,11 @@ const ExplorePage = () => {
                     },
                 });
 
+                // Check if response is ok before parsing JSON
+                if (!response.ok) {
+                    throw new Error("Something went wrong. Please try again later.");
+                }
+
                 // Handle response
                 const data = await response.json();
                 if (isInitial) {
@@ -74,7 +80,8 @@ const ExplorePage = () => {
                 setHasMore(data.items.length > 0 && data.items.length === PAGE_SIZE);
                 setError(null);
             } catch (error) {
-                setError(error);
+                // Use a generic error message for all server/network errors
+                setError("Something went wrong. Please try again later.");
             } finally {
                 setLoading(false);
                 setIsLoadingMore(false);
@@ -136,17 +143,30 @@ const ExplorePage = () => {
             />
 
             { /* Error State */}
-            {error && (
+            {error && !isRetrying && (
                 <div className="text-center py-8">
                     <p className="text-red-500">{error}</p>
                     <Button
-                        variant="outline" onClick={() => fetchCards(1, true)}
+                        variant="outline" 
+                        disabled={isRetrying}
+                        onClick={() => {
+                            setIsRetrying(true);
+                            // Create a promise that resolves after 2 seconds
+                            const delay = new Promise(resolve => setTimeout(resolve, 2000));
+                            // Wait for both the delay and the fetch to complete
+                            Promise.all([delay, fetchCards(1, true)]).finally(() => {
+                                setIsRetrying(false);
+                            });
+                        }}
                         className="mt-4"
                     >
-                        Try Again
+                        {isRetrying ? "Retrying..." : "Try Again"}
                     </Button>
                 </div>
             )}
+
+            { /* Retry Loading State */ }
+            {isRetrying && <LoadingCardGrid count={PAGE_SIZE}/>}
 
             { /* Initial Loading State with Card Skeleton Grid */ }
             {loading && !error && <LoadingCardGrid count={PAGE_SIZE}/>}
