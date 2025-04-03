@@ -4,6 +4,20 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 
+const getDisplayPrice = (prices) => {
+    if (prices.length === 1) return prices[0].price.toFixed(2);
+
+    const finishPriority = ["NORMAL", "HOLOFOIL", "REVERSE_HOLO", "STAMP"];
+    
+    const price = finishPriority.reduce((selectedPrice, finish) => {
+        if (selectedPrice !== null) return selectedPrice;
+        const priceObj = prices.find(p => p.finish === finish);
+        return priceObj ? priceObj.price : selectedPrice;
+    }, null) || prices[0].price; // Fallback to first price if no priority match
+
+    return price.toFixed(2);
+};
+
 const RenderCard = ({ card }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
 
@@ -60,7 +74,7 @@ const RenderCard = ({ card }) => {
                                 {card.rarity}
                             </span>
                             <span className="text-lg font-semibold text-green-500">
-                                ${card.prices[0].price}
+                                ${getDisplayPrice(card.prices)}
                             </span>
                         </div>
                     </div>
