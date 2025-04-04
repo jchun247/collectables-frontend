@@ -79,7 +79,7 @@ const ExplorePage = () => {
                 }
                 setHasMore(data.items.length > 0 && data.items.length === PAGE_SIZE);
                 setError(null);
-            } catch (error) {
+            } catch {
                 // Use a generic error message for all server/network errors
                 setError("Something went wrong. Please try again later.");
             } finally {
@@ -181,7 +181,11 @@ const ExplorePage = () => {
                                 key={`${card.name}-${index}`}
                                 ref={index === cards.length - 1 ? lastCardRef : null}
                             >
-                                <RenderCard card={card} index={index} />
+                                <RenderCard 
+                                    card={card} 
+                                    getAccessTokenSilently={getAccessTokenSilently}
+                                    apiBaseUrl={apiBaseUrl}
+                                />
                             </div>
                         ))}
                         {/* Display loading skeletons  */}
