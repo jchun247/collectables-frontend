@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import CardDetailsTab from './CardDetailsTab';
 import {
   Dialog,
   DialogContent,
@@ -21,16 +22,26 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
           Card details dialog for {cardDetails.name} - {cardDetails.setName} - {cardDetails.setNumber}
         </DialogDescription>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-          <div className="aspect-[2.5/3.5] relative rounded-lg overflow-hidden max-w-[500px] mx-auto">
-            <img 
-              src={cardDetails.images.find(img => img.resolution === "HIGH_RES").url}
-              alt={cardDetails.name}
-              className="object-cover w-full h-full"
-            />
+          <div className="space-y-2">
+            <div className="aspect-[2.5/3.5] relative rounded-lg overflow-hidden max-w-[500px] mx-auto">
+              <img 
+                src={cardDetails.images.find(img => img.resolution === "HIGH_RES").url}
+                alt={cardDetails.name}
+                className="object-cover w-full h-full"
+              />
+            </div>
+            {cardDetails.pokemonDetails?.flavourText && (
+              <p className="text-sm text-muted-foreground italic max-w-[500px] mx-auto">
+                {cardDetails.pokemonDetails.flavourText}
+              </p>
+            )}
           </div>
           <div className="space-y-4">
-            <h2 className="text-5xl font-bold mb-4">{cardDetails.name}</h2>
-            
+            <h2 className="text-4xl font-bold mb-4">{cardDetails.name}</h2>
+            <div className="flex flex-col space-y-1">
+              <span className="font-medium">{cardDetails.setName}</span>
+              <span className="font-medium">#{cardDetails.setNumber}</span>
+            </div>
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Details</TabsTrigger>
@@ -38,64 +49,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </TabsList>
               
               <TabsContent value="details" className="mt-4">
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <span className="text-muted-foreground">Set:</span>
-                    <span>{cardDetails.setName}</span>
-                    <span className="text-muted-foreground">Number:</span>
-                    <span>{cardDetails.setNumber}</span>
-                    <span className="text-muted-foreground">Rarity:</span>
-                    <span>{cardDetails.rarity}</span>
-                    {cardDetails.hitPoints && (
-                      <>
-                        <span className="text-muted-foreground">HP:</span>
-                        <span>{cardDetails.hitPoints}</span>
-                      </>
-                    )}
-                    <span className="text-muted-foreground">Illustrator:</span>
-                    <span>{cardDetails.illustratorName || 'N/A'}</span>
-                  </div>
-
-                  {cardDetails.abilities && cardDetails.abilities.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold mb-2">Abilities</h3>
-                      <div className="space-y-3">
-                        {cardDetails.abilities.map((ability, index) => (
-                          <div key={index} className="border rounded-lg p-3">
-                            <div className="flex justify-between items-center">
-                              <span className="font-medium">{ability.name}</span>
-                              <span>{ability.text}</span>
-                            </div>
-                          </div>
-                        ))}
-                        </div>
-                    </div>  
-                  )}
-
-                  {cardDetails.attacks && cardDetails.attacks.length > 0 && (
-                    <div>
-                      <h3 className="font-semibold mb-2">Attacks</h3>
-                      <div className="space-y-3">
-                        {cardDetails.attacks.map((attack, index) => (
-                          <div key={index} className="border rounded-lg p-3">
-                            <div className="flex justify-between items-center">
-                              <span className="font-medium">{attack.name}</span>
-                              <span>{attack.damage}</span>
-                            </div>
-                            <p className="text-sm text-muted-foreground mt-1">{attack.text}</p>
-                            <div className="mt-1 flex gap-1">
-                              {attack.cost.map((type, i) => (
-                                <span key={i} className="text-xs bg-primary/10 px-2 py-1 rounded">
-                                  {type}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <CardDetailsTab cardDetails={cardDetails} />
               </TabsContent>
               
               <TabsContent value="prices" className="mt-4">
