@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import CardDetailsTab from './CardDetailsTab';
+import CardPriceHistoryTab from './CardPriceHistoryTab';
 import {
   Dialog,
   DialogContent,
@@ -45,7 +46,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="w-full grid grid-cols-2">
                 <TabsTrigger value="details">Details</TabsTrigger>
-                <TabsTrigger value="prices">Prices</TabsTrigger>
+                <TabsTrigger value="prices">Price History</TabsTrigger>
               </TabsList>
               
               <TabsContent value="details" className="mt-4">
@@ -53,22 +54,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </TabsContent>
               
               <TabsContent value="prices" className="mt-4">
-                {cardDetails.prices && cardDetails.prices.length > 0 ? (
-                  <div className="space-y-2">
-                    {cardDetails.prices.map((price, index) => (
-                      <div key={index} className="flex justify-between items-center">
-                        <span className="text-muted-foreground">
-                          {price.condition} ({price.finish})
-                        </span>
-                        <span className="font-medium text-green-500">
-                          ${price.price.toFixed(2)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">No price information available.</p>
-                )}
+                <CardPriceHistoryTab prices={cardDetails.priceHistory} />
               </TabsContent>
             </Tabs>
 
