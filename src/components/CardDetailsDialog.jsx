@@ -56,6 +56,22 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                     <span>{cardDetails.illustratorName || 'N/A'}</span>
                   </div>
 
+                  {cardDetails.abilities && cardDetails.abilities.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold mb-2">Abilities</h3>
+                      <div className="space-y-3">
+                        {cardDetails.abilities.map((ability, index) => (
+                          <div key={index} className="border rounded-lg p-3">
+                            <div className="flex justify-between items-center">
+                              <span className="font-medium">{ability.name}</span>
+                              <span>{ability.text}</span>
+                            </div>
+                          </div>
+                        ))}
+                        </div>
+                    </div>  
+                  )}
+
                   {cardDetails.attacks && cardDetails.attacks.length > 0 && (
                     <div>
                       <h3 className="font-semibold mb-2">Attacks</h3>
