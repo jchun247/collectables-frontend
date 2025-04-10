@@ -3,6 +3,26 @@ import PropTypes from 'prop-types';
 const CardDetailsTab = ({ cardDetails }) => {
   return (
     <div className="space-y-6">
+      {cardDetails.prices && cardDetails.prices.length > 0 && (
+        <div>
+          <h3 className="font-semibold mb-2">Market Price</h3>
+          <div className="space-y-3">
+            {cardDetails.prices.map((price, index) => (
+              <div key={index} className="border rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1">
+                    <div className="font-medium">{price.finish}</div>
+                    <div className="text-sm text-muted-foreground">{price.condition}</div>
+                  </div>
+                  <div className="text-lg font-semibold text-green-500">
+                    ${price.price.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       {cardDetails.pokemonDetails?.abilities && cardDetails.pokemonDetails.abilities.length > 0 && (
         <div>
           <h3 className="font-semibold mb-2">Abilities</h3>
