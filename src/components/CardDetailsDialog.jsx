@@ -15,14 +15,14 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[80vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[60vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <DialogTitle>{cardDetails.name}</DialogTitle>
         </DialogHeader>
         <DialogDescription className="sr-only">
           Card details dialog for {cardDetails.name} - {cardDetails.setName} - {cardDetails.setNumber}
         </DialogDescription>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
           <div className="space-y-2">
             <div className="aspect-[2.5/3.5] relative rounded-lg overflow-hidden max-w-[500px] mx-auto">
               <img 
@@ -37,10 +37,10 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </p>
             )}
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             <h2 className="text-4xl font-bold mb-4">{cardDetails.name}</h2>
             <div className="flex flex-col space-y-1">
-              <span className="font-medium">{cardDetails.setName}</span>
+              <button className="font-medium hover:text-blue-500 hover:underline transition-colors text-left">{cardDetails.setName}</button>
               <span className="font-medium">#{cardDetails.setNumber}</span>
             </div>
             <Tabs defaultValue="details" className="w-full">

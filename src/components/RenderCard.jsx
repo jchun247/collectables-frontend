@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useState, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import CardDetailsDialog from './CardDetailsDialog';
+import { RARITY_IMAGES } from '@/utils/rarityImages';
 
 const getDisplayPrice = (prices) => {
     if (prices.length === 1) return prices[0].price.toFixed(2);
@@ -95,8 +96,12 @@ const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
                                     </button>
                                 </div>
                                 <div className="flex items-center justify-between mt-auto">
-                                    <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
-                                        {card.rarity}
+                                    <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1">
+                                        <img 
+                                            src={RARITY_IMAGES[card.rarity] || RARITY_IMAGES.COMMON}
+                                            alt={card.rarity}
+                                            className="h-4 w-auto"
+                                        />
                                     </span>
                                     <span className="text-lg font-semibold text-green-500">
                                         ${getDisplayPrice(card.prices)}

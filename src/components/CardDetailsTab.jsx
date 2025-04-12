@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
+import { formatCardFinish, formatCardCondition, formatCardRarity, formatCardSubtype } from '@/utils/textFormatters';
 
 const CardDetailsTab = ({ cardDetails }) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {cardDetails.prices && cardDetails.prices.length > 0 && (
         <div>
           <h3 className="font-semibold mb-2">Market Price</h3>
@@ -11,8 +12,8 @@ const CardDetailsTab = ({ cardDetails }) => {
               <div key={index} className="border rounded-lg p-3">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
-                    <div className="font-medium">{price.finish}</div>
-                    <div className="text-sm text-muted-foreground">{price.condition}</div>
+                    <div className="font-medium">{formatCardFinish(price.finish)}</div>
+                    <div className="text-sm text-muted-foreground">{formatCardCondition(price.condition)}</div>
                   </div>
                   <div className="text-lg font-semibold text-green-500">
                     ${price.price.toFixed(2)}
@@ -76,7 +77,7 @@ const CardDetailsTab = ({ cardDetails }) => {
         </div>  
       )}
 
-      <div className="mt-6 border-t border-border py-6">
+      <div className="mt-4 border-t border-border py-4">
         <div className="grid grid-cols-2 gap-6 text-sm">
           {cardDetails.pokemonDetails && Object.keys(cardDetails.pokemonDetails).length > 0 && (
             <>
@@ -130,7 +131,7 @@ const CardDetailsTab = ({ cardDetails }) => {
             </span>
             <span className="font-medium">
               {cardDetails.subTypes?.length
-                ? cardDetails.subTypes.join(', ')
+                ? cardDetails.subTypes.map(subType => formatCardSubtype(subType)).join(', ')
                 : 'N/A'}
             </span>
           </div>
@@ -138,9 +139,9 @@ const CardDetailsTab = ({ cardDetails }) => {
             <span className="text-sm text-muted-foreground">
               Illustrated By
             </span>
-            <span className="font-medium">
+            <button className="font-medium hover:text-blue-500 hover:underline transition-colors text-left w-full">
               {cardDetails.illustratorName || 'N/A'}
-            </span>
+            </button>
           </div>
           <div className="flex flex-col space-y-1">
             <span className="text-sm text-muted-foreground">
@@ -155,7 +156,7 @@ const CardDetailsTab = ({ cardDetails }) => {
               Rarity
             </span>
             <span className="font-medium">
-              {cardDetails.rarity || 'N/A'}
+              {formatCardRarity(cardDetails.rarity) || 'N/A'}
             </span>
           </div>
         </div>
