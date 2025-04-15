@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { formatCardFinish, formatCardCondition, formatCardRarity, formatCardSubtype } from '@/utils/textFormatters';
+import { formatCardFinish, formatCardCondition, formatCardRarity, formatCardSubtype, formatModifier, formatCardText } from '@/utils/textFormatters';
+import energyTypeImages from '@/utils/energyTypeImages';
 
 const CardDetailsTab = ({ cardDetails }) => {
   return (
@@ -53,9 +54,12 @@ const CardDetailsTab = ({ cardDetails }) => {
                 <p className="text-sm text-muted-foreground mt-1">{attack.text}</p>
                 <div className="mt-1 flex gap-1">
                   {attack.cost?.sort((a, b) => a.id - b.id).map((costItem) => (
-                    <span key={costItem.id} className="text-xs bg-primary/10 px-2 py-1 rounded">
-                      {costItem.cost}
-                    </span>
+                    <img
+                      key={costItem.id}
+                      src={energyTypeImages[costItem.cost]}
+                      alt={costItem.cost}
+                      className="w-6 h-6"
+                    />
                   ))}
                 </div>
               </div>
@@ -85,11 +89,24 @@ const CardDetailsTab = ({ cardDetails }) => {
                 <span className="text-sm text-muted-foreground">
                   {(cardDetails.pokemonDetails.types?.length || 0) > 1 ? 'Types' : 'Type'}
                 </span>
-                <span className="font-medium">
-                  {cardDetails.pokemonDetails.types?.length
-                    ? cardDetails.pokemonDetails.types.map(t => t.type).join(', ')
-                    : 'N/A'}
-                </span>
+                <div className="font-medium flex items-center gap-2">
+                  {cardDetails.pokemonDetails.types?.length ? (
+                    <div className="flex flex-col space-y-1">
+                      {cardDetails.pokemonDetails.types.map((t, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <img 
+                            src={energyTypeImages[t.type]} 
+                            alt={t.type} 
+                            className="w-5 h-5"
+                          />
+                          <span className="pl-1">{formatCardText(t.type)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm text-muted-foreground">HP</span>
@@ -99,29 +116,62 @@ const CardDetailsTab = ({ cardDetails }) => {
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm text-muted-foreground">Weakness</span>
-                <span className="font-medium">
-                  {cardDetails.pokemonDetails.weakness?.weaknessType
-                    ? `${cardDetails.pokemonDetails.weakness.weaknessType} (×${
-                        cardDetails.pokemonDetails.weakness.weaknessValue
-                      })`
-                    : 'N/A'}
-                </span>
+                <div className="font-medium flex items-center gap-2">
+                  {cardDetails.pokemonDetails.weakness?.weaknessType ? (
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={energyTypeImages[cardDetails.pokemonDetails.weakness.weaknessType]} 
+                        alt={cardDetails.pokemonDetails.weakness.weaknessType} 
+                        className="w-5 h-5"
+                      />
+                      <span>
+                        {formatModifier(cardDetails.pokemonDetails.weakness.weaknessModifier)}
+                        {cardDetails.pokemonDetails.weakness.weaknessValue}
+                      </span>
+                    </div>
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm text-muted-foreground">Resistance</span>
-                <span className="font-medium">
-                  {cardDetails.pokemonDetails.resistance?.weaknessType
-                    ? `${cardDetails.pokemonDetails.resistance.weaknessType} (x${
-                        cardDetails.pokemonDetails.resistance.weaknessValue
-                      })`
-                    : 'N/A'}
-                </span>
+                <div className="font-medium flex items-center gap-2">
+                  {cardDetails.pokemonDetails.resistance?.resistanceType ? (
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={energyTypeImages[cardDetails.pokemonDetails.resistance.resistanceType]} 
+                        alt={cardDetails.pokemonDetails.resistance.resistanceType} 
+                        className="w-5 h-5"
+                      />
+                      <span>
+                        {formatModifier(cardDetails.pokemonDetails.resistance.resistanceModifier)}
+                        {cardDetails.pokemonDetails.resistance.resistanceValue}
+                      </span>
+                    </div>
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-sm text-muted-foreground">Retreat Cost</span>
-                <span className="font-medium">
-                  {cardDetails.pokemonDetails.retreatCost || 'N/A'}
-                </span>
+                <div className="font-medium flex gap-1">
+                  {cardDetails.pokemonDetails.retreatCost ? (
+                    Array(cardDetails.pokemonDetails.retreatCost)
+                      .fill(0)
+                      .map((_, index) => (
+                        <img
+                          key={index}
+                          src={energyTypeImages['COLORLESS']}
+                          alt="Colorless Energy"
+                          className="w-5 h-5"
+                        />
+                      ))
+                  ) : (
+                    'N/A'
+                  )}
+                </div>
               </div>
             </>
           )}
