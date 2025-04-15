@@ -169,3 +169,18 @@ export const formatCardSubtype = (subtype) => {
     if (!subtype) return '';
     return CARD_SUB_TYPE_MAPPING[subtype] || formatCardText(subtype);
 };
+
+/**
+ * Maps resistance modifiers to their display symbols
+ * @param {string} modifier - The resistance modifier (MULTIPLY, ADD, REDUCE, PERCENTAGE)
+ * @returns {string} The corresponding symbol (×, +, -, %)
+ */
+export const formatModifier = (modifier) => {
+    const modifierMap = {
+        MULTIPLY: '×',
+        ADD: '+',
+        REDUCE: '-',
+        PERCENTAGE: '%'
+    };
+    return modifierMap[modifier] || modifier;
+};
