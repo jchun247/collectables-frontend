@@ -5,6 +5,7 @@ import LandingPage from './components/LandingPage'
 import ExplorePage from './pages/ExplorePage';
 import CardDetails from './pages/CardDetails';
 import UserPortfolio from './pages/UserPortfolio';
+import SetsPage from './pages/SetsPage';
 
 const App = () => {
 
@@ -20,6 +21,7 @@ const App = () => {
         />
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
+        <Route path="/sets" element={<SetsPage />} />
         <Route path="/portfolio" element={<UserPortfolio />}/>
         <Route path="/cards/:id" element={<CardDetails />}/>
         <Route path="/login" />

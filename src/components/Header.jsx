@@ -34,6 +34,11 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li>
+                                <Link to="/sets" className="text-md font-medium hover:text-primary">
+                                    Sets
+                                </Link>
+                            </li>
+                            <li>
                                 <Link to="/portfolio" className="text-md font-medium hover:text-primary">
                                     Portfolio
                                 </Link>
