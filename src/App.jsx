@@ -1,4 +1,5 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
+import { useAuth0 } from "@auth0/auth0-react";
 import Header from './components/Header'
 import Profile from './pages/Dashboard/Profile'
 import LandingPage from './components/LandingPage'
@@ -9,17 +10,15 @@ import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
 
 const App = () => {
+  const { isAuthenticated } = useAuth0();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <Routes>
         <Route path="/" element={
-            <>
-              <LandingPage />
-            </>
-          }
-        />
+          isAuthenticated ? <Navigate to="/explore" replace /> : <LandingPage />
+        }/>
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
