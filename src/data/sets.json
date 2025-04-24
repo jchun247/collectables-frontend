@@ -1,0 +1,2859 @@
+{
+  "series": [
+    "XY",
+    "HEARTGOLD_AND_SOULSILVER",
+    "OTHER",
+    "NEO",
+    "SWORD_AND_SHIELD",
+    "POP",
+    "NP",
+    "SUN_AND_MOON",
+    "EX",
+    "PLATINUM",
+    "DIAMOND_AND_PEARL",
+    "BASE",
+    "E_CARD",
+    "BLACK_AND_WHITE",
+    "GYM",
+    "SCARLET_AND_VIOLET"
+  ],
+  "setsBySeries": {
+    "XY": [
+      {
+        "id": "xy4",
+        "name": "Phantom Forces",
+        "game": "POKEMON",
+        "releaseDate": "2014-11-05",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy6",
+        "name": "Roaring Skies",
+        "game": "POKEMON",
+        "releaseDate": "2015-05-06",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy6/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy6/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "xy7",
+        "name": "Ancient Origins",
+        "game": "POKEMON",
+        "releaseDate": "2015-08-12",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy7/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy7/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "xyp",
+        "name": "XY Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2013-10-12",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xyp/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xyp/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy5",
+        "name": "Primal Clash",
+        "game": "POKEMON",
+        "releaseDate": "2015-02-04",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy5/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy5/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "dc1",
+        "name": "Double Crisis",
+        "game": "POKEMON",
+        "releaseDate": "2015-03-25",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dc1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dc1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy8",
+        "name": "BREAKthrough",
+        "game": "POKEMON",
+        "releaseDate": "2015-11-04",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy8/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy8/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy10",
+        "name": "Fates Collide",
+        "game": "POKEMON",
+        "releaseDate": "2016-05-02",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy10/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy10/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "xy12",
+        "name": "Evolutions",
+        "game": "POKEMON",
+        "releaseDate": "2016-11-02",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy12/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy12/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy0",
+        "name": "Kalos Starter Set",
+        "game": "POKEMON",
+        "releaseDate": "2013-11-08",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy0/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy0/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy9",
+        "name": "BREAKpoint",
+        "game": "POKEMON",
+        "releaseDate": "2016-02-03",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy11",
+        "name": "Steam Siege",
+        "game": "POKEMON",
+        "releaseDate": "2016-08-03",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy11/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy11/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy1",
+        "name": "XY",
+        "game": "POKEMON",
+        "releaseDate": "2014-02-05",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy2",
+        "name": "Flashfire",
+        "game": "POKEMON",
+        "releaseDate": "2014-05-07",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "xy3",
+        "name": "Furious Fists",
+        "game": "POKEMON",
+        "releaseDate": "2014-08-13",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/xy3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/xy3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "g1",
+        "name": "Generations",
+        "game": "POKEMON",
+        "releaseDate": "2016-02-22",
+        "series": "XY",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/g1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/g1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "HEARTGOLD_AND_SOULSILVER": [
+      {
+        "id": "hgss1",
+        "name": "HeartGold & SoulSilver",
+        "game": "POKEMON",
+        "releaseDate": "2010-02-10",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/hgss1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/hgss1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "hgss3",
+        "name": "HS—Undaunted",
+        "game": "POKEMON",
+        "releaseDate": "2010-08-18",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/hgss3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/hgss3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "hgss2",
+        "name": "HS—Unleashed",
+        "game": "POKEMON",
+        "releaseDate": "2010-05-12",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/hgss2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/hgss2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "hgss4",
+        "name": "HS—Triumphant",
+        "game": "POKEMON",
+        "releaseDate": "2010-11-03",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/hgss4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/hgss4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "col1",
+        "name": "Call of Legends",
+        "game": "POKEMON",
+        "releaseDate": "2011-02-09",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/col1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/col1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "hsp",
+        "name": "HGSS Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2010-02-10",
+        "series": "HEARTGOLD_AND_SOULSILVER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/hsp/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/hsp/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "OTHER": [
+      {
+        "id": "base6",
+        "name": "Legendary Collection",
+        "game": "POKEMON",
+        "releaseDate": "2002-05-24",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base6/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base6/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ru1",
+        "name": "Pokémon Rumble",
+        "game": "POKEMON",
+        "releaseDate": "2009-12-02",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ru1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ru1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd16",
+        "name": "McDonald's Collection 2016",
+        "game": "POKEMON",
+        "releaseDate": "2016-08-19",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd16/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd16/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "mcd11",
+        "name": "McDonald's Collection 2011",
+        "game": "POKEMON",
+        "releaseDate": "2011-06-17",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd11/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd11/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd14",
+        "name": "McDonald's Collection 2014",
+        "game": "POKEMON",
+        "releaseDate": "2014-05-23",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd14/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd14/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "mcd17",
+        "name": "McDonald's Collection 2017",
+        "game": "POKEMON",
+        "releaseDate": "2017-11-07",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd17/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd17/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "mcd21",
+        "name": "McDonald's Collection 2021",
+        "game": "POKEMON",
+        "releaseDate": "2021-02-09",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd21/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd21/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd19",
+        "name": "McDonald's Collection 2019",
+        "game": "POKEMON",
+        "releaseDate": "2019-10-15",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd19/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd19/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd18",
+        "name": "McDonald's Collection 2018",
+        "game": "POKEMON",
+        "releaseDate": "2018-10-16",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd18/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd18/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "fut20",
+        "name": "Pokémon Futsal Collection",
+        "game": "POKEMON",
+        "releaseDate": "2020-09-11",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/fut20/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/fut20/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "mcd22",
+        "name": "McDonald's Collection 2022",
+        "game": "POKEMON",
+        "releaseDate": "2022-08-03",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd22/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd22/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "si1",
+        "name": "Southern Islands",
+        "game": "POKEMON",
+        "releaseDate": "2001-07-31",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/si1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/si1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd12",
+        "name": "McDonald's Collection 2012",
+        "game": "POKEMON",
+        "releaseDate": "2012-06-15",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd12/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd12/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "mcd15",
+        "name": "McDonald's Collection 2015",
+        "game": "POKEMON",
+        "releaseDate": "2015-11-27",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/mcd15/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/mcd15/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bp",
+        "name": "Best of Game",
+        "game": "POKEMON",
+        "releaseDate": "2002-12-01",
+        "series": "OTHER",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bp/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bp/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "NEO": [
+      {
+        "id": "neo1",
+        "name": "Neo Genesis",
+        "game": "POKEMON",
+        "releaseDate": "2000-12-16",
+        "series": "NEO",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/neo1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/neo1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "neo2",
+        "name": "Neo Discovery",
+        "game": "POKEMON",
+        "releaseDate": "2001-06-01",
+        "series": "NEO",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/neo2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/neo2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "neo4",
+        "name": "Neo Destiny",
+        "game": "POKEMON",
+        "releaseDate": "2002-02-28",
+        "series": "NEO",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/neo4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/neo4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "neo3",
+        "name": "Neo Revelation",
+        "game": "POKEMON",
+        "releaseDate": "2001-09-21",
+        "series": "NEO",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/neo3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/neo3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "SWORD_AND_SHIELD": [
+      {
+        "id": "swshp",
+        "name": "SWSH Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2019-11-15",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swshp/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swshp/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh1",
+        "name": "Sword & Shield",
+        "game": "POKEMON",
+        "releaseDate": "2020-02-07",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh35",
+        "name": "Champion's Path",
+        "game": "POKEMON",
+        "releaseDate": "2020-09-25",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh35/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh35/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh45sv",
+        "name": "Shining Fates Shiny Vault",
+        "game": "POKEMON",
+        "releaseDate": "2021-02-19",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh45sv/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh45sv/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh5",
+        "name": "Battle Styles",
+        "game": "POKEMON",
+        "releaseDate": "2021-03-19",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pgo",
+        "name": "Pokémon GO",
+        "game": "POKEMON",
+        "releaseDate": "2022-07-01",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pgo/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pgo/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh12",
+        "name": "Silver Tempest",
+        "game": "POKEMON",
+        "releaseDate": "2022-11-11",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh12/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh12/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh45",
+        "name": "Shining Fates",
+        "game": "POKEMON",
+        "releaseDate": "2021-02-19",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh45/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh45/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "cel25c",
+        "name": "Celebrations: Classic Collection",
+        "game": "POKEMON",
+        "releaseDate": "2021-10-08",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/cel25c/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/cel25c/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh9",
+        "name": "Brilliant Stars",
+        "game": "POKEMON",
+        "releaseDate": "2022-02-25",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh11tg",
+        "name": "Lost Origin Trainer Gallery",
+        "game": "POKEMON",
+        "releaseDate": "2022-09-09",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh11tg/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh11tg/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh12pt5gg",
+        "name": "Crown Zenith Galarian Gallery",
+        "game": "POKEMON",
+        "releaseDate": "2023-01-20",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh12pt5gg/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh12pt5gg/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh3",
+        "name": "Darkness Ablaze",
+        "game": "POKEMON",
+        "releaseDate": "2020-08-14",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh4",
+        "name": "Vivid Voltage",
+        "game": "POKEMON",
+        "releaseDate": "2020-11-13",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh7",
+        "name": "Evolving Skies",
+        "game": "POKEMON",
+        "releaseDate": "2021-08-27",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh7/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh7/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "cel25",
+        "name": "Celebrations",
+        "game": "POKEMON",
+        "releaseDate": "2021-10-08",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/cel25/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/cel25/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh8",
+        "name": "Fusion Strike",
+        "game": "POKEMON",
+        "releaseDate": "2021-11-12",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh8/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh8/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh10",
+        "name": "Astral Radiance",
+        "game": "POKEMON",
+        "releaseDate": "2022-05-27",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh10/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh10/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh2",
+        "name": "Rebel Clash",
+        "game": "POKEMON",
+        "releaseDate": "2020-05-01",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh6",
+        "name": "Chilling Reign",
+        "game": "POKEMON",
+        "releaseDate": "2021-06-18",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh6/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh6/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh9tg",
+        "name": "Brilliant Stars Trainer Gallery",
+        "game": "POKEMON",
+        "releaseDate": "2022-02-25",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh9tg/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh9tg/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh10tg",
+        "name": "Astral Radiance Trainer Gallery",
+        "game": "POKEMON",
+        "releaseDate": "2022-05-27",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh10tg/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh10tg/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh11",
+        "name": "Lost Origin",
+        "game": "POKEMON",
+        "releaseDate": "2022-09-09",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh11/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh11/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "swsh12tg",
+        "name": "Silver Tempest Trainer Gallery",
+        "game": "POKEMON",
+        "releaseDate": "2022-11-11",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh12tg/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh12tg/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "swsh12pt5",
+        "name": "Crown Zenith",
+        "game": "POKEMON",
+        "releaseDate": "2023-01-20",
+        "series": "SWORD_AND_SHIELD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/swsh12pt5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/swsh12pt5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "POP": [
+      {
+        "id": "pop1",
+        "name": "POP Series 1",
+        "game": "POKEMON",
+        "releaseDate": "2004-09-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop2",
+        "name": "POP Series 2",
+        "game": "POKEMON",
+        "releaseDate": "2005-08-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "pop3",
+        "name": "POP Series 3",
+        "game": "POKEMON",
+        "releaseDate": "2006-04-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "pop4",
+        "name": "POP Series 4",
+        "game": "POKEMON",
+        "releaseDate": "2006-08-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop5",
+        "name": "POP Series 5",
+        "game": "POKEMON",
+        "releaseDate": "2007-03-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop7",
+        "name": "POP Series 7",
+        "game": "POKEMON",
+        "releaseDate": "2008-03-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop7/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop7/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop9",
+        "name": "POP Series 9",
+        "game": "POKEMON",
+        "releaseDate": "2009-03-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop8",
+        "name": "POP Series 8",
+        "game": "POKEMON",
+        "releaseDate": "2008-09-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop8/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop8/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pop6",
+        "name": "POP Series 6",
+        "game": "POKEMON",
+        "releaseDate": "2007-09-01",
+        "series": "POP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pop6/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pop6/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "NP": [
+      {
+        "id": "np",
+        "name": "Nintendo Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2003-10-01",
+        "series": "NP",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/np/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/np/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "SUN_AND_MOON": [
+      {
+        "id": "smp",
+        "name": "SM Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2017-02-03",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/smp/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/smp/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "det1",
+        "name": "Detective Pikachu",
+        "game": "POKEMON",
+        "releaseDate": "2019-04-05",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/det1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/det1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm7",
+        "name": "Celestial Storm",
+        "game": "POKEMON",
+        "releaseDate": "2018-08-03",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm7/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm7/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm3",
+        "name": "Burning Shadows",
+        "game": "POKEMON",
+        "releaseDate": "2017-08-05",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm35",
+        "name": "Shining Legends",
+        "game": "POKEMON",
+        "releaseDate": "2017-10-06",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm35/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm35/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm6",
+        "name": "Forbidden Light",
+        "game": "POKEMON",
+        "releaseDate": "2018-05-04",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm6/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm6/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm75",
+        "name": "Dragon Majesty",
+        "game": "POKEMON",
+        "releaseDate": "2018-09-07",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm75/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm75/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm12",
+        "name": "Cosmic Eclipse",
+        "game": "POKEMON",
+        "releaseDate": "2019-11-01",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm12/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm12/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm1",
+        "name": "Sun & Moon",
+        "game": "POKEMON",
+        "releaseDate": "2017-02-03",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm2",
+        "name": "Guardians Rising",
+        "game": "POKEMON",
+        "releaseDate": "2017-05-05",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm4",
+        "name": "Crimson Invasion",
+        "game": "POKEMON",
+        "releaseDate": "2017-11-03",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm4/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm4/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm5",
+        "name": "Ultra Prism",
+        "game": "POKEMON",
+        "releaseDate": "2018-02-02",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm8",
+        "name": "Lost Thunder",
+        "game": "POKEMON",
+        "releaseDate": "2018-11-02",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm8/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm8/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm9",
+        "name": "Team Up",
+        "game": "POKEMON",
+        "releaseDate": "2019-02-01",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm10",
+        "name": "Unbroken Bonds",
+        "game": "POKEMON",
+        "releaseDate": "2019-05-03",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm10/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm10/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sm11",
+        "name": "Unified Minds",
+        "game": "POKEMON",
+        "releaseDate": "2019-08-02",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm11/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm11/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sm115",
+        "name": "Hidden Fates",
+        "game": "POKEMON",
+        "releaseDate": "2019-08-23",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sm115/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sm115/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sma",
+        "name": "Hidden Fates Shiny Vault",
+        "game": "POKEMON",
+        "releaseDate": "2019-08-23",
+        "series": "SUN_AND_MOON",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sma/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sma/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "EX": [
+      {
+        "id": "ex1",
+        "name": "Ruby & Sapphire",
+        "game": "POKEMON",
+        "releaseDate": "2003-07-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex2",
+        "name": "Sandstorm",
+        "game": "POKEMON",
+        "releaseDate": "2003-09-18",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex4",
+        "name": "Team Magma vs Team Aqua",
+        "game": "POKEMON",
+        "releaseDate": "2004-03-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex5",
+        "name": "Hidden Legends",
+        "game": "POKEMON",
+        "releaseDate": "2004-06-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex5/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex5/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex7",
+        "name": "Team Rocket Returns",
+        "game": "POKEMON",
+        "releaseDate": "2004-11-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex7/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex7/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex15",
+        "name": "Dragon Frontiers",
+        "game": "POKEMON",
+        "releaseDate": "2006-11-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex15/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex15/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "tk1a",
+        "name": "EX Trainer Kit Latias",
+        "game": "POKEMON",
+        "releaseDate": "2004-06-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/tk1a/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/tk1a/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex13",
+        "name": "Holon Phantoms",
+        "game": "POKEMON",
+        "releaseDate": "2006-05-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex13/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex13/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "tk2a",
+        "name": "EX Trainer Kit 2 Plusle",
+        "game": "POKEMON",
+        "releaseDate": "2006-03-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/tk2a/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/tk2a/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "tk2b",
+        "name": "EX Trainer Kit 2 Minun",
+        "game": "POKEMON",
+        "releaseDate": "2006-03-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/tk2b/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/tk2b/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex10",
+        "name": "Unseen Forces",
+        "game": "POKEMON",
+        "releaseDate": "2005-08-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex10/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex10/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex11",
+        "name": "Delta Species",
+        "game": "POKEMON",
+        "releaseDate": "2005-10-31",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex11/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex11/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex12",
+        "name": "Legend Maker",
+        "game": "POKEMON",
+        "releaseDate": "2006-02-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex12/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex12/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex14",
+        "name": "Crystal Guardians",
+        "game": "POKEMON",
+        "releaseDate": "2006-08-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex14/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex14/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex16",
+        "name": "Power Keepers",
+        "game": "POKEMON",
+        "releaseDate": "2007-02-02",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex16/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex16/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex3",
+        "name": "Dragon",
+        "game": "POKEMON",
+        "releaseDate": "2003-11-24",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex6",
+        "name": "FireRed & LeafGreen",
+        "game": "POKEMON",
+        "releaseDate": "2004-09-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex6/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex6/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ex8",
+        "name": "Deoxys",
+        "game": "POKEMON",
+        "releaseDate": "2005-02-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex8/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex8/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ex9",
+        "name": "Emerald",
+        "game": "POKEMON",
+        "releaseDate": "2005-05-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ex9/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ex9/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "tk1b",
+        "name": "EX Trainer Kit Latios",
+        "game": "POKEMON",
+        "releaseDate": "2004-06-01",
+        "series": "EX",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/tk1b/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/tk1b/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "PLATINUM": [
+      {
+        "id": "pl4",
+        "name": "Arceus",
+        "game": "POKEMON",
+        "releaseDate": "2009-11-04",
+        "series": "PLATINUM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pl4/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pl4/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "pl2",
+        "name": "Rising Rivals",
+        "game": "POKEMON",
+        "releaseDate": "2009-05-16",
+        "series": "PLATINUM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pl2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pl2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "pl3",
+        "name": "Supreme Victors",
+        "game": "POKEMON",
+        "releaseDate": "2009-08-19",
+        "series": "PLATINUM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pl3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pl3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "pl1",
+        "name": "Platinum",
+        "game": "POKEMON",
+        "releaseDate": "2009-02-11",
+        "series": "PLATINUM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/pl1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/pl1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "DIAMOND_AND_PEARL": [
+      {
+        "id": "dpp",
+        "name": "DP Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2007-05-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dpp/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dpp/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "dp2",
+        "name": "Mysterious Treasures",
+        "game": "POKEMON",
+        "releaseDate": "2007-08-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "dp3",
+        "name": "Secret Wonders",
+        "game": "POKEMON",
+        "releaseDate": "2007-11-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "dp4",
+        "name": "Great Encounters",
+        "game": "POKEMON",
+        "releaseDate": "2008-02-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp4/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp4/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "dp5",
+        "name": "Majestic Dawn",
+        "game": "POKEMON",
+        "releaseDate": "2008-05-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp5/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp5/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "dp1",
+        "name": "Diamond & Pearl",
+        "game": "POKEMON",
+        "releaseDate": "2007-05-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp1/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp1/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "dp6",
+        "name": "Legends Awakened",
+        "game": "POKEMON",
+        "releaseDate": "2008-08-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp6/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp6/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "dp7",
+        "name": "Stormfront",
+        "game": "POKEMON",
+        "releaseDate": "2008-11-01",
+        "series": "DIAMOND_AND_PEARL",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dp7/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dp7/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "BASE": [
+      {
+        "id": "base2",
+        "name": "Jungle",
+        "game": "POKEMON",
+        "releaseDate": "1999-06-16",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "basep",
+        "name": "Wizards Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "1999-07-01",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/basep/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/basep/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "base5",
+        "name": "Team Rocket",
+        "game": "POKEMON",
+        "releaseDate": "2000-04-24",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "base1",
+        "name": "Base",
+        "game": "POKEMON",
+        "releaseDate": "1999-01-09",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "base3",
+        "name": "Fossil",
+        "game": "POKEMON",
+        "releaseDate": "1999-10-10",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "base4",
+        "name": "Base Set 2",
+        "game": "POKEMON",
+        "releaseDate": "2000-02-24",
+        "series": "BASE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/base4/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/base4/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      }
+    ],
+    "E_CARD": [
+      {
+        "id": "ecard2",
+        "name": "Aquapolis",
+        "game": "POKEMON",
+        "releaseDate": "2003-01-15",
+        "series": "E_CARD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ecard2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ecard2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "ecard1",
+        "name": "Expedition Base Set",
+        "game": "POKEMON",
+        "releaseDate": "2002-09-15",
+        "series": "E_CARD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ecard1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ecard1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "ecard3",
+        "name": "Skyridge",
+        "game": "POKEMON",
+        "releaseDate": "2003-05-12",
+        "series": "E_CARD",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/ecard3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/ecard3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "BLACK_AND_WHITE": [
+      {
+        "id": "dv1",
+        "name": "Dragon Vault",
+        "game": "POKEMON",
+        "releaseDate": "2012-10-05",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/dv1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/dv1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bw7",
+        "name": "Boundaries Crossed",
+        "game": "POKEMON",
+        "releaseDate": "2012-11-07",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw7/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw7/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw2",
+        "name": "Emerging Powers",
+        "game": "POKEMON",
+        "releaseDate": "2011-08-31",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw2/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw2/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw10",
+        "name": "Plasma Blast",
+        "game": "POKEMON",
+        "releaseDate": "2013-08-14",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw10/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw10/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw3",
+        "name": "Noble Victories",
+        "game": "POKEMON",
+        "releaseDate": "2011-11-16",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw3/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw3/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw8",
+        "name": "Plasma Storm",
+        "game": "POKEMON",
+        "releaseDate": "2013-02-06",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw8/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw8/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw9",
+        "name": "Plasma Freeze",
+        "game": "POKEMON",
+        "releaseDate": "2013-05-08",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bwp",
+        "name": "BW Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2011-03-01",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bwp/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bwp/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw1",
+        "name": "Black & White",
+        "game": "POKEMON",
+        "releaseDate": "2011-04-25",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bw4",
+        "name": "Next Destinies",
+        "game": "POKEMON",
+        "releaseDate": "2012-02-08",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw4/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw4/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "bw5",
+        "name": "Dark Explorers",
+        "game": "POKEMON",
+        "releaseDate": "2012-05-09",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bw6",
+        "name": "Dragons Exalted",
+        "game": "POKEMON",
+        "releaseDate": "2012-08-15",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw6/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw6/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "bw11",
+        "name": "Legendary Treasures",
+        "game": "POKEMON",
+        "releaseDate": "2013-11-06",
+        "series": "BLACK_AND_WHITE",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/bw11/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/bw11/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "GYM": [
+      {
+        "id": "gym1",
+        "name": "Gym Heroes",
+        "game": "POKEMON",
+        "releaseDate": "2000-08-14",
+        "series": "GYM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/gym1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/gym1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "gym2",
+        "name": "Gym Challenge",
+        "game": "POKEMON",
+        "releaseDate": "2000-10-16",
+        "series": "GYM",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/gym2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/gym2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ],
+    "SCARLET_AND_VIOLET": [
+      {
+        "id": "sv1",
+        "name": "Scarlet & Violet",
+        "game": "POKEMON",
+        "releaseDate": "2023-03-31",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv1/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv1/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "svp",
+        "name": "Scarlet & Violet Black Star Promos",
+        "game": "POKEMON",
+        "releaseDate": "2023-01-01",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/svp/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/svp/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sv2",
+        "name": "Paldea Evolved",
+        "game": "POKEMON",
+        "releaseDate": "2023-06-09",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv2/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv2/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sve",
+        "name": "Scarlet & Violet Energies",
+        "game": "POKEMON",
+        "releaseDate": "2023-03-31",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sve/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sve/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv3",
+        "name": "Obsidian Flames",
+        "game": "POKEMON",
+        "releaseDate": "2023-08-11",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv3/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv3/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv3pt5",
+        "name": "151",
+        "game": "POKEMON",
+        "releaseDate": "2023-09-22",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv3pt5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv3pt5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv4",
+        "name": "Paradox Rift",
+        "game": "POKEMON",
+        "releaseDate": "2023-11-03",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv4/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv4/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sv4pt5",
+        "name": "Paldean Fates",
+        "game": "POKEMON",
+        "releaseDate": "2024-01-26",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv4pt5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv4pt5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv5",
+        "name": "Temporal Forces",
+        "game": "POKEMON",
+        "releaseDate": "2024-03-22",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv6",
+        "name": "Twilight Masquerade",
+        "game": "POKEMON",
+        "releaseDate": "2024-05-24",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv6/logo.png",
+            "imageType": "logo"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv6/symbol.png",
+            "imageType": "symbol"
+          }
+        ]
+      },
+      {
+        "id": "sv6pt5",
+        "name": "Shrouded Fable",
+        "game": "POKEMON",
+        "releaseDate": "2024-08-02",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv6pt5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv6pt5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv7",
+        "name": "Stellar Crown",
+        "game": "POKEMON",
+        "releaseDate": "2024-09-13",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv7/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv7/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv8",
+        "name": "Surging Sparks",
+        "game": "POKEMON",
+        "releaseDate": "2024-11-08",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv8/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv8/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv8pt5",
+        "name": "Prismatic Evolutions",
+        "game": "POKEMON",
+        "releaseDate": "2025-01-17",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv8pt5/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv8pt5/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      },
+      {
+        "id": "sv9",
+        "name": "Journey Together",
+        "game": "POKEMON",
+        "releaseDate": "2025-03-28",
+        "series": "SCARLET_AND_VIOLET",
+        "images": [
+          {
+            "url": "https://images.pokemontcg.io/sv9/symbol.png",
+            "imageType": "symbol"
+          },
+          {
+            "url": "https://images.pokemontcg.io/sv9/logo.png",
+            "imageType": "logo"
+          }
+        ]
+      }
+    ]
+  }
+}
