@@ -135,87 +135,89 @@ const ExplorePage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <SearchAndFilterHeader 
-                searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
-                sortBy={sortOption} setSortBy={setSortOption} 
-                filters={filters} setFilters={setFilters}
-                fetchCards={fetchCards}
-            />
+            <div className="mb-8 space-y-4">
+                <h1 className="text-3xl font-bold">Explore Cards</h1>
+                <SearchAndFilterHeader 
+                    searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
+                    sortBy={sortOption} setSortBy={setSortOption} 
+                    filters={filters} setFilters={setFilters}
+                    fetchCards={fetchCards}
+                />
 
-            { /* Error State */}
-            {error && !isRetrying && (
-                <div className="text-center py-8">
-                    <p className="text-red-500">{error}</p>
-                    <Button
-                        variant="outline" 
-                        disabled={isRetrying}
-                        onClick={() => {
-                            setIsRetrying(true);
-                            // Create a promise that resolves after 2 seconds
-                            const delay = new Promise(resolve => setTimeout(resolve, 2000));
-                            // Wait for both the delay and the fetch to complete
-                            Promise.all([delay, fetchCards(1, true)]).finally(() => {
-                                setIsRetrying(false);
-                            });
-                        }}
-                        className="mt-4"
-                    >
-                        {isRetrying ? "Retrying..." : "Try Again"}
-                    </Button>
-                </div>
-            )}
-
-            { /* Retry Loading State */ }
-            {isRetrying && <LoadingCardGrid count={PAGE_SIZE}/>}
-
-            { /* Initial Loading State with Card Skeleton Grid */ }
-            {loading && !error && <LoadingCardGrid count={PAGE_SIZE}/>}
-
-            { /* Cards Grid*/ }
-            {!loading && !error && (
-                <>
-                    {/* Render cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
-                        {cards.map((card, index) => (
-                            <div 
-                                key={`${card.name}-${index}`}
-                                ref={index === cards.length - 1 ? lastCardRef : null}
-                            >
-                                <RenderCard 
-                                    card={card} 
-                                    getAccessTokenSilently={getAccessTokenSilently}
-                                    apiBaseUrl={apiBaseUrl}
-                                />
-                            </div>
-                        ))}
-                        {/* Display loading skeletons  */}
-                {isLoadingMore && (
-                            <>
-                                {[...Array(Math.min(PAGE_SIZE, 5))].map((_, i) => (
-                                    <div key={`loading-${i}`}>
-                                        <LoadingCardGrid count={1} />
-                                    </div>
-                                ))}
-                            </>
-                        )}
+                { /* Error State */}
+                {error && !isRetrying && (
+                    <div className="text-center py-8">
+                        <p className="text-red-500">{error}</p>
+                        <Button
+                            variant="outline" 
+                            disabled={isRetrying}
+                            onClick={() => {
+                                setIsRetrying(true);
+                                // Create a promise that resolves after 2 seconds
+                                const delay = new Promise(resolve => setTimeout(resolve, 2000));
+                                // Wait for both the delay and the fetch to complete
+                                Promise.all([delay, fetchCards(1, true)]).finally(() => {
+                                    setIsRetrying(false);
+                                });
+                            }}
+                            className="mt-4"
+                        >
+                            {isRetrying ? "Retrying..." : "Try Again"}
+                        </Button>
                     </div>
+                )}
 
-                    {/* No Results State*/}
-                    {cards.length === 0 && !loading && (
-                        <div className="text-center py-8">
-                            <p className="text-muted-foreground">No cards found matching your search</p>
-                        </div>
-                    )}
+                { /* Retry Loading State */ }
+                {isRetrying && <LoadingCardGrid count={PAGE_SIZE}/>}
 
-                    {/* End of results state */}
-                    {!hasMore && cards.length > 0 && (
-                        <div className="text-center py-8">
-                            <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
+                { /* Initial Loading State with Card Skeleton Grid */ }
+                {loading && !error && <LoadingCardGrid count={PAGE_SIZE}/>}
+
+                { /* Cards Grid*/ }
+                {!loading && !error && (
+                    <>
+                        {/* Render cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
+                            {cards.map((card, index) => (
+                                <div 
+                                    key={`${card.name}-${index}`}
+                                    ref={index === cards.length - 1 ? lastCardRef : null}
+                                >
+                                    <RenderCard 
+                                        card={card} 
+                                        getAccessTokenSilently={getAccessTokenSilently}
+                                        apiBaseUrl={apiBaseUrl}
+                                    />
+                                </div>
+                            ))}
+                            {/* Display loading skeletons  */}
+                    {isLoadingMore && (
+                                <>
+                                    {[...Array(Math.min(PAGE_SIZE, 5))].map((_, i) => (
+                                        <div key={`loading-${i}`}>
+                                            <LoadingCardGrid count={1} />
+                                        </div>
+                                    ))}
+                                </>
+                            )}
                         </div>
-                    )}
-                </>
-            )}
-            
+
+                        {/* No Results State*/}
+                        {cards.length === 0 && !loading && (
+                            <div className="text-center py-8">
+                                <p className="text-muted-foreground">No cards found matching your search</p>
+                            </div>
+                        )}
+
+                        {/* End of results state */}
+                        {!hasMore && cards.length > 0 && (
+                            <div className="text-center py-8">
+                                <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
         </div>
     )
 }

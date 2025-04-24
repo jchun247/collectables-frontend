@@ -43,9 +43,7 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
     }, 0);
   
     return (
-        <div className="mb-8 space-y-4">
-            <h1 className="text-3xl font-bold">Explore Cards</h1>
-        
+        <>
             {/* Search bar */}
             <div className="flex flex-col sm:flex-row gap-4">
                 <div className="relative flex-grow flex">
@@ -96,7 +94,7 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                     </Sheet>
                 </div>
             </div>
-        </div>
+        </>
   )
 }
 
