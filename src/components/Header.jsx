@@ -19,6 +19,7 @@ const Header = () => {
                         <span className="font-bold text-xl">
                             <Link
                                 to="/"
+                                className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all after:duration-200 hover:after:w-full"
                             >
                                 Collectables
                             </Link>
@@ -29,22 +30,22 @@ const Header = () => {
                     <nav className="hidden md:flex items-center">
                         <ul className="flex items-center space-x-8">
                             <li>
-                                <Link to="/explore" className="text-md font-medium hover:text-primary">
+                                <Link to="/explore" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
                                     Explore
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/sets" className="text-md font-medium hover:text-primary">
+                                <Link to="/sets" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
                                     Sets
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/portfolio" className="text-md font-medium hover:text-primary">
+                                <Link to="/portfolio" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
                                     Portfolio
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/community" className="text-md font-medium hover:text-primary">
+                                <Link to="/community" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
                                     Community
                                 </Link>
                             </li>
@@ -57,14 +58,17 @@ const Header = () => {
                             <>
                                 <Link
                                     to="/profile"
-                                    className="text-md font-medium hover:text-primary flex items-center gap-2"
+                                    className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600 flex items-center gap-2"
                                 >
                                     <User className="h-4 w-4" />
                                     {user?.name}
                                 </Link>
-                                <Button onClick={() => 
-                                    logout({ logoutParams: { returnTo: window.location.origin }})
-                                }>
+                                <Button 
+                                    className="transition-transform duration-200 hover:scale-105 active:scale-95"
+                                    onClick={() => 
+                                        logout({ logoutParams: { returnTo: window.location.origin }})
+                                    }
+                                >
                                     Log out
                                 </Button>
                             </>
@@ -72,12 +76,14 @@ const Header = () => {
                             <>
                                 <Button 
                                     variant="ghost"
+                                    className="transition-transform duration-200 hover:scale-105 active:scale-95"
                                     onClick={() =>
                                         loginWithRedirect()
                                     }>
                                         Log in
                                 </Button>
                                 <Button
+                                    className="transition-transform duration-200 hover:scale-105 active:scale-95"
                                     onClick={() =>
                                         loginWithRedirect({
                                             authorizationParams: {
@@ -94,7 +100,7 @@ const Header = () => {
 
                     {/* Mobile menu button*/}
                     <Button 
-                        variant="ghost" size="icon" className="md:hidden"
+                        variant="ghost" size="icon" className="md:hidden transition-transform duration-200 hover:scale-110 active:scale-95"
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     >
                         {isMobileMenuOpen ? (
@@ -107,34 +113,35 @@ const Header = () => {
             </div>
 
             {/* Mobile Menu */}
-            {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 right-0 bg-background border-b md:hidden">
+            <div className={`absolute top-16 left-0 right-0 bg-background border-b md:hidden transform transition-all duration-300 ${
+                isMobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-[-10px] opacity-0 pointer-events-none'
+            }`}>
                     <div className="container mx-auto px-4 py-4">
                         <nav className="flex flex-col space-y-4">
                             <Link
                                 to="/profile"
-                                className="text-sm font-medium hover:text-primary"
+                                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Profile
                             </Link>
                             <Link
                                 to="/explore"
-                                className="text-sm font-medium hover:text-primary"
+                                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Explore
                             </Link>
                             <Link
                                 to="/portfolio"
-                                className="text-sm font-medium hover:text-primary"
+                                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Portfolio
                             </Link>
                             <Link
                                 to="/community"
-                                className="text-sm font-medium hover:text-primary"
+                                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Community
@@ -142,7 +149,6 @@ const Header = () => {
                         </nav>
                     </div>
                 </div>
-            )}
         </header>
     )
 }

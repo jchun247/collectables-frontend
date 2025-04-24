@@ -11,8 +11,7 @@ import PropTypes from 'prop-types';
 
 const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, 
     sortBy, setSortBy, 
-    filters, setFilters,
-    fetchCards }) => {
+    filters, setFilters }) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
@@ -45,52 +44,40 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
     return (
         <>
             {/* Search bar */}
-            <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative flex-grow flex">
-                    <div className="relative flex-grow">
+            <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
+                <div className="relative flex">
+                    <div className="relative w-[600px]">
                         <Input
                             placeholder="Search any card..."
                             value={localSearchQuery}
                             onChange={handleSearchChange}
-                            className="bg-background rounded-r-none"
+                            className="bg-background pl-8"
                         />
+                        <Search className="h-4 w-4 absolute left-2.5 top-3 text-muted-foreground" />
                     </div>
-                    <Button 
-                        variant="outline" 
-                        className="rounded-l-none border-l-0"
-                        onClick={() => {
-                            // For explicit search button click, update both states immediately
-                            setLocalSearchQuery(localSearchQuery);
-                            setSearchQuery(localSearchQuery);
-                            fetchCards(0, true);
-                        }}
-                    >
-                        <Search className="h-4 w-4" />
-                    </Button>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex items-center gap-4">
+                    <span className="text-sm text-muted-foreground">Sort by:</span>
                     <FilterSortBy sortBy={sortBy} setSortBy={setSortBy} />
-
-                    {/* Filter sidebar button*/}
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <Button variant="outline" className="flex gap-2">
-                                <SlidersHorizontal className="h-4 w-4" />
-                                Filters
-                                {activeFiltersCount > 0 && (
-                                    <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
-                                        {activeFiltersCount}
-                                    </span>
-                                )}
-                            </Button>
-                        </SheetTrigger>
-                        <SheetContent className="w-[300px] sm:w-[400px]">
-                            <SheetHeader>
-                                <SheetTitle>Filters</SheetTitle>
-                            </SheetHeader>
-                            <FilterSidebar filters={filters} setFilters={setFilters} />
-                        </SheetContent>
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="outline" className="flex gap-2">
+                                    <SlidersHorizontal className="h-4 w-4" />
+                                    Filters
+                                    {activeFiltersCount > 0 && (
+                                        <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs">
+                                            {activeFiltersCount}
+                                        </span>
+                                    )}
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent className="w-[300px] sm:w-[400px]">
+                                <SheetHeader>
+                                    <SheetTitle>Filters</SheetTitle>
+                                </SheetHeader>
+                                <FilterSidebar filters={filters} setFilters={setFilters} />
+                            </SheetContent>
                     </Sheet>
                 </div>
             </div>
