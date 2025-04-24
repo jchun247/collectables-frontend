@@ -4,6 +4,8 @@ import { useState, useCallback } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
 import CardDetailsDialog from './CardDetailsDialog';
 import { RARITY_IMAGES } from '@/utils/rarityImages';
+import { useNavigate } from "react-router-dom";
+import { navigateToSet } from "@/utils/navigation";
 
 const getDisplayPrice = (prices) => {
     if (prices.length === 1) return prices[0].price.toFixed(2);
@@ -20,6 +22,7 @@ const getDisplayPrice = (prices) => {
 };
 
 const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
+    const navigate = useNavigate();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [cardDetails, setCardDetails] = useState(null);
@@ -85,12 +88,12 @@ const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
                                     <p className="text-sm font-medium mt-0.5">{card.setNumber}</p>
                                     <button 
                                         onClick={(e) => {
-                                            e.preventDefault();
-                                            // Link handler will be added later
+                                            e.stopPropagation();
+                                            navigateToSet(navigate, card.setId);
                                         }}
                                         className="block text-left w-full relative z-20"
                                     >
-                                        <p className="text-sm text-muted-foreground truncate mt-1 hover:text-muted-foreground/80 hover:underline" title={card.setName}>
+                                        <p className="text-sm text-muted-foreground truncate mt-1 hover:text-blue-500 hover:underline transition-colors" title={card.setName}>
                                             {card.setName}
                                         </p>
                                     </button>

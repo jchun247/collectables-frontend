@@ -9,8 +9,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
+import { navigateToSet } from "@/utils/navigation";
 
 const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
+  const navigate = useNavigate();
   if (!cardDetails) return null;
 
   return (
@@ -37,10 +40,15 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </p>
             )}
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <h2 className="text-4xl font-bold mb-4">{cardDetails.name}</h2>
             <div className="flex flex-col space-y-1">
-              <button className="font-medium hover:text-blue-500 hover:underline transition-colors text-left">{cardDetails.setName}</button>
+              <button
+                onClick={() => navigateToSet(navigate, cardDetails.setId)}
+                className="font-medium text-muted-foreground hover:text-blue-500 hover:underline transition-colors text-left"
+              >
+                {cardDetails.setName}
+                </button>
               <span className="font-medium">#{cardDetails.setNumber}</span>
             </div>
             <Tabs defaultValue="details" className="w-full">
