@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 import LoadingCardGrid from '../components/LoadingCardGrid';
+import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
 import { useAuth0 } from "@auth0/auth0-react";
 import setsData from "@/data/sets.json";
@@ -17,6 +18,9 @@ const SetCardsPage = () => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [sortOption, setSortOption] = useState("name");
+    const [filters, setFilters] = useState({});
 
     // Reference for the intersection observer
     const observer = useRef();
@@ -43,6 +47,9 @@ const SetCardsPage = () => {
                     setId,
                     page: pageNum.toString(),
                 });
+
+                if (sortOption) queryParams.set('sortOption', sortOption);
+                if (searchQuery) queryParams.set('query', searchQuery);
                 
 
                 const response = await fetch(`${apiBaseUrl}/cards?${queryParams}`, {
@@ -75,14 +82,14 @@ const SetCardsPage = () => {
             setError("You are not authenticated. Please login to view cards.");
             setLoading(false);
         }
-    }, [setId, isAuthenticated, getAccessTokenSilently, apiBaseUrl, PAGE_SIZE]);
+    }, [setId, isAuthenticated, getAccessTokenSilently, apiBaseUrl, PAGE_SIZE, searchQuery, sortOption]);
 
-    // Effect for initial load
+    // Effect for search/filter changes and initial load
     useEffect(() => {
         setCards([]);
         setCurrentPage(0);
         fetchSetCards(0, true);
-    }, [setId, isAuthenticated, fetchSetCards]);
+    }, [setId, isAuthenticated, fetchSetCards, searchQuery, sortOption]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -122,37 +129,32 @@ const SetCardsPage = () => {
             {/* Set Header */}
             {setDetails && (
                 <div className="mb-8 bg-accent/50 rounded-lg p-6 shadow-md">
-                    <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
                         {/* Logo and Name Section */}
-                        <div className="flex items-center gap-4 flex-1">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
                             <div className="flex flex-col items-center gap-2">
                                 <img 
                                     src={setDetails.images.find(img => img.imageType === "logo")?.url}
                                     alt={`${setDetails.name} logo`}
                                     className="max-w-[200px]"
                                 />
-                                {/* <img 
-                                    src={setDetails.images.find(img => img.imageType === "symbol")?.url}
-                                    alt={`${setDetails.name} symbol`}
-                                    className="w-8 h-8"
-                                /> */}
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold mb-2">{setDetails.name}</h1>
                                 <p>{formatDate(setDetails.releaseDate)}</p>
-                                {/* <p className="text-muted-foreground">Series: {setDetails.series.replace(/_/g, ' ')}</p> */}
                             </div>
                         </div>
                         
                         {/* Series Section */}
-                        <div className="flex flex-col justify-center gap-1 min-w-[150px]">
+                        <div className="flex flex-col justify-center gap-1 flex-shrink-0">
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground">Series</span>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="w-full overflow-hidden">
                                 <button 
                                     onClick={() => navigate(`/sets?series=${setDetails.series}`)}
-                                    className="hover:text-muted-foreground/80 hover:underline"
+                                    className="hover:text-muted-foreground/80 hover:underline whitespace-nowrap overflow-hidden text-ellipsis block w-full text-left"
+                                    title={CARD_SERIES_MAPPING[setDetails.series]}
                                 >
                                     {CARD_SERIES_MAPPING[setDetails.series]}
                                 </button>
@@ -160,7 +162,7 @@ const SetCardsPage = () => {
                         </div>
 
                         {/* Symbol section */}
-                        <div className="flex flex-col justify-center gap-1 min-w-[75px]">
+                        <div className="flex flex-col justify-center gap-1 flex-shrink-0">
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground">Symbol</span>
                             </div>
@@ -168,13 +170,13 @@ const SetCardsPage = () => {
                                 <img
                                     src={setDetails.images.find(img => img.imageType === "symbol")?.url}
                                     alt={`${setDetails.name} symbol`}
-                                    className="w-10 h-6"
+                                    className="w-6 h-6"
                                 />
                             </div>
                         </div>
 
                         {/* Total Cards Section */}
-                        <div className="flex flex-col justify-center gap-1 min-w-[150px]">
+                        <div className="flex flex-col justify-center gap-1 flex-shrink-0">
                             <div className="flex items-center gap-2">
                                 <span className="text-muted-foreground">Total Cards</span>
                             </div>
@@ -185,6 +187,17 @@ const SetCardsPage = () => {
                     </div>
                 </div>
             )}
+
+            {/* Search and Filter Header */}
+                <SearchAndFilterHeader 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                sortBy={sortOption}
+                setSortBy={setSortOption}
+                filters={filters}
+                setFilters={setFilters}
+                hideFilters={true}
+            />
 
             {/* Error State */}
             {error && (
