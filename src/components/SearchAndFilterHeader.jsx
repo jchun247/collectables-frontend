@@ -11,7 +11,8 @@ import PropTypes from 'prop-types';
 
 const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, 
     sortBy, setSortBy, 
-    filters, setFilters }) => {
+    filters, setFilters,
+    hideFilters = false }) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
@@ -60,6 +61,7 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                 <div className="flex items-center gap-4">
                     <span className="text-sm text-muted-foreground">Sort by:</span>
                     <FilterSortBy sortBy={sortBy} setSortBy={setSortBy} />
+                    {!hideFilters && (
                         <Sheet>
                             <SheetTrigger asChild>
                                 <Button variant="outline" className="flex gap-2">
@@ -78,7 +80,8 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
                                 </SheetHeader>
                                 <FilterSidebar filters={filters} setFilters={setFilters} />
                             </SheetContent>
-                    </Sheet>
+                        </Sheet>
+                    )}
                 </div>
             </div>
         </>
@@ -92,7 +95,8 @@ SearchAndFilterHeader.propTypes = {
     setSortBy: PropTypes.func.isRequired,
     filters: PropTypes.object.isRequired,
     setFilters: PropTypes.func.isRequired,
-    fetchCards: PropTypes.func.isRequired
+    fetchCards: PropTypes.func,
+    hideFilters: PropTypes.bool
 }
 
 export default SearchAndFilterHeader;
