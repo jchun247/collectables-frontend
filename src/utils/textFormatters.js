@@ -115,6 +115,25 @@ export const CARD_RARITY_MAPPING = {
     'PROMO': 'Promo'
 }
 
+export const CARD_SERIES_MAPPING = {
+    'XY': 'XY',
+    'HEARTGOLD_AND_SOULSILVER': 'HeartGold & SoulSilver',
+    'OTHER': 'Other',
+    'NEO': 'Neo',
+    'SWORD_AND_SHIELD': 'Sword & Shield',
+    'POP': 'POP',
+    'NP': 'NP',
+    'SUN_AND_MOON': 'Sun & Moon',
+    'EX': 'EX',
+    'PLATINUM': 'Platinum',
+    'DIAMOND_AND_PEARL': 'Diamond & Pearl',
+    'BASE': 'Base',
+    'E_CARD': 'E-Card',
+    'BLACK_AND_WHITE': 'Black & White',
+    'GYM': 'Gym',
+    'SCARLET_AND_VIOLET': 'Scarlet & Violet',
+}
+
 /**
  * Formats a string to be more human readable by:
  * - Capitalizing the first letter of each word
@@ -183,4 +202,19 @@ export const formatModifier = (modifier) => {
         PERCENTAGE: '%'
     };
     return modifierMap[modifier] || modifier;
+};
+
+/**
+ * Formats a date string from YYYY-MM-DD to Month DD, YYYY
+ * @param {string} dateStr - The date string to format
+ * @returns {string} The formatted date string
+ */
+export const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
 };
