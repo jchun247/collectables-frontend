@@ -22,7 +22,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
-        <Route path="/portfolio" element={<UserPortfolio />}/>
+        <Route path="/collection" element={<UserPortfolio />}/>
         <Route path="/cards/:id" element={<CardDetails />}/>
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />

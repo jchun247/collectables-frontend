@@ -5,7 +5,7 @@ import { Menu, User, X } from "lucide-react";
 import { useState } from "react";
 
 const Header = () => {
-    const { loginWithRedirect, logout, isAuthenticated, user } = useAuth0();
+    const { loginWithRedirect, isAuthenticated, user } = useAuth0();
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -40,13 +40,8 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/portfolio" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
-                                    Portfolio
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/community" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
-                                    Community
+                                <Link to="/collection" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
+                                    Collection
                                 </Link>
                             </li>
                         </ul>
@@ -61,16 +56,8 @@ const Header = () => {
                                     className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600 flex items-center gap-2"
                                 >
                                     <User className="h-4 w-4" />
-                                    {user?.name}
+                                    {user?.nickname || user?.email}
                                 </Link>
-                                <Button 
-                                    className="transition-transform duration-200 hover:scale-105 active:scale-95"
-                                    onClick={() => 
-                                        logout({ logoutParams: { returnTo: window.location.origin }})
-                                    }
-                                >
-                                    Log out
-                                </Button>
                             </>
                         ) : (
                             <>
