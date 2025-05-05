@@ -21,7 +21,7 @@ const getDisplayPrice = (prices) => {
     return price.toFixed(2);
 };
 
-const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
+const RenderCard = ({ card, apiBaseUrl }) => {
     const navigate = useNavigate();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -30,12 +30,7 @@ const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
     const handleCardClick = useCallback(async (e) => {
         e.preventDefault();
         try {
-            const token = await getAccessTokenSilently();
-            const response = await fetch(`${apiBaseUrl}/cards/${card.id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const response = await fetch(`${apiBaseUrl}/cards/${card.id}`);
             
             if (!response.ok) {
                 throw new Error("Failed to fetch card details");
@@ -47,7 +42,7 @@ const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
         } catch (error) {
             console.error('Error fetching card details:', error);
         }
-    }, [apiBaseUrl, card.id, getAccessTokenSilently]);
+    }, [apiBaseUrl, card.id]);
 
     return (
         <>
@@ -127,7 +122,6 @@ const RenderCard = ({ card, getAccessTokenSilently, apiBaseUrl }) => {
 
 RenderCard.propTypes = {
     card: PropTypes.object.isRequired,
-    getAccessTokenSilently: PropTypes.func.isRequired,
     apiBaseUrl: PropTypes.string.isRequired
 }
 

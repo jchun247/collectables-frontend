@@ -4,16 +4,12 @@ import LoadingCardGrid from '../components/LoadingCardGrid';
 import { Button } from "@/components/ui/button";
 import RenderCard from '../components/RenderCard';
 
-import { useAuth0 } from "@auth0/auth0-react";
-
 const ExplorePage = () => {
     const PAGE_SIZE = 15; // Match backend pagination size
 
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
-
     const [cards, setCards] = useState([]);
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchText, setSearchText] = useState("");
     const [sortOption, setSortOption] = useState("name");
     const [filters, setFilters] = useState({
         game: {},
@@ -36,19 +32,17 @@ const ExplorePage = () => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
     const fetchCards = useCallback(async (pageNum = 0, isInitial = true) => {
-        if (isAuthenticated) {
-            if (isInitial) {
-                setLoading(true);
-            } else {
-                setIsLoadingMore(true);
-            }
-            const token = await getAccessTokenSilently();
-            try {
+        if (isInitial) {
+            setLoading(true);
+        } else {
+            setIsLoadingMore(true);
+        }
+        try {
                 const queryParams = {};
                 // Conditionally add each parameter if it has a value
                 if (pageNum != null) queryParams.page = pageNum;
                 if (sortOption) queryParams.sortOption = sortOption;
-                if (searchQuery) queryParams.query = searchQuery;
+                if (searchText) queryParams.searchText = searchText;
                 // Get selected games from the game object
                 const selectedGames = Object.entries(filters.game || {})
                     .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
@@ -57,11 +51,7 @@ const ExplorePage = () => {
                 // if (filters.productType) queryParams.productType = filters.productType;
                 if (filters.condition) queryParams.condition = filters.condition;
 
-                const response = await fetch(`${apiBaseUrl}/cards?${new URLSearchParams(queryParams)}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await fetch(`${apiBaseUrl}/cards?${new URLSearchParams(queryParams)}`);
 
                 // Check if response is ok before parsing JSON
                 if (!response.ok) {
@@ -86,10 +76,7 @@ const ExplorePage = () => {
                 setLoading(false);
                 setIsLoadingMore(false);
             }
-        } else {
-            setError("You are not authenticated. Please login to view cards.");
-        }
-    }, [isAuthenticated, getAccessTokenSilently, sortOption, searchQuery, filters, apiBaseUrl, PAGE_SIZE]);
+    }, [sortOption, searchText, filters, apiBaseUrl, PAGE_SIZE]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -131,14 +118,14 @@ const ExplorePage = () => {
         setCards([]);
         setCurrentPage(0);
         fetchCards(0, true);
-    }, [searchQuery, sortOption, filters, isAuthenticated, fetchCards])
+    }, [searchText, sortOption, filters, fetchCards])
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-8 space-y-4">
                 <h1 className="text-3xl font-bold">Explore Cards</h1>
                 <SearchAndFilterHeader 
-                    searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
+                    searchQuery={searchText} setSearchQuery={setSearchText} 
                     sortBy={sortOption} setSortBy={setSortOption} 
                     filters={filters} setFilters={setFilters}
                     fetchCards={fetchCards}
@@ -185,7 +172,6 @@ const ExplorePage = () => {
                                 >
                                     <RenderCard 
                                         card={card} 
-                                        getAccessTokenSilently={getAccessTokenSilently}
                                         apiBaseUrl={apiBaseUrl}
                                     />
                                 </div>

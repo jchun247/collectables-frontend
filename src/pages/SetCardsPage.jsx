@@ -3,14 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
-import { useAuth0 } from "@auth0/auth0-react";
 import setsData from "@/data/sets.json";
 import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters"
 
 const SetCardsPage = () => {
     const { setId } = useParams();
     const navigate = useNavigate();
-    const { isAuthenticated, getAccessTokenSilently } = useAuth0();
     const PAGE_SIZE = 15; // Match backend pagination size
     const [cards, setCards] = useState([]);
     const [error, setError] = useState(null);
@@ -34,29 +32,22 @@ const SetCardsPage = () => {
         .find(set => set.id === setId);
 
     const fetchSetCards = useCallback(async (pageNum = 0, isInitial = true) => {
-        if (isAuthenticated) {
-            if (isInitial) {
-                setLoading(true);
-            } else {
-                setIsLoadingMore(true);
-            }
-            
-            try {
-                const token = await getAccessTokenSilently();
+        if (isInitial) {
+            setLoading(true);
+        } else {
+            setIsLoadingMore(true);
+        }
+        
+        try {
                 const queryParams = new URLSearchParams({
                     setId,
-                    page: pageNum.toString(),
+                    page: pageNum,
                 });
 
                 if (sortOption) queryParams.set('sortOption', sortOption);
                 if (searchQuery) queryParams.set('query', searchQuery);
                 
-
-                const response = await fetch(`${apiBaseUrl}/cards?${queryParams}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+                const response = await fetch(`${apiBaseUrl}/cards?${queryParams}`);
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch set cards");
@@ -78,18 +69,14 @@ const SetCardsPage = () => {
                 setLoading(false);
                 setIsLoadingMore(false);
             }
-        } else {
-            setError("You are not authenticated. Please login to view cards.");
-            setLoading(false);
-        }
-    }, [setId, isAuthenticated, getAccessTokenSilently, apiBaseUrl, PAGE_SIZE, searchQuery, sortOption]);
+    }, [setId, apiBaseUrl, PAGE_SIZE, searchQuery, sortOption]);
 
     // Effect for search/filter changes and initial load
     useEffect(() => {
         setCards([]);
         setCurrentPage(0);
         fetchSetCards(0, true);
-    }, [setId, isAuthenticated, fetchSetCards, searchQuery, sortOption]);
+    }, [setId, fetchSetCards, searchQuery, sortOption]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -220,7 +207,6 @@ const SetCardsPage = () => {
                             >
                                 <RenderCard 
                                     card={card} 
-                                    getAccessTokenSilently={getAccessTokenSilently}
                                     apiBaseUrl={apiBaseUrl}
                                 />
                             </div>
