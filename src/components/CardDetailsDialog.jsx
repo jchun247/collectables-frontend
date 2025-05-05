@@ -8,13 +8,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
+import { Plus, Star } from 'lucide-react';
+import CardCollectionEntryDialog from './CardCollectionEntryDialog';
+import { useState } from 'react';
+import { useAuth0 } from "@auth0/auth0-react";
+import AuthPromptDialog from './AuthPromptDialog';
 
 const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth0();
+  const [dialogState, setDialogState] = useState({ isOpen: false, type: null });
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
   if (!cardDetails) return null;
+
+  const handleCollectionAction = (type) => {
+    if (!isAuthenticated) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    setDialogState({ isOpen: true, type });
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -25,7 +43,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
         <DialogDescription className="sr-only">
           Card details dialog for {cardDetails.name} - {cardDetails.setName} - {cardDetails.setNumber}
         </DialogDescription>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
           <div className="space-y-2">
             <div className="aspect-[2.5/3.5] relative rounded-lg overflow-hidden max-w-[500px] mx-auto">
               <img 
@@ -41,7 +59,39 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
             )}
           </div>
           <div className="space-y-2">
-            <h2 className="text-4xl font-bold mb-4">{cardDetails.name}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-4xl font-bold">{cardDetails.name}</h2>
+              <div className="flex gap-2">
+                <Button 
+                  variant="secondary"
+                  className="hover:opacity-50 transition-opacity duration-200"
+                  onClick={() => handleCollectionAction('list')}
+                >
+                  <Star />
+                  Add to List
+                </Button>
+                <Button 
+                  variant="default"
+                  className="hover:opacity-50 transition-opacity duration-200"
+                  onClick={() => handleCollectionAction('portfolio')}
+                >
+                  <Plus />
+                  Add to Portfolio
+                </Button>
+                <CardCollectionEntryDialog 
+                  isOpen={dialogState.isOpen}
+                  onOpenChange={(isOpen) => setDialogState({ 
+                    isOpen, 
+                    type: isOpen ? dialogState.type : null 
+                  })}
+                  type={dialogState.type || "portfolio"}
+                  onSubmit={(data) => {
+                    console.log('Collection entry:', { ...data, card: cardDetails });
+                    // Here you would typically send this data to your backend
+                  }}
+                />
+              </div>
+            </div>
             <div className="flex flex-col space-y-1">
               <button
                 onClick={() => navigateToSet(navigate, cardDetails.setId)}
@@ -69,6 +119,11 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
           </div>
         </div>
       </DialogContent>
+      <AuthPromptDialog 
+        isOpen={showAuthPrompt}
+        onOpenChange={setShowAuthPrompt}
+        message="Please sign in or create an account to add cards to your collection"
+      />
     </Dialog>
   );
 };
