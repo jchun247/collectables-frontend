@@ -9,7 +9,15 @@ const CardDetailsTab = ({ cardDetails }) => {
         <div>
           <h3 className="font-semibold mb-2">Market Price</h3>
           <div className="space-y-3">
-            {cardDetails.prices.map((price, index) => (
+            {[...cardDetails.prices].sort((a, b) => {
+              const finishPriority = {
+                HOLOFOIL: 4,
+                NORMAL: 3,
+                REVERSE_HOLO: 2,
+                STAMP: 1
+              };
+              return (finishPriority[b.finish] || 0) - (finishPriority[a.finish] || 0);
+            }).map((price, index) => (
               <div key={index} className="border rounded-lg p-3">
                 <div className="flex justify-between items-center">
                   <div className="space-y-1">
