@@ -59,7 +59,7 @@ const RenderCard = ({ card, apiBaseUrl }) => {
                                     <Skeleton className="absolute inset-0 w-full h-full" />
                                 )}
                                 <img 
-                                    src={card.images.find(img => img.resolution === "LOW_RES").url}
+                                    src={card.imageUrl}
                                     alt={card.name}
                                     loading="lazy"
                                     decoding="async"
