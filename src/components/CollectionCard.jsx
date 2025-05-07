@@ -17,8 +17,8 @@ const CollectionCard = ({ collection }) => {
     <Card className="p-4 space-y-2">
       <div className="flex justify-between items-start">
         <div className="flex-1">
-          <h3 className="font-semibold text-lg">{name}</h3>
-          <p className="text-sm text-gray-400">{description}</p>
+          <h3 className="font-semibold text-lg truncate">{name}</h3>
+          <p className="text-sm text-gray-400 line-clamp-2 min-h-[2.5rem]">{description || " "}</p>
         </div>
         <button 
           onClick={toggleFavorite}

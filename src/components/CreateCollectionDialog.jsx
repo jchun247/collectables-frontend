@@ -60,8 +60,12 @@ const CreateCollectionDialog = ({ isOpen, onClose, type, onSubmit, isSubmitting,
               placeholder={`Enter ${type === "list" ? "list" : "portfolio"} name`}
               required
               autofocus
+              maxLength={255}
               className="text-base"
             />
+            <p className="text-xs text-muted-foreground text-right">
+              {255 - name.length} characters remaining
+            </p>
             {!name.trim() && <p className="text-xs text-red-500">Name is required.</p>}
           </div>
           {/* Description */}
