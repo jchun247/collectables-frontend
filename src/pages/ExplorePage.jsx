@@ -9,7 +9,7 @@ const ExplorePage = () => {
 
     const [cards, setCards] = useState([]);
 
-    const [searchText, setSearchText] = useState("");
+    const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("name");
     const [filters, setFilters] = useState({
         game: {},
@@ -42,7 +42,7 @@ const ExplorePage = () => {
                 // Conditionally add each parameter if it has a value
                 if (pageNum != null) queryParams.page = pageNum;
                 if (sortOption) queryParams.sortOption = sortOption;
-                if (searchText) queryParams.searchText = searchText;
+                if (searchQuery) queryParams.searchQuery = searchQuery;
                 // Get selected games from the game object
                 const selectedGames = Object.entries(filters.game || {})
                     .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
@@ -76,7 +76,7 @@ const ExplorePage = () => {
                 setLoading(false);
                 setIsLoadingMore(false);
             }
-    }, [sortOption, searchText, filters, apiBaseUrl, PAGE_SIZE]);
+    }, [sortOption, searchQuery, filters, apiBaseUrl, PAGE_SIZE]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -118,14 +118,14 @@ const ExplorePage = () => {
         setCards([]);
         setCurrentPage(0);
         fetchCards(0, true);
-    }, [searchText, sortOption, filters, fetchCards])
+    }, [searchQuery, sortOption, filters, fetchCards])
 
     return (
         <div className="container mx-auto px-4 py-8">
             <div className="mb-8 space-y-4">
                 <h1 className="text-3xl font-bold">Explore Cards</h1>
                 <SearchAndFilterHeader 
-                    searchQuery={searchText} setSearchQuery={setSearchText} 
+                    searchQuery={searchQuery} setSearchQuery={setSearchQuery} 
                     sortBy={sortOption} setSortBy={setSortOption} 
                     filters={filters} setFilters={setFilters}
                     fetchCards={fetchCards}
