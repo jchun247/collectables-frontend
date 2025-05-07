@@ -28,14 +28,13 @@ const SetsPage = () => {
       "HEARTGOLD_AND_SOULSILVER": 6,
       "PLATINUM": 7,
       "DIAMOND_AND_PEARL": 8,
-      "EX": 9,
-      "E_CARD": 10,
-      "NEO": 11,
-      "GYM": 12,
-      "BASE": 13,
-      // Special series at the end
-      "POP": 14,
-      "NP": 15,
+      "POP" :9,
+      "NP": 10,
+      "EX": 11,
+      "E_CARD": 12,
+      "NEO": 13,
+      "GYM": 14,
+      "BASE": 15,
       "OTHER": 16
     };
     
@@ -134,6 +133,13 @@ const SetsPage = () => {
                       onKeyDown={(e) => handleSetKeyDown(e, set.id)}
                     >
                       <div className="flex flex-col h-full">
+                        <div className="aspect-[16/9] relative rounded-lg overflow-hidden mb-2">
+                          <img 
+                            src={set.images.find(img => img.imageType === "logo").url} 
+                            alt={set.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
                         <h3 className="font-medium mb-2">{set.name}</h3>
                         <div className="flex justify-between items-end mt-auto">
                           <p className="text-sm text-muted-foreground group-hover:text-accent-foreground/75">
