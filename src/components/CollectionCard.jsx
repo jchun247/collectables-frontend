@@ -55,7 +55,7 @@ const CollectionCard = ({ collection }) => {
 
 CollectionCard.propTypes = {
   collection: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     type: PropTypes.oneOf(['PORTFOLIO', 'LIST']).isRequired,

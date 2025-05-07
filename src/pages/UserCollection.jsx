@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import CollectionCard from "@/components/CollectionCard";
-import { Plus, Loader2, Folder, FolderKanban, ListChecks, AlertTriangle } from "lucide-react";
+import { Plus, Loader2, FolderKanban, ListChecks, AlertTriangle } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState, useEffect, useCallback } from "react";
 import AuthPromptDialog from "@/components/AuthPromptDialog";
@@ -191,7 +191,7 @@ const UserCollection = () => {
         <h2 className="text-2xl font-bold mb-4">My Collection</h2>
         {!hasCollections && isAuthenticated ? (
           <div className="bg-sky-50 dark:bg-slate-800/60 p-8 rounded-lg text-center border border-sky-200 dark:border-slate-700 shadow-sm">
-            <Folder className="mx-auto h-12 w-12 text-sky-400 dark:text-sky-500 mb-4" />
+            <FolderKanban className="mx-auto h-12 w-12 text-sky-400 dark:text-sky-500 mb-4" />
             <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-2">
               Your Collection is Empty
             </h3>
@@ -219,9 +219,9 @@ const UserCollection = () => {
                     Portfolios: <span className="font-bold text-sky-700 dark:text-sky-400">{portfolios.length}</span>
                   </h3>
                 </div>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
+                {/* <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
                   {portfolios.length > 0 ? `You have ${portfolios.length} portfolio${portfolios.length === 1 ? '' : 's'} to showcase your grouped items.` : "No portfolios created yet. Add one to start grouping your items!"}
-                </p>
+                </p> */}
               </div>
               <hr className="border-slate-200 dark:border-slate-700"/>
               <div>
@@ -231,9 +231,9 @@ const UserCollection = () => {
                     Lists: <span className="font-bold text-green-700 dark:text-green-400">{lists.length}</span>
                   </h3>
                 </div>
-                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
+                {/* <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
                   {lists.length > 0 ? `You're maintaining ${lists.length} list${lists.length === 1 ? '' : 's'} for detailed tracking or wishlists.` : "No lists created yet. Organize specific items by creating a list!"}
-                </p>
+                </p> */}
               </div>
             </div>
             {(portfolios.length === 0 || lists.length === 0) && (
