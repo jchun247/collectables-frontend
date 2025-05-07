@@ -1,13 +1,13 @@
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { useAuth0 } from "@auth0/auth0-react";
 import Header from './components/Header'
-import Profile from './pages/Dashboard/Profile'
+import Profile from './pages/Profile'
 import LandingPage from './components/LandingPage'
 import ExplorePage from './pages/ExplorePage';
 import CardDetails from './pages/CardDetails';
-import UserPortfolio from './pages/UserPortfolio';
 import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
+import UserCollection from './pages/UserCollection';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -22,7 +22,7 @@ const App = () => {
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
-        <Route path="/collection" element={<UserPortfolio />}/>
+        <Route path="/collection" element={<UserCollection />}/>
         <Route path="/cards/:id" element={<CardDetails />}/>
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />
