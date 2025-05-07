@@ -4,7 +4,6 @@ import Header from './components/Header'
 import Profile from './pages/Profile'
 import LandingPage from './components/LandingPage'
 import ExplorePage from './pages/ExplorePage';
-import CardDetails from './pages/CardDetails';
 import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
 import UserCollection from './pages/UserCollection';
@@ -23,7 +22,6 @@ const App = () => {
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
         <Route path="/collection" element={<UserCollection />}/>
-        <Route path="/cards/:id" element={<CardDetails />}/>
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />
         <Route path="/signup" />
