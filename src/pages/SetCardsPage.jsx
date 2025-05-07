@@ -168,7 +168,7 @@ const SetCardsPage = () => {
                                 <span className="text-muted-foreground">Total Cards</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span>{setDetails.printedTotal} + {setDetails.total - setDetails.printedTotal} secret</span>
+                                <span>{setDetails.printedTotal}{setDetails.total - setDetails.printedTotal == 0 ? '' : " + " + (setDetails.total - setDetails.printedTotal) + " secret"}</span>
                             </div>
                         </div>
                     </div>
