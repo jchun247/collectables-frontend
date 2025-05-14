@@ -171,8 +171,7 @@ const ExplorePage = () => {
                                     ref={index === cards.length - 1 ? lastCardRef : null}
                                 >
                                     <RenderCard 
-                                        card={card} 
-                                        apiBaseUrl={apiBaseUrl}
+                                        card={card}
                                     />
                                 </div>
                             ))}
