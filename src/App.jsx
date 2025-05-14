@@ -7,6 +7,8 @@ import ExplorePage from './pages/ExplorePage';
 import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
 import UserCollection from './pages/UserCollection';
+import UserPortfolioDetails from './pages/UserPortfolioDetails';
+import UserListDetails from './pages/UserListDetails';
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -22,6 +24,8 @@ const App = () => {
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
         <Route path="/collection" element={<UserCollection />}/>
+        <Route path="/collection/lists/:listId" element={<UserListDetails />} />
+        <Route path="/collection/portfolios/:portfolioId" element={<UserPortfolioDetails />} />
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />
         <Route path="/signup" />
