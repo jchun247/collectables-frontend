@@ -21,7 +21,8 @@ const getDisplayPrice = (prices) => {
     return price.toFixed(2);
 };
 
-const RenderCard = ({ card, apiBaseUrl }) => {
+const RenderCard = ({ card }) => {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -121,8 +122,7 @@ const RenderCard = ({ card, apiBaseUrl }) => {
 }
 
 RenderCard.propTypes = {
-    card: PropTypes.object.isRequired,
-    apiBaseUrl: PropTypes.string.isRequired
+    card: PropTypes.object.isRequired
 }
 
 export default RenderCard;
