@@ -2,9 +2,11 @@ import { Star, Globe, Lock } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const CollectionCard = ({ collection }) => {
-  const { name, description, isPublic, numProducts, currentValue, isFavourite: initialFavourite } = collection;
+  const { id, name, description, public: isPublic, numProducts, currentValue, favourite: initialFavourite, collectionType } = collection;
+  const navigate = useNavigate();
   const [isFavourite, setIsFavourite] = useState(initialFavourite);
 
   const toggleFavorite = () => {
@@ -14,7 +16,16 @@ const CollectionCard = ({ collection }) => {
   };
 
   return (
-    <Card className="p-4 space-y-2">
+    <Card 
+      className="p-4 space-y-2 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={() => {
+        if (collectionType === 'PORTFOLIO') {
+          navigate(`/collection/portfolios/${id}`, { state: { collection } });
+        } else {
+          navigate(`/collection/lists/${id}`);
+        }
+      }}
+    >
       <div className="flex justify-between items-start">
         <div className="flex-1">
           <h3 className="font-semibold text-lg truncate">{name}</h3>
@@ -58,11 +69,11 @@ CollectionCard.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
-    type: PropTypes.oneOf(['PORTFOLIO', 'LIST']).isRequired,
-    isPublic: PropTypes.bool.isRequired,
+    collectionType: PropTypes.oneOf(['PORTFOLIO', 'LIST']).isRequired,
+    public: PropTypes.bool.isRequired,
     numProducts: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,
-    isFavourite: PropTypes.bool.isRequired
+    favourite: PropTypes.bool.isRequired
   }).isRequired
 };
 
