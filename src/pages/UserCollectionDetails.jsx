@@ -1,66 +1,137 @@
 import { useState, useEffect } from 'react'
-import { useParams, useLocation, Navigate } from 'react-router-dom'
+import { useParams, useLocation, Navigate, useNavigate } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types'
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Settings, Trash2, Star, CalendarDays, ListOrdered, Info, Globe } from "lucide-react"
+import { Settings, Star, CalendarDays, ListOrdered, Info, Globe } from "lucide-react"
 import RenderCard from "@/components/RenderCard"
+import UpdateCollectionDialog from '../components/UpdateCollectionDialog'
+import { formatCurrency, formatDate } from "@/utils/textFormatters"
 
 function UserCollectionDetails({ collectionType }) {
   // Extract ID from URL based on collection type
-  const params = useParams()
-  const collectionId = params[collectionType === 'portfolio' ? 'portfolioId' : 'listId']
-  
-  const location = useLocation()
-  const collection = location.state?.collection
+  const params = useParams();
+  const collectionId = params[collectionType === 'portfolio' ? 'portfolioId' : 'listId'];
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [collectionItems, setCollectionItems] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
+  const [currentCollection, setCurrentCollection] = useState(location.state?.collection);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // State for API call status for update/delete operations
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeletingCollection, setIsDeletingCollection] = useState(false);
+  const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
+
+  // State for fetching collection items
+  const [collectionItems, setCollectionItems] = useState(null);
+  const [isLoadingItems, setIsLoadingItems] = useState(true);
+  const [fetchItemsError, setFetchItemsError] = useState(null);
+
+  const { getAccessTokenSilently } = useAuth0();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const fetchCollectionItems = async () => {
+      if (!collectionId) return;
       try {
-        setIsLoading(true)
-        setError(null)
-        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`)
+        setIsLoadingItems(true);
+        setFetchItemsError(null);
+        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`);
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${collectionType} items`)
+          throw new Error(`Failed to fetch ${collectionType} items`);
         }
-        const data = await response.json()
-        setCollectionItems(data)
+        const data = await response.json();
+        setCollectionItems(data);
       } catch (err) {
-        setError(err.message)
+        setFetchItemsError(err.message);
       } finally {
-        setIsLoading(false)
+        setIsLoadingItems(false);
       }
     }
 
     fetchCollectionItems()
-  }, [collectionId, collectionType, apiBaseUrl])
+  }, [collectionId, collectionType, apiBaseUrl]);
 
-  if (!collection) {
+  // This is useful if navigating to the same route with different state
+  useEffect(() => {
+    if (location.state?.collection && location.state.collection.id === currentCollection?.id) {
+      setCurrentCollection(location.state.collection);
+    } else if (location.state?.collection) {
+      setCurrentCollection(location.state.collection);
+    }
+  }, [location.state?.collection, currentCollection?.id]);
+
+  const handleUpdateCollection = async (formData) => {
+    setIsUpdating(true);
+    setDialogSubmissionError(null);
+
+    const requestBody = {
+      ...formData,
+      public: formData.visibility === 'PUBLIC',
+    };
+
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update collection');
+      }
+
+      const updatedCollection = await response.json();
+      setCurrentCollection(updatedCollection);
+      setIsSettingsOpen(false);
+    } catch (error) {
+      setDialogSubmissionError(error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteCollection = async () => {
+    const collectionTypeLabel = collectionType.charAt(0).toUpperCase() + collectionType.slice(1);
+    if (!window.confirm(`Are you sure you want to delete this ${collectionTypeLabel}? This action cannot be undone.`)) {
+      return;
+    }
+
+    setIsDeletingCollection(true);
+    setDialogSubmissionError(null);
+
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+         },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: `Failed to delete ${collectionType}. Status: ${response.status}` }));
+        throw new Error(errorData.message || `Failed to delete ${collectionType}.`);
+      }
+
+      setIsSettingsOpen(false);
+      navigate('/collections', { replace: true });
+    } catch (err) {
+      setDialogSubmissionError(err.message);
+    } finally {
+      setIsDeletingCollection(false);
+    }
+  };
+
+  if (!currentCollection) {
     return <Navigate to="/collections" replace />
-  }
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount)
   }
 
   const collectionTypeLabel = collectionType.charAt(0).toUpperCase() + collectionType.slice(1)
@@ -72,14 +143,14 @@ function UserCollectionDetails({ collectionType }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100">{collection.name}</h1>
-              {collection.favourite && (
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 dark:text-slate-100">{currentCollection.name}</h1>
+              {currentCollection.favourite && (
                 <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" aria-label="Favorite" />
               )}
             </div>
-            {collection.description && (
+            {currentCollection.description && (
               <p className="mt-2 text-base text-slate-600 dark:text-slate-400 max-w-2xl">
-                {collection.description}
+                {currentCollection.description}
               </p>
             )}
           </div>
@@ -90,33 +161,22 @@ function UserCollectionDetails({ collectionType }) {
                 <span className="sr-only">{collectionTypeLabel} Settings</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>{collectionTypeLabel} Settings</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">Name</Label>
-                  <Input id="name" defaultValue={collection.name} className="col-span-3" />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="description" className="text-right">Description</Label>
-                  <Input id="description" defaultValue={collection.description} className="col-span-3" />
-                </div>
-                <div className="flex items-center space-x-2 justify-end col-span-4">
-                  <input type="checkbox" id="visibility" defaultChecked={collection.public} className="form-checkbox h-4 w-4 text-sky-600 border-slate-300 rounded focus:ring-sky-500"/>
-                  <Label htmlFor="visibility" className="text-sm font-medium">Public {collectionTypeLabel}</Label>
-                </div>
-                <div className="flex items-center space-x-2 justify-end col-span-4">
-                  <input type="checkbox" id="favourite" defaultChecked={collection.favourite} className="form-checkbox h-4 w-4 text-yellow-500 border-slate-300 rounded focus:ring-yellow-400"/>
-                  <Label htmlFor="favourite" className="text-sm font-medium">Mark as Favorite</Label>
-                </div>
-                <Button variant="destructive" className="w-full mt-4" onClick={() => { /* Implement delete logic */ console.log(`Delete ${collectionType} clicked`) }}>
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete {collectionTypeLabel}
-                </Button>
-              </div>
-            </DialogContent>
+            {currentCollection && (
+              <UpdateCollectionDialog
+                isOpen={isSettingsOpen}
+                onClose={() => {
+                  setIsSettingsOpen(false)
+                  setDialogSubmissionError(null);
+                }}
+                collection={currentCollection}
+                collectionType={collectionType}
+                onSubmit={handleUpdateCollection}
+                onDelete={handleDeleteCollection}
+                isSubmitting={isUpdating}
+                isDeleting={isDeletingCollection}
+                submissionError={dialogSubmissionError}
+              />
+            )}
           </Dialog>
         </div>
       </header>
@@ -131,7 +191,7 @@ function UserCollectionDetails({ collectionType }) {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold text-slate-800 dark:text-slate-100">
-                {formatCurrency(collection.currentValue)}
+                {formatCurrency(currentCollection.currentValue)}
               </div>
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
                 Total estimated market value
@@ -145,7 +205,7 @@ function UserCollectionDetails({ collectionType }) {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold text-slate-800 dark:text-slate-100">
-                {isLoading ? (
+                {isLoadingItems ? (
                   <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 animate-pulse rounded"></div>
                 ) : collectionItems?.totalItems ?? 0}
               </div>
@@ -157,9 +217,9 @@ function UserCollectionDetails({ collectionType }) {
               <CalendarDays className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-100">{formatDate(collection.createdAt)}</div>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-100">{formatDate(currentCollection.createdAt)}</div>
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                Last updated on: {formatDate(collection.updatedAt)}
+                Last updated on: {formatDate(currentCollection.updatedAt)}
               </p>
             </CardContent>
           </Card>
@@ -169,7 +229,7 @@ function UserCollectionDetails({ collectionType }) {
               <Globe className="h-5 w-5 text-slate-500 dark:text-slate-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-100">{collection.public ? 'Public' : 'Private'}</div>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-100">{currentCollection.public ? 'Public' : 'Private'}</div>
             </CardContent>
           </Card>
         </div>
@@ -180,24 +240,24 @@ function UserCollectionDetails({ collectionType }) {
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2">
             <h2 id="collection-items-heading" className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
-              Cards in {collectionTypeLabel} ({isLoading ? "..." : collectionItems?.totalItems ?? 0})
+              Cards in {collectionTypeLabel} ({isLoadingItems ? "..." : collectionItems?.totalItems ?? 0})
             </h2>
           </div>
         </div>
-        {isLoading ? (
+        {isLoadingItems ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="w-full h-96 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
             ))}
           </div>
-        ) : error ? (
+        ) : fetchItemsError ? (
           <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
             <Info className="mx-auto h-12 w-12 text-red-400 dark:text-red-500 mb-4" />
             <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-2">
               Error Loading {collectionTypeLabel} Items
             </h3>
             <p className="text-slate-500 dark:text-slate-400">
-              {error}
+              {fetchItemsError}
             </p>
           </div>
         ) : collectionItems?.items?.length > 0 ? (
