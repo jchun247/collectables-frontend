@@ -24,9 +24,9 @@ const App = () => {
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
         <Route path="/sets" element={<SetsPage />} />
-        <Route path="/collection" element={<UserCollection />}/>
-        <Route path="/collection/lists/:listId" element={<UserCollectionDetails collectionType="list" />} />
-        <Route path="/collection/portfolios/:portfolioId" element={<UserCollectionDetails collectionType="portfolio" />} />
+        <Route path="/collections" element={<UserCollection />}/>
+        <Route path="/collections/lists/:listId" element={<UserCollectionDetails collectionType="list" />} />
+        <Route path="/collections/portfolios/:portfolioId" element={<UserCollectionDetails collectionType="portfolio" />} />
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />
         <Route path="/signup" />

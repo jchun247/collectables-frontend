@@ -20,9 +20,9 @@ const CollectionCard = ({ collection }) => {
       className="p-4 space-y-2 cursor-pointer hover:shadow-md transition-shadow"
       onClick={() => {
         if (collectionType === 'PORTFOLIO') {
-          navigate(`/collection/portfolios/${id}`, { state: { collection } });
+          navigate(`/collections/portfolios/${id}`, { state: { collection } });
         } else {
-          navigate(`/collection/lists/${id}`, { state: { collection } });
+          navigate(`/collections/lists/${id}`, { state: { collection } });
         }
       }}
     >

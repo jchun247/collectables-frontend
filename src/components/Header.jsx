@@ -40,7 +40,7 @@ const Header = () => {
                                 </Link>
                             </li>
                             <li>
-                                <Link to="/collection" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
+                                <Link to="/collections" className="text-md font-medium text-primary transition-colors duration-200 hover:text-gray-600">
                                     Collection
                                 </Link>
                             </li>
