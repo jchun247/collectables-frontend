@@ -77,7 +77,7 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
     };
 
     fetchCollections();
-  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently]);
+  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently, user.sub]);
 
   const [useMarketPrice, setUseMarketPrice] = useState(false);
   const [selectedFinish, setSelectedFinish] = useState("");
