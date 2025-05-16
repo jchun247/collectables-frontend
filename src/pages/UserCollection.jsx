@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
+import { formatCardText } from "@/utils/textFormatters";
 import CollectionCard from "@/components/CollectionCard";
 import { Plus, Loader2, FolderKanban, ListChecks, AlertTriangle } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useState, useEffect, useCallback } from "react";
+import { useToast } from "@/hooks/use-toast";
 import AuthPromptDialog from "@/components/AuthPromptDialog";
 import CreateCollectionDialog from "@/components/CreateCollectionDialog";
 
@@ -10,6 +12,8 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const UserCollection = () => {
   const { user, isAuthenticated, isLoading: isAuthLoading, getAccessTokenSilently } = useAuth0();
+  const { toast } = useToast();
+
   const [collections, setCollections] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +74,6 @@ const UserCollection = () => {
   const handleCreateCollection = async (collectionData, collectionType, dialogSetter) => {
     if (!isAuthenticated || !user?.sub) {
       setSubmissionError("User not authenticated.");
-      // toast({ title: "Error", description: "User not authenticated.", variant: "destructive" });
       return;
     }
 
@@ -89,7 +92,7 @@ const UserCollection = () => {
           description: collectionData.description,
           type: "PORTFOLIO",
           totalCostBasis: 0.00,
-          public: Boolean(collectionData.visibility)
+          isPublic: collectionData.visibility === 'PUBLIC'
         }
       } else {
         endPointUrl = `${apiBaseUrl}/collections/lists`;
@@ -99,7 +102,7 @@ const UserCollection = () => {
           description: collectionData.description,
           type: "LIST",
           listType: collectionData.listType,
-          public: Boolean(collectionData.visibility)
+          public: collectionData.visibility === 'PUBLIC'
         }
       }
       
@@ -116,14 +119,12 @@ const UserCollection = () => {
         const errorData = await response.json().catch(() => ({ message: `Failed to create ${collectionType}` }));
         throw new Error(errorData.message || `Failed to create ${collectionType}`);
       }
-      // const newCollection = await response.json(); // Optional: use newCollection data
       await fetchCollections(); // Re-fetch all collections
       dialogSetter(false); // Close the dialog
-      // toast({ title: "Success!", description: `${collectionType} created successfully.`, className: "bg-green-500 text-white" });
+      toast({ title: "Success!", description: `${formatCardText(collectionType)} created successfully.`, className: "bg-green-500 text-white" });
     } catch (err) {
-      console.error(`Error creating ${collectionType}:`, err);
       setSubmissionError(err.message || `Could not create ${collectionType}. Please try again.`);
-      // toast({ title: `Error creating ${collectionType}`, description: err.message, variant: "destructive" });
+      toast({ title: `Error creating ${formatCardText(collectionType)}`, description: err.message, variant: "destructive" });
       // Note: Dialog remains open on error so user can see the error or retry.
     } finally {
       setIsSubmitting(false);
@@ -219,9 +220,6 @@ const UserCollection = () => {
                     Portfolios: <span className="font-bold text-sky-700 dark:text-sky-400">{portfolios.length}</span>
                   </h3>
                 </div>
-                {/* <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
-                  {portfolios.length > 0 ? `You have ${portfolios.length} portfolio${portfolios.length === 1 ? '' : 's'} to showcase your grouped items.` : "No portfolios created yet. Add one to start grouping your items!"}
-                </p> */}
               </div>
               <hr className="border-slate-200 dark:border-slate-700"/>
               <div>
@@ -231,9 +229,6 @@ const UserCollection = () => {
                     Lists: <span className="font-bold text-green-700 dark:text-green-400">{lists.length}</span>
                   </h3>
                 </div>
-                {/* <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 ml-10">
-                  {lists.length > 0 ? `You're maintaining ${lists.length} list${lists.length === 1 ? '' : 's'} for detailed tracking or wishlists.` : "No lists created yet. Organize specific items by creating a list!"}
-                </p> */}
               </div>
             </div>
             {(portfolios.length === 0 || lists.length === 0) && (
