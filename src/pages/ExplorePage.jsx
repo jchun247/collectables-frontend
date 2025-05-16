@@ -38,44 +38,44 @@ const ExplorePage = () => {
             setIsLoadingMore(true);
         }
         try {
-                const queryParams = {};
-                // Conditionally add each parameter if it has a value
-                if (pageNum != null) queryParams.page = pageNum;
-                if (sortOption) queryParams.sortOption = sortOption;
-                if (searchQuery) queryParams.searchQuery = searchQuery;
-                // Get selected games from the game object
-                const selectedGames = Object.entries(filters.game || {})
-                    .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
-                    .map(([game]) => game);
-                if (selectedGames.length > 0) queryParams.games = selectedGames.join(',');
-                // if (filters.productType) queryParams.productType = filters.productType;
-                if (filters.condition) queryParams.condition = filters.condition;
+            const queryParams = {};
+            // Conditionally add each parameter if it has a value
+            if (pageNum != null) queryParams.page = pageNum;
+            if (sortOption) queryParams.sortOption = sortOption;
+            if (searchQuery) queryParams.searchQuery = searchQuery;
+            // Get selected games from the game object
+            const selectedGames = Object.entries(filters.game || {})
+                .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
+                .map(([game]) => game);
+            if (selectedGames.length > 0) queryParams.games = selectedGames.join(',');
+            // if (filters.productType) queryParams.productType = filters.productType;
+            if (filters.condition) queryParams.condition = filters.condition;
 
-                const response = await fetch(`${apiBaseUrl}/cards?${new URLSearchParams(queryParams)}`);
+            const response = await fetch(`${apiBaseUrl}/cards?${new URLSearchParams(queryParams)}`);
 
-                // Check if response is ok before parsing JSON
-                if (!response.ok) {
-                    throw new Error("Something went wrong. Please try again later.");
-                }
-
-                // Handle response
-                const data = await response.json();
-                if (isInitial) {
-                    setCards(data.items);
-                    setCurrentPage(0);
-                } else {
-                    setCards(prev => [...prev, ...data.items]);
-                    setCurrentPage(pageNum);
-                }
-                setHasMore(data.items.length > 0 && data.items.length === PAGE_SIZE);
-                setError(null);
-            } catch {
-                // Use a generic error message for all server/network errors
-                setError("Something went wrong. Please try again later.");
-            } finally {
-                setLoading(false);
-                setIsLoadingMore(false);
+            // Check if response is ok before parsing JSON
+            if (!response.ok) {
+                throw new Error("Something went wrong. Please try again later.");
             }
+
+            // Handle response
+            const data = await response.json();
+            if (isInitial) {
+                setCards(data.items);
+                setCurrentPage(0);
+            } else {
+                setCards(prev => [...prev, ...data.items]);
+                setCurrentPage(pageNum);
+            }
+            setHasMore(data.items.length > 0 && data.items.length === PAGE_SIZE);
+            setError(null);
+        } catch {
+            // Use a generic error message for all server/network errors
+            setError("Something went wrong. Please try again later.");
+        } finally {
+            setLoading(false);
+            setIsLoadingMore(false);
+        }
     }, [sortOption, searchQuery, filters, apiBaseUrl, PAGE_SIZE]);
 
     // Set up intersection observer
