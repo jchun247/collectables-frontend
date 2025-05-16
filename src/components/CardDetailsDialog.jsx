@@ -36,7 +36,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[60vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[90vw] md:max-w-[75vw] lg:max-w-[60vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <DialogTitle>{cardDetails.name}</DialogTitle>
         </DialogHeader>
@@ -59,23 +59,23 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
             )}
           </div>
           <div className="space-y-2">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-              <h2 className="text-4xl font-bold truncate">{cardDetails.name}</h2>
-              <div className="flex flex-wrap gap-2 shrink-0">
+            <div className="flex flex-col md:flex-row md:flex-wrap md:items-start md:justify-between gap-x-4 gap-y-2 mb-4">
+              <h2 className="text-4xl font-bold truncate md:flex-grow md:min-w-0">{cardDetails.name}</h2>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
                 <Button 
                   variant="secondary"
-                  className="w-full md:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap"
+                  className="w-full sm:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
                   onClick={() => handleCollectionAction('list')}
                 >
-                  <Star />
+                  <Star className="mr-2 h-4 w-4"/>
                   Add to List
                 </Button>
                 <Button 
                   variant="default"
-                  className="w-full md:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap"
+                  className="w-full sm:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
                   onClick={() => handleCollectionAction('portfolio')}
                 >
-                  <Plus />
+                  <Plus className="mr-2 h-4 w-4"/>
                   Add to Portfolio
                 </Button>
                 <CardCollectionEntryDialog 
