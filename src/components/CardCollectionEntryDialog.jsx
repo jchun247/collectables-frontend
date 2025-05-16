@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { formatCardFinish, formatCardCondition } from '@/utils/textFormatters';
 
-const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId }) => {
+const CardCollectionEntryDialog = ({ isOpen, onOpenChange, type = "portfolio", prices = [], cardId }) => {
   const { user, getAccessTokenSilently } = useAuth0();
   const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -169,16 +169,6 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to add card to collection');
       }
-
-      onSubmit({
-        quantity: parseInt(formData.get('quantity')),
-        condition: selectedCondition,
-        finish: selectedFinish,
-        collection: collectionId,
-        purchaseDate: formData.get('purchaseDate'),
-        type,
-        ...(type === 'portfolio' && { unitPrice: parseFloat(unitPrice) || 0})
-      });
       
       toast({
         title: "Success",

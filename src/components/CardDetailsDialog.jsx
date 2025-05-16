@@ -85,10 +85,6 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                     type: isOpen ? dialogState.type : null 
                   })}
                   type={dialogState.type || "portfolio"}
-                  onSubmit={(data) => {
-                    console.log('Collection entry:', { ...data, card: cardDetails });
-                    // Here you would typically send this data to your backend
-                  }}
                   prices={cardDetails.prices}
                   cardId={cardDetails.id}
                 />
