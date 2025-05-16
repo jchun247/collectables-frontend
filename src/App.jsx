@@ -1,5 +1,6 @@
 import { Route, Routes, Navigate } from 'react-router-dom'
 import { useAuth0 } from "@auth0/auth0-react";
+import { Toaster } from "@/components/ui/toaster";
 import Header from './components/Header'
 import Profile from './pages/Profile'
 import LandingPage from './components/LandingPage'
@@ -16,6 +17,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
+      <Toaster />
       <Routes>
         <Route path="/" element={
           isAuthenticated ? <Navigate to="/explore" replace /> : <LandingPage />
