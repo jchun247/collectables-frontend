@@ -22,7 +22,7 @@ const CollectionCard = ({ collection }) => {
         if (collectionType === 'PORTFOLIO') {
           navigate(`/collection/portfolios/${id}`, { state: { collection } });
         } else {
-          navigate(`/collection/lists/${id}`);
+          navigate(`/collection/lists/${id}`, { state: { collection } });
         }
       }}
     >
