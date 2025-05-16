@@ -1,4 +1,7 @@
 import PropTypes from 'prop-types';
+import { useState, useEffect, useMemo } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -15,45 +19,185 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatCardFinish, formatCardCondition } from '@/utils/textFormatters';
 
-const CONDITIONS = [
-  "Near Mint",
-  "Lightly Played",
-  "Moderately Played",
-  "Heavily Played",
-];
+const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId }) => {
+  const { user, getAccessTokenSilently } = useAuth0();
+  const { toast } = useToast();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const [collections, setCollections] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [dateError, setDateError] = useState("");
 
-const COLLECTION_TYPES = {
-  portfolio: {
-    title: "Add to Portfolio",
-    options: ["Main Collection", "Trading", "Wishlist"],
-    label: "Portfolio"
-  },
-  list: {
-    title: "Add to List",
-    options: ["Want", "Have", "Trading"],
-    label: "List"
-  }
-};
+  const collectionConfig = {
+    portfolio: {
+      title: "Add to Portfolio",
+      label: "Portfolio"
+    },
+    list: {
+      title: "Add to List",
+      label: "List"
+    }
+  }[type];
 
-const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio" }) => {
-  const collectionConfig = COLLECTION_TYPES[type];
+  useEffect(() => {
+    const fetchCollections = async () => {
+      if (!isOpen) return;
+      
+      try {
+        setIsLoading(true);
+        setError(null);
+        const token = await getAccessTokenSilently();
+        const queryParams = new URLSearchParams();
+        if (type === 'portfolio') {
+          queryParams.append('type', 'PORTFOLIO');
+        } else {
+          queryParams.append('type', 'LIST');
+        }
+        
+        const response = await fetch(`${apiBaseUrl}/collections/users/${user.sub}?${queryParams}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
-  const handleSubmit = (e) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch collections');
+        }
+
+        const data = await response.json();
+        setCollections(data.items);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching collections:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCollections();
+  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently]);
+
+  const [useMarketPrice, setUseMarketPrice] = useState(false);
+  const [selectedFinish, setSelectedFinish] = useState("");
+  const [selectedCondition, setSelectedCondition] = useState("");
+  const [marketPrice, setMarketPrice] = useState(0);
+  const [unitPrice, setUnitPrice] = useState("");
+
+  const uniqueFinishes = useMemo(() => [...new Set(prices.map(p => p.finish))], [prices]);
+  const uniqueConditions = useMemo(() => [...new Set(prices.map(p => p.condition))], [prices]);
+
+   // Effect to set the initial selected finish and condition
+  useEffect(() => {
+    if (prices.length > 0) {
+      const initialFinish = uniqueFinishes[0] || "";
+      setSelectedFinish(initialFinish);
+      
+      const initialCondition = uniqueConditions[0] || "";
+      setSelectedCondition(initialCondition);
+    } else {
+      // Reset if prices are cleared
+      setSelectedFinish("");
+      setSelectedCondition("");
+    }
+  }, [prices, uniqueFinishes, uniqueConditions]); // N.B. uniqueFinishes/Conditions depend on prices
+
+  // Main effect to update marketPrice and unitPrice based on selections and useMarketPrice
+  useEffect(() => {
+    let currentSelectedPrice = 0;
+    if (selectedFinish && selectedCondition && prices.length > 0) {
+      currentSelectedPrice = prices.find(p => p.finish === selectedFinish && p.condition === selectedCondition)?.price || 0;
+    }
+    setMarketPrice(currentSelectedPrice);
+
+    if (useMarketPrice) {
+      setUnitPrice(currentSelectedPrice > 0 ? currentSelectedPrice.toFixed(2) : "");
+    }
+    // If !useMarketPrice, unitPrice is managed by manual input or cleared by the checkbox handler
+  }, [selectedFinish, selectedCondition, useMarketPrice, prices]);
+
+  const handleFinishChange = (finish) => {
+    setSelectedFinish(finish);
+    // updateMarketPrice(finish, selectedCondition);
+  };
+
+  const handleConditionChange = (condition) => {
+    setSelectedCondition(condition);
+    // updateMarketPrice(selectedFinish, condition);
+  };
+
+  const handleUseMarketPriceChange = (checked) => {
+    setUseMarketPrice(checked);
+    if (!checked) {
+      setUnitPrice(""); // Clear unit price if user unchecks "Use Market Price"
+    }
+    // If checked is true, the main useEffect will set the unitPrice
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (dateError || error || (collections.length === 0)) {
+      return;
+    }
+    
     const formData = new FormData(e.target);
-    onSubmit({
-      quantity: parseInt(formData.get('quantity')),
-      condition: formData.get('condition'),
-      collection: formData.get('collection'),
-      type
-    });
-    onOpenChange(false);
+    const collectionId = formData.get('collection');
+    
+    try {
+      const token = await getAccessTokenSilently();
+      
+      const requestBody = {
+        cardId,
+        condition: selectedCondition,
+        finish: selectedFinish,
+        quantity: parseInt(formData.get('quantity')),
+        purchaseDate: formData.get('purchaseDate'),
+        costBasis: type === 'portfolio' ? parseFloat(unitPrice) || 0 : 0
+      };
+
+      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add card to collection');
+      }
+
+      onSubmit({
+        quantity: parseInt(formData.get('quantity')),
+        condition: selectedCondition,
+        finish: selectedFinish,
+        collection: collectionId,
+        purchaseDate: formData.get('purchaseDate'),
+        type,
+        ...(type === 'portfolio' && { unitPrice: parseFloat(unitPrice) || 0})
+      });
+      
+      toast({
+        title: "Success",
+        description: "Card added to collection successfully"
+      });
+      onOpenChange(false);
+    } catch (err) {
+      console.error('Error adding card to collection:', err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || 'Failed to add card to collection'
+      });
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{collectionConfig.title}</DialogTitle>
         </DialogHeader>
@@ -72,14 +216,20 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
           
           <div className="space-y-2">
             <Label htmlFor="condition">Condition</Label>
-            <Select name="condition" required defaultValue={CONDITIONS[0]}>
+            <Select 
+              name="condition" 
+              required 
+              value={selectedCondition}
+              onValueChange={handleConditionChange}
+              disabled={uniqueConditions.length <= 1}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select condition" />
               </SelectTrigger>
               <SelectContent>
-                {CONDITIONS.map((condition) => (
+                {uniqueConditions.map((condition) => (
                   <SelectItem key={condition} value={condition}>
-                    {condition}
+                    {formatCardCondition(condition)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -87,17 +237,129 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="finish">Finish</Label>
+            <Select 
+              name="finish" 
+              required 
+              defaultValue={selectedFinish}
+              onValueChange={handleFinishChange}
+              disabled={uniqueFinishes.length <= 1}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select finish" />
+              </SelectTrigger>
+              <SelectContent>
+                {uniqueFinishes.map((finish) => (
+                  <SelectItem key={finish} value={finish}>
+                    {formatCardFinish(finish)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {type == "portfolio" && (
+            <div className="space-y-2 border-t border-border pt-4 mt-4">
+              <Label htmlFor="unitPrice">Unit Price</Label>
+
+              {selectedFinish && selectedCondition && prices.length > 0 && (
+                <p className="text-sm text-muted-foreground pt-1">
+                  Current Market Price: {marketPrice > 0 ? `$${marketPrice.toFixed(2)}` : "N/A"}
+                </p>
+              )}
+
+              <div className="flex items-center gap-2">
+                <Input 
+                  id="unitPrice"
+                  name="unitPrice"
+                  required
+                  type="number"
+                  min="0"
+                  placeholder="0.00"
+                  value={unitPrice}
+                  step="0.01"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Ensure only 2 decimal places
+                    if (value.includes('.') && value.split('.')[1].length > 2) {
+                      const fixed = parseFloat(value).toFixed(2);
+                      setUnitPrice(fixed);
+                    } else {
+                      setUnitPrice(value);
+                    }
+                  }}
+                  className="w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  disabled={useMarketPrice}
+                />
+                <div className="flex items-center gap-2">
+                  <Checkbox 
+                    id="useMarketPrice" 
+                    checked={useMarketPrice}
+                    onCheckedChange={handleUseMarketPriceChange}
+                  />
+                  <Label 
+                    htmlFor="useMarketPrice"
+                    className="text-sm font-normal text-muted-foreground cursor-pointer hover:text-accent-foreground transition-colors"
+                  >
+                    Use Market Price
+                  </Label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="purchaseDate">Purchase Date</Label>
+            <Input
+              id="purchaseDate"
+              name="purchaseDate"
+              type="date"
+              required
+              defaultValue={new Date().toISOString().split('T')[0]}
+              max={new Date().toISOString().split('T')[0]}
+              className={`text-foreground [color-scheme:normal] [&::-webkit-calendar-picker-indicator]:text-foreground [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:[filter:invert(1)] ${dateError ? "border-red-500" : ""}`}
+              onChange={(e) => {
+                const selectedDate = new Date(e.target.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (selectedDate > today) {
+                  setDateError("Purchase date cannot be in the future");
+                } else {
+                  setDateError("");
+                }
+              }}
+            />
+            {dateError && (
+              <p className="text-sm text-red-500 mt-1">
+                {dateError}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="collection">{collectionConfig.label}</Label>
-            <Select name="collection" required defaultValue={collectionConfig.options[0]}>
+            <Select 
+              name="collection" 
+              required
+            >
               <SelectTrigger>
                 <SelectValue placeholder={`Select ${collectionConfig.label.toLowerCase()}`} />
               </SelectTrigger>
               <SelectContent>
-                {collectionConfig.options.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {option}
-                  </SelectItem>
-                ))}
+                {isLoading ? (
+                  <SelectItem value="loading" disabled>Loading collections...</SelectItem>
+                ) : error ? (
+                  <SelectItem value="error" disabled>Error loading collections</SelectItem>
+                ) : collections.length === 0 ? (
+                  <SelectItem value="none" disabled>No collections found</SelectItem>
+                ) : (
+                  collections.map((collection) => (
+                    <SelectItem key={collection.id} value={collection.id.toString()}>
+                      {collection.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -106,7 +368,11 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
             <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">
+            <Button 
+              type="submit" 
+              disabled={error || collections.length === 0}
+              title={error ? "Unable to load collections" : collections.length === 0 ? "No collections available" : ""}
+            >
               Add to {collectionConfig.label}
             </Button>
           </div>
@@ -120,7 +386,13 @@ CardCollectionEntryDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onOpenChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  type: PropTypes.oneOf(['portfolio', 'list'])
+  type: PropTypes.oneOf(['portfolio', 'list']),
+  prices: PropTypes.arrayOf(PropTypes.shape({
+    condition: PropTypes.string.isRequired,
+    finish: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired
+  })),
+  cardId: PropTypes.number.isRequired
 };
 
 export default CardCollectionEntryDialog;

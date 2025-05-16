@@ -59,12 +59,12 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
             )}
           </div>
           <div className="space-y-2">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-4xl font-bold">{cardDetails.name}</h2>
-              <div className="flex gap-2">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+              <h2 className="text-4xl font-bold truncate">{cardDetails.name}</h2>
+              <div className="flex flex-wrap gap-2 shrink-0">
                 <Button 
                   variant="secondary"
-                  className="hover:opacity-50 transition-opacity duration-200"
+                  className="w-full md:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap"
                   onClick={() => handleCollectionAction('list')}
                 >
                   <Star />
@@ -72,7 +72,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                 </Button>
                 <Button 
                   variant="default"
-                  className="hover:opacity-50 transition-opacity duration-200"
+                  className="w-full md:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap"
                   onClick={() => handleCollectionAction('portfolio')}
                 >
                   <Plus />
@@ -89,6 +89,8 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                     console.log('Collection entry:', { ...data, card: cardDetails });
                     // Here you would typically send this data to your backend
                   }}
+                  prices={cardDetails.prices}
+                  cardId={cardDetails.id}
                 />
               </div>
             </div>
