@@ -11,13 +11,13 @@ import PropTypes from "prop-types";
 const UpdateCollectionDialog = ({
   isOpen,
   onClose,
-  collection,
+  collection = null, // Default value moved here
   collectionType, // "list" or "portfolio"
   onSubmit,
   onDelete,
-  isSubmitting,
-  isDeleting,
-  submissionError,
+  isSubmitting = false, // Default value moved here
+  isDeleting = false, // Default value moved here
+  submissionError = null, // Default value moved here
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -252,13 +252,6 @@ UpdateCollectionDialog.propTypes = {
   isSubmitting: PropTypes.bool,
   isDeleting: PropTypes.bool,
   submissionError: PropTypes.string,
-};
-
-UpdateCollectionDialog.defaultProps = {
-  isSubmitting: false,
-  isDeleting: false,
-  submissionError: null,
-  collection: null, // Important for initial render if dialog can be structured before collection is ready
 };
 
 export default UpdateCollectionDialog;
