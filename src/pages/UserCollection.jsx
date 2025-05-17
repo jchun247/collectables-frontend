@@ -152,7 +152,6 @@ const UserCollection = () => {
       <div className="container mx-auto p-6">
         <div className="bg-red-100 dark:bg-red-900/30 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-center flex items-center justify-center" role="alert">
           <AlertTriangle className="h-5 w-5 mr-2" />
-          <strong className="font-bold">Oops! </strong>
           <span className="block sm:inline">{error}</span>
         </div>
       </div>
