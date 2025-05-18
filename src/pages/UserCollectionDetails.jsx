@@ -37,9 +37,15 @@ function UserCollectionDetails({ collectionType }) {
     const fetchCollectionItems = async () => {
       if (!collectionId) return;
       try {
+        const token = await getAccessTokenSilently();
         setIsLoadingItems(true);
         setFetchItemsError(null);
-        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`);
+        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
         if (!response.ok) {
           throw new Error(`Failed to fetch ${collectionType} items`);
         }
