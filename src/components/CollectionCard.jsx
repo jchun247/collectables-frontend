@@ -17,7 +17,7 @@ const CollectionCard = ({ collection }) => {
 
   return (
     <Card 
-      className="p-4 space-y-2 cursor-pointer hover:shadow-md transition-shadow"
+      className="p-4 space-y-2 cursor-pointer hover:shadow-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 ease-in-out"
       onClick={() => {
         if (collectionType === 'PORTFOLIO') {
           navigate(`/collections/portfolios/${id}`, { state: { collection } });
