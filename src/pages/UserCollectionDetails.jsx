@@ -3,7 +3,7 @@ import { useParams, useLocation, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types'
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Settings, Star, CalendarDays, ListOrdered, Info, Globe } from "lucide-react"
 import RenderCard from "@/components/RenderCard"
@@ -161,6 +161,9 @@ function UserCollectionDetails({ collectionType }) {
             )}
           </div>
           <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+            <DialogDescription className="sr-only">
+              Collection settings dialog for {currentCollection.name} - {currentCollection.description}
+             </DialogDescription>
             <DialogTrigger asChild>
               <Button variant="outline" size="icon" className="flex-shrink-0">
                 <Settings className="h-5 w-5" />
@@ -170,10 +173,6 @@ function UserCollectionDetails({ collectionType }) {
             {currentCollection && (
               <UpdateCollectionDialog
                 isOpen={isSettingsOpen}
-                onClose={() => {
-                  setIsSettingsOpen(false)
-                  setDialogSubmissionError(null);
-                }}
                 collection={currentCollection}
                 collectionType={collectionType}
                 onSubmit={handleUpdateCollection}

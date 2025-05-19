@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea";
@@ -10,7 +10,6 @@ import PropTypes from "prop-types";
 
 const UpdateCollectionDialog = ({
   isOpen,
-  onClose,
   collection = null, // Default value moved here
   collectionType, // "list" or "portfolio"
   onSubmit,
@@ -69,19 +68,12 @@ const UpdateCollectionDialog = ({
     onDelete(); // Call the onDelete prop function
   }
 
-  const handleOpenChange = (open) => {
-    if (!open) {
-      onClose();
-    }
-  };
-
   if (!collection) {
     // Or some placeholder/loading state if the dialog can be open without a collection briefly
     return null;
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md md:max-w-lg">
         <DialogHeader className="mb-1">
           <DialogTitle>Update {collectionTypeLabel} Settings</DialogTitle>
@@ -232,13 +224,11 @@ const UpdateCollectionDialog = ({
           </DialogFooter>
         </form>
       </DialogContent>
-    </Dialog>
   );
 };
 
 UpdateCollectionDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
   collection: PropTypes.shape({
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     name: PropTypes.string,
