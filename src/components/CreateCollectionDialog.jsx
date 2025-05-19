@@ -59,7 +59,7 @@ const CreateCollectionDialog = ({ isOpen, onClose, type, onSubmit, isSubmitting,
               onChange={(e) => setName(e.target.value)}
               placeholder={`Enter ${type === "list" ? "list" : "portfolio"} name`}
               required
-              autofocus
+              autoFocus
               maxLength={255}
               className="text-base"
             />
