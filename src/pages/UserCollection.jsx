@@ -92,7 +92,7 @@ const UserCollection = () => {
           description: collectionData.description,
           type: "PORTFOLIO",
           totalCostBasis: 0.00,
-          isPublic: collectionData.visibility === 'PUBLIC'
+          public: collectionData.visibility === 'PUBLIC'
         }
       } else {
         endPointUrl = `${apiBaseUrl}/collections/lists`;
@@ -232,15 +232,14 @@ const UserCollection = () => {
             </div>
             {(portfolios.length === 0 || lists.length === 0) && (
               <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 text-center">
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">Want to add more?</p>
                   <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-3">
                       {portfolios.length === 0 && (
-                          <Button onClick={() => handleOpenCreateDialog('portfolio')} variant="outline" size="sm">
+                          <Button onClick={() => handleOpenCreateDialog('portfolio')} variant="outline" size="lg">
                               <Plus className="w-4 h-4 mr-1.5" /> Create a Portfolio
                           </Button>
                       )}
                       {lists.length === 0 && (
-                            <Button onClick={() => handleOpenCreateDialog('list')} variant="outline" size="sm">
+                            <Button onClick={() => handleOpenCreateDialog('list')} variant="outline" size="lg">
                               <Plus className="w-4 h-4 mr-1.5" /> Create a List
                           </Button>
                       )}
