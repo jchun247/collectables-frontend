@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Settings, Star, CalendarDays, ListOrdered, Info, Globe } from "lucide-react"
+import { AlertTriangle, ArrowLeft, Settings, Star, CalendarDays, ListOrdered, Loader2, Info, Globe } from "lucide-react"
 import RenderCard from "@/components/RenderCard"
 import UpdateCollectionDialog from '../components/UpdateCollectionDialog'
 import { formatCurrency, formatDate } from "@/utils/textFormatters"
@@ -17,10 +17,13 @@ function UserCollectionDetails({ collectionType }) {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [currentCollection, setCurrentCollection] = useState(location.state?.collection);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [currentCollection, setCurrentCollection] = useState(null);
+  const [isLoadingCollectionDetails, setIsLoadingCollectionDetails] = useState(true);
+  const [collectionDetailsError, setCollectionDetailsError] = useState(null);
+
 
   // State for API call status for update/delete operations
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeletingCollection, setIsDeletingCollection] = useState(false);
   const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
@@ -33,6 +36,56 @@ function UserCollectionDetails({ collectionType }) {
   const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
+  useEffect(() => {
+    const fetchDetails = async () => {
+      if (!collectionId) {
+        setCollectionDetailsError(`No ${collectionType} ID provided in the URL.`);
+        setIsLoadingCollectionDetails(false);
+        setCurrentCollection(null);
+        return;
+      }
+
+      setIsLoadingCollectionDetails(true);
+      setCollectionDetailsError(null);
+
+      // Check if collection data is already in location.state and matches the current collectionId
+      if (location.state?.collection && location.state.collection.id.toString() === collectionId.toString()) {
+        setCurrentCollection(location.state.collection);
+        setIsLoadingCollectionDetails(false);
+        return; // Data found in state, no need to fetch from API
+      }
+
+      // If not in state or ID mismatch, fetch from API
+      try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}`, { // Endpoint to get a single collection's details
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error(`${collectionType.charAt(0).toUpperCase() + collectionType.slice(1)} with ID '${collectionId}' not found.`);
+          }
+          const errorData = await response.json().catch(() => ({ message: `Failed to fetch ${collectionType} details.` }));
+          throw new Error(errorData.message || `Failed to fetch ${collectionType} details. Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setCurrentCollection(data);
+      } catch (err) {
+        setCollectionDetailsError(err.message);
+        setCurrentCollection(null); // Ensure currentCollection is null on error to trigger correct UI
+      } finally {
+        setIsLoadingCollectionDetails(false);
+      }
+    };
+
+    fetchDetails();
+  }, [collectionId, collectionType, location.state?.collection, apiBaseUrl, getAccessTokenSilently]);
+
+  // Fetch cards within the collection
   useEffect(() => {
     const fetchCollectionItems = async () => {
       if (!collectionId) return;
@@ -59,16 +112,36 @@ function UserCollectionDetails({ collectionType }) {
     }
 
     fetchCollectionItems()
-  }, [collectionId, collectionType, apiBaseUrl]);
+  }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently]);
 
-  // This is useful if navigating to the same route with different state
-  useEffect(() => {
-    if (location.state?.collection && location.state.collection.id === currentCollection?.id) {
-      setCurrentCollection(location.state.collection);
-    } else if (location.state?.collection) {
-      setCurrentCollection(location.state.collection);
-    }
-  }, [location.state?.collection, currentCollection?.id]);
+  if (isLoadingCollectionDetails) {
+    return (
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center items-center min-h-[calc(100vh-200px)]">
+        <Loader2 className="h-12 w-12 animate-spin text-sky-600 dark:text-sky-500" />
+        <p className="mt-4 text-lg text-slate-700 dark:text-slate-300">Loading {collectionType} details...</p>
+      </div>
+    );
+  }
+
+  if (collectionDetailsError && !currentCollection) {
+    return (
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 text-center">
+        <div className="max-w-md mx-auto bg-white dark:bg-slate-800 shadow-lg rounded-lg p-6 border border-red-300 dark:border-red-700">
+          <AlertTriangle className="h-12 w-12 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-red-700 dark:text-red-300 mb-2">Error Loading {collectionType.charAt(0).toUpperCase() + collectionType.slice(1)}</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">{collectionDetailsError}</p>
+          <Button variant="outline" onClick={() => navigate('/collections', { replace: true })}>
+            Back to Collections
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback if currentCollection is null after loading attempts without a specific error
+  if (!currentCollection) {
+    return <Navigate to="/collections" replace />;
+  }
 
   const handleUpdateCollection = async (formData) => {
     setIsUpdating(true);
@@ -136,14 +209,19 @@ function UserCollectionDetails({ collectionType }) {
     }
   };
 
-  if (!currentCollection) {
-    return <Navigate to="/collections" replace />
-  }
-
   const collectionTypeLabel = collectionType.charAt(0).toUpperCase() + collectionType.slice(1)
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-8 min-h-screen">
+    <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen">
+      {/* Back Button */}
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(`/collections`)}
+          className="-ml-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+        >
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Collections
+      </Button>
       {/* Collection Header Section */}
       <header className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -251,8 +329,8 @@ function UserCollectionDetails({ collectionType }) {
         </div>
         {isLoadingItems ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, index) => (
-              <div key={index} className="w-full h-96 bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
+            {[...Array(collectionItems?.items?.length || 6)].map((_, index) => (
+              <div key={index} className="w-full aspect-[3/4] bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
             ))}
           </div>
         ) : fetchItemsError ? (
@@ -266,12 +344,35 @@ function UserCollectionDetails({ collectionType }) {
             </p>
           </div>
         ) : collectionItems?.items?.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             {collectionItems.items.map((item) => (
-              <RenderCard
+              <div
                 key={item.id}
-                card={item.card}
-              />
+                onClick={() => {
+                  if (collectionType === 'portfolio') {
+                    navigate(
+                      `/collections/portfolios/${collectionId}/card/${item.id}`,
+                      { 
+                        state: { 
+                          cardId: item.card.id,
+                          quantity: item.quantity,
+                          condition: item.condition,
+                          finish: item.finish,
+                        }
+                      }
+                    );
+                  }
+                }}
+              >
+                <RenderCard
+                  card={item.card}
+                  showQuantity={true}
+                  quantity={item.quantity}
+                  showDetails={true}
+                  finish={item.finish}
+                  condition={item.condition}
+                />
+              </div>
             ))}
           </div>
         ) : (
