@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CollectionCard = ({ collection }) => {
-  const { id, name, description, public: isPublic, numProducts, currentValue, favourite: initialFavourite, collectionType } = collection;
+  const { id, name, description, public: isPublic, numProducts, currentValue, favourite: initialFavourite, collectionType, totalCostBasis } = collection;
   const navigate = useNavigate();
   const [isFavourite, setIsFavourite] = useState(initialFavourite);
 
@@ -48,6 +48,11 @@ const CollectionCard = ({ collection }) => {
         <p className="text-sm">Cards: {numProducts}</p>
         <p className="text-sm font-medium">
           Value: ${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          {collectionType === 'PORTFOLIO' && (
+            <span className={`ml-1 ${currentValue - totalCostBasis >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              ({((currentValue - totalCostBasis) >= 0 ? '+' : '')}{(currentValue - totalCostBasis).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+            </span>
+          )}
         </p>
       </div>
       <div className="flex justify-end items-center space-x-1">
@@ -73,7 +78,8 @@ CollectionCard.propTypes = {
     public: PropTypes.bool.isRequired,
     numProducts: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,
-    favourite: PropTypes.bool.isRequired
+    favourite: PropTypes.bool.isRequired,
+    totalCostBasis: PropTypes.number
   }).isRequired
 };
 
