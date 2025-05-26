@@ -328,9 +328,7 @@ function UserCollectionDetails({ collectionType }) {
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold text-slate-800 dark:text-slate-100">
-                {isLoadingItems ? (
-                  <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 animate-pulse rounded"></div>
-                ) : collectionItems?.totalItems ?? 0}
+                {currentCollection.numProducts}
               </div>
             </CardContent>
           </Card>
