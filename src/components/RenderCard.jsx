@@ -8,7 +8,15 @@ import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
 import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
 
-const getDisplayPrice = (prices) => {
+const getDisplayPrice = (prices, finish = null, condition = null) => {
+    // If a specific finish and condition are provided, find the exact price (used by UserCollectionDetails)
+    if (finish && condition) {
+        const specificPrice = prices.find(p => p.finish === finish && p.condition === condition);
+        if (specificPrice) {
+            return specificPrice.price.toFixed(2);
+        }
+    }
+
     if (prices.length === 1) return prices[0].price.toFixed(2);
 
     const finishPriority = ["NORMAL", "HOLOFOIL", "REVERSE_HOLO", "STAMP"];
@@ -81,46 +89,6 @@ const RenderCard = ({ card, showQuantity = false, quantity = null, showDetails =
                                 )}
                             </div>
                         </div>
-                        {/* <div className="p-4 h-[140px]">
-                            <div className="h-full flex flex-col justify-between">
-                                <div>
-                                    <h3 className="pb-1 text-lg font-semibold tracking-tight leading-none truncate" title={card.name}>
-                                        {card.name}
-                                    </h3>
-                                    <p className="text-sm font-medium mt-0.5">{card.setNumber}</p>
-                                    <button 
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            navigateToSet(navigate, card.setId);
-                                        }}
-                                        className="block text-left w-full relative z-20"
-                                    >
-                                        <p className="text-sm text-muted-foreground truncate mt-1 hover:text-blue-500 hover:underline transition-colors" title={card.setName}>
-                                            {card.setName}
-                                        </p>
-                                    </button>
-                                </div>
-                                <div className="mt-auto space-y-2">
-                                    {showDetails && finish && condition && (
-                                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">
-                                            {formatCardCondition(condition)} &bull; {formatCardFinish(finish)}
-                                        </p>
-                                    )}
-                                    <div className="flex items-center justify-between">
-                                        <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1">
-                                            <img 
-                                                src={RARITY_IMAGES[card.rarity] || RARITY_IMAGES.COMMON}
-                                                alt={card.rarity}
-                                                className="h-4 w-auto"
-                                            />
-                                        </span>
-                                        <span className="text-lg font-semibold text-green-500">
-                                            ${getDisplayPrice(card.prices)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
                         <div className="p-4 flex flex-col justify-between h-[140px]">
                             {/* TOP GROUP: Card Name and Set Info */}
                             <div className="space-y-1.5">
@@ -162,7 +130,7 @@ const RenderCard = ({ card, showQuantity = false, quantity = null, showDetails =
                                         />
                                     </span>
                                     <span className="text-lg font-semibold text-green-500">
-                                        ${getDisplayPrice(card.prices)}
+                                        ${getDisplayPrice(card.prices, finish, condition)}
                                     </span>
                                 </div>
                             </div>
