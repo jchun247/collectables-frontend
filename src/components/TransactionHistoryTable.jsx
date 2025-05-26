@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types';
+import UpdateTransactionDialog from './UpdateTransactionDialog';
 import { Loader2, AlertTriangle, ListOrdered, ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -31,8 +33,53 @@ function TransactionHistoryTable({
   isLoading = false, 
   error = null,
   onEdit = () => {},
-  onDelete = () => {} 
+  onDelete = () => {},
+  collectionId 
 }) {
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const { getAccessTokenSilently } = useAuth0();
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
+
+  const handleEdit = (transaction) => {
+    setSelectedTransaction(transaction);
+    setIsUpdateDialogOpen(true);
+  };
+
+  const handleUpdateSubmit = async (updatedTransaction) => {
+    setIsSubmitting(true);
+    setDialogSubmissionError(null);
+
+    try {
+      const accessToken = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${collectionId}/transactions/${updatedTransaction.id}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedTransaction),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to update transaction');
+      }
+
+      const updatedData = await response.json();
+      onEdit(updatedData);
+      setIsUpdateDialogOpen(false);
+    } catch (error) {
+      setDialogSubmissionError(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const [sorting, setSorting] = useState([]);
   const [rowSelection, setRowSelection] = useState({});
   const [pagination, setPagination] = useState({
@@ -40,7 +87,10 @@ function TransactionHistoryTable({
     pageSize: 5,
   });
 
-  const columns = transactionHistoryTableColumns({ onEdit, onDelete });
+  const columns = transactionHistoryTableColumns({ 
+    onEdit: handleEdit, 
+    onDelete 
+  });
 
   const tableInstance = useReactTable({
     data: transactionHistory.items || [],
@@ -214,6 +264,14 @@ function TransactionHistoryTable({
           </div>
         </div>
       </div>
+      <UpdateTransactionDialog
+        isOpen={isUpdateDialogOpen}
+        transaction={selectedTransaction}
+        onSubmit={handleUpdateSubmit}
+        isSubmitting={isSubmitting}
+        submissionError={dialogSubmissionError}
+        onClose={() => setIsUpdateDialogOpen(false)}
+      />
     </div>
   );
 }
@@ -221,7 +279,7 @@ function TransactionHistoryTable({
 TransactionHistoryTable.propTypes = {
   transactionHistory: PropTypes.shape({
     items: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string,
+      id: PropTypes.number,
       quantity: PropTypes.number,
       costBasis: PropTypes.number,
     })).isRequired,
@@ -230,6 +288,7 @@ TransactionHistoryTable.propTypes = {
   error: PropTypes.string,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
+  collectionId: PropTypes.number.isRequired,
 };
 
 export default TransactionHistoryTable;

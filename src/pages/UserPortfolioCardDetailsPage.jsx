@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 import StatCard from "@/components/StatCard";
 import TransactionHistoryTable from "@/components/TransactionHistoryTable";
 import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
@@ -17,6 +18,7 @@ function UserPortfolioCardDetailsPage() {
   const finish = location.state?.finish;
   const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const { toast } = useToast();
 
   const [cardDetails, setCardDetails] = useState(null);
   const [transactionHistory, setTransactionHistory] = useState({ items: [] });
@@ -191,17 +193,7 @@ function UserPortfolioCardDetailsPage() {
               View Detailed Sales History <ExternalLink className="ml-1 h-3 w-3" />
             </a> */}
           </div>
-
-          {/* Action Buttons (Placeholder functionality) */}
-          {/* <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-            <Button size="lg" className="w-full sm:w-auto flex-grow bg-green-600 hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600 text-white">
-              <Plus className="mr-2 h-5 w-5" /> Add Copy
-            </Button>
-            <Button size="lg" variant="destructive" className="w-full sm:w-auto flex-grow">
-              <Minus className="mr-2 h-5 w-5" /> Log Sale
-            </Button>
-          </div> */}
-
+          
           {/* Stats Row */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
             <StatCard title="Your Quantity" value={quantity} icon={<Hash className="text-slate-500 dark:text-slate-400"/>} />
@@ -229,6 +221,19 @@ function UserPortfolioCardDetailsPage() {
           transactionHistory={transactionHistory}
           isLoading={isLoadingHistory}
           error={historyError}
+          collectionId={params.portfolioId}
+          onEdit={(updatedTransaction) => {
+            setTransactionHistory(prev => ({
+              ...prev,
+              items: prev.items.map(item => 
+                item.id === updatedTransaction.id ? updatedTransaction : item
+              ),
+            }));
+            toast({
+              title: "Transaction Updated",
+              description: "The transaction has been successfully updated.",
+            });
+          }}
         />
       </div>
     </div>
