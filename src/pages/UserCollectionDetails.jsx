@@ -3,7 +3,15 @@ import { useParams, useLocation, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types'
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogDescription, DialogTrigger } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { AlertTriangle, ArrowLeft, Settings, Star, CalendarDays, ListOrdered, Loader2, Info, Globe } from "lucide-react"
 import RenderCard from "@/components/RenderCard"
@@ -27,6 +35,7 @@ function UserCollectionDetails({ collectionType }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeletingCollection, setIsDeletingCollection] = useState(false);
   const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   // State for fetching collection items
   const [collectionItems, setCollectionItems] = useState(null);
@@ -178,13 +187,9 @@ function UserCollectionDetails({ collectionType }) {
   };
 
   const handleDeleteCollection = async () => {
-    const collectionTypeLabel = collectionType.charAt(0).toUpperCase() + collectionType.slice(1);
-    if (!window.confirm(`Are you sure you want to delete this ${collectionTypeLabel}? This action cannot be undone.`)) {
-      return;
-    }
-
     setIsDeletingCollection(true);
     setDialogSubmissionError(null);
+    setShowDeleteConfirm(false);
 
     try {
       const token = await getAccessTokenSilently();
@@ -238,6 +243,7 @@ function UserCollectionDetails({ collectionType }) {
               </p>
             )}
           </div>
+          {/* Settings Dialog */}
           <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
             <DialogDescription className="sr-only">
               Collection settings dialog for {currentCollection.name} - {currentCollection.description}
@@ -254,12 +260,46 @@ function UserCollectionDetails({ collectionType }) {
                 collection={currentCollection}
                 collectionType={collectionType}
                 onSubmit={handleUpdateCollection}
-                onDelete={handleDeleteCollection}
+                onDelete={() => setShowDeleteConfirm(true)}
                 isSubmitting={isUpdating}
                 isDeleting={isDeletingCollection}
                 submissionError={dialogSubmissionError}
               />
             )}
+          </Dialog>
+          
+          {/* Delete Confirmation Dialog */}
+          <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Delete {collectionTypeLabel}</DialogTitle>
+              </DialogHeader>
+              <div className="py-6">
+                <p className="text-center text-slate-700 dark:text-slate-300">
+                  Are you sure you want to delete <span className="font-semibold">{currentCollection.name}</span>?
+                  <br />
+                  <span className="text-red-600 dark:text-red-400 text-sm">This action cannot be undone.</span>
+                </p>
+              </div>
+              <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-center sm:space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="mt-3 sm:mt-0"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={handleDeleteCollection}
+                  disabled={isDeletingCollection}
+                >
+                  {isDeletingCollection ? "Deleting..." : "Delete"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
           </Dialog>
         </div>
       </header>
