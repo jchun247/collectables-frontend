@@ -10,13 +10,13 @@ import PropTypes from "prop-types";
 
 const UpdateCollectionDialog = ({
   isOpen,
-  collection = null, // Default value moved here
+  collection = null,
   collectionType, // "list" or "portfolio"
   onSubmit,
   onDelete,
-  isSubmitting = false, // Default value moved here
-  isDeleting = false, // Default value moved here
-  submissionError = null, // Default value moved here
+  isSubmitting = false,
+  isDeleting = false,
+  submissionError = null,
 }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -41,13 +41,6 @@ const UpdateCollectionDialog = ({
         setListType(collection.listType || "GENERAL");
       }
     }
-    // When the dialog closes, fields will retain their last state until opened with new `collection` data.
-    // If you prefer to clear them or reset to initial prop values on every close:
-    // if (!isOpen) {
-    //   setName(collection?.name || ""); // Or just ""
-    //   setDescription(collection?.description || ""); // Or just ""
-    //   // etc.
-    // }
   }, [isOpen, collection, collectionType]);
 
   const handleSubmit = (e) => {
@@ -65,11 +58,10 @@ const UpdateCollectionDialog = ({
 
   const handleDelete = () => {
     if (isDeleting) return;
-    onDelete(); // Call the onDelete prop function
+    onDelete();
   }
 
   if (!collection) {
-    // Or some placeholder/loading state if the dialog can be open without a collection briefly
     return null;
   }
 
@@ -233,8 +225,8 @@ UpdateCollectionDialog.propTypes = {
     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     name: PropTypes.string,
     description: PropTypes.string,
-    public: PropTypes.bool, // Assuming your collection object uses 'public' boolean
-    listType: PropTypes.string, // Relevant if collectionType is "list"
+    public: PropTypes.bool,
+    listType: PropTypes.string,
   }),
   collectionType: PropTypes.oneOf(["list", "portfolio"]).isRequired,
   onSubmit: PropTypes.func.isRequired,
