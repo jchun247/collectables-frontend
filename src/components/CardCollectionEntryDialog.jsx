@@ -154,16 +154,15 @@ const CardCollectionEntryDialog = ({
     }
     
     const form = new FormData(e.target);
-    const collectionId = form.get('collection');
 
     const submitData = {
       cardId,
       condition: selectedCondition,
       finish: selectedFinish,
-      quantity: parseInt(form.get('quantity')),
+      quantity: form.get('quantity'),
       purchaseDate: form.get('purchaseDate'),
       costBasis: type === 'portfolio' ? parseFloat(unitPrice) || 0 : 0,
-      collectionId: parseInt(collectionId)
+      collectionId: disableCollectionSelect ? Number(currentPortfolioId) : Number(form.get('collection'))
     };
 
     onSubmit(submitData);
@@ -369,7 +368,7 @@ CardCollectionEntryDialog.propTypes = {
     price: PropTypes.number.isRequired
   })),
   cardId: PropTypes.number.isRequired,
-  currentPortfolioId: PropTypes.string,
+  currentPortfolioId: PropTypes.number,
   disableCollectionSelect: PropTypes.bool,
   selectedCardCondition: PropTypes.string,
   selectedCardFinish: PropTypes.string,
