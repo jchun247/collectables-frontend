@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -21,9 +20,8 @@ import {
 } from "@/components/ui/select";
 import { formatCardFinish, formatCardCondition } from '@/utils/textFormatters';
 
-const CardCollectionEntryDialog = ({ isOpen, onOpenChange, type = "portfolio", prices = [], cardId }) => {
+const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId }) => {
   const { user, getAccessTokenSilently } = useAuth0();
-  const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [collections, setCollections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -135,54 +133,26 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, type = "portfolio", p
     // If checked is true, the main useEffect will set the unitPrice
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (dateError || error || (collections.length === 0)) {
       return;
     }
     
-    const formData = new FormData(e.target);
-    const collectionId = formData.get('collection');
-    
-    try {
-      const token = await getAccessTokenSilently();
-      
-      const requestBody = {
-        cardId,
-        condition: selectedCondition,
-        finish: selectedFinish,
-        quantity: parseInt(formData.get('quantity')),
-        purchaseDate: formData.get('purchaseDate'),
-        costBasis: type === 'portfolio' ? parseFloat(unitPrice) || 0 : 0
-      };
+    const form = new FormData(e.target);
+    const collectionId = form.get('collection');
 
-      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
-      });
+    const submitData = {
+      cardId,
+      condition: selectedCondition,
+      finish: selectedFinish,
+      quantity: parseInt(form.get('quantity')),
+      purchaseDate: form.get('purchaseDate'),
+      costBasis: type === 'portfolio' ? parseFloat(unitPrice) || 0 : 0,
+      collectionId: parseInt(collectionId)
+    };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add card to collection');
-      }
-      
-      toast({
-        title: "Success",
-        description: "Card added to collection successfully"
-      });
-      onOpenChange(false);
-    } catch (err) {
-      console.error('Error adding card to collection:', err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: err.message || 'Failed to add card to collection'
-      });
-    }
+    onSubmit(submitData);
   };
 
   return (

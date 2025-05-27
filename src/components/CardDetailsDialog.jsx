@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import CardDetailsTab from './CardDetailsTab';
 import CardPriceHistoryTab from './CardPriceHistoryTab';
+import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -20,11 +21,48 @@ import AuthPromptDialog from './AuthPromptDialog';
 
 const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
+  const { toast } = useToast();
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [dialogState, setDialogState] = useState({ isOpen: false, type: null });
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   if (!cardDetails) return null;
+
+  const handleSubmit = async (formData) => {
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${formData.collectionId}/cards`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add card to collection');
+      }
+
+      toast({
+        title: "Success",
+        description: "Card added to collection successfully"
+      });
+      setDialogState({ isOpen: false, type: null });
+    } catch (err) {
+      console.error('Error adding card to collection:', err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || 'Failed to add card to collection'
+      });
+    }
+  };
 
   const handleCollectionAction = (type) => {
     if (!isAuthenticated) {
@@ -87,6 +125,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                   type={dialogState.type || "portfolio"}
                   prices={cardDetails.prices}
                   cardId={cardDetails.id}
+                  onSubmit={handleSubmit}
                 />
               </div>
             </div>
