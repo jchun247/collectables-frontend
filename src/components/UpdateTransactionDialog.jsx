@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast";
 import PropTypes from "prop-types";
 
 const UpdateTransactionDialog = ({
@@ -16,6 +17,7 @@ const UpdateTransactionDialog = ({
 
   const [dateError, setDateError] = useState("");
   const [costBasis, setCostBasis] = useState(0);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (transaction?.costBasis !== undefined) {
@@ -28,12 +30,17 @@ const UpdateTransactionDialog = ({
     if (isSubmitting) return;
 
     const formData = new FormData(e.target);
-    onSubmit({
-      ...transaction,
-      purchaseDate: new Date(formData.get('purchaseDate')).toISOString(),
-      quantity: Number(formData.get('quantity')),
-      costBasis: Number(formData.get('costBasis')),
-    });
+      const updatedData = {
+        ...transaction,
+        quantity: Number(formData.get('quantity')),
+        purchaseDate: new Date(formData.get('purchaseDate')).toISOString(),
+        costBasis: Number(formData.get('costBasis')),
+      };
+      onSubmit(updatedData);
+      toast({
+        title: "Transaction Updated",
+        description: "The transaction has been successfully updated.",
+      });
   };
 
   if (!transaction) {

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus } from 'lucide-react';
+import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus, Minus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import StatCard from "@/components/StatCard";
 import TransactionHistoryTable from "@/components/TransactionHistoryTable";
 import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
@@ -18,7 +17,6 @@ function UserPortfolioCardDetailsPage() {
   const finish = location.state?.finish;
   const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  const { toast } = useToast();
 
   const [cardDetails, setCardDetails] = useState(null);
   const [transactionHistory, setTransactionHistory] = useState({ items: [] });
@@ -174,10 +172,16 @@ function UserPortfolioCardDetailsPage() {
               <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 dark:text-slate-100 leading-tight">
                 {cardDetails.name}
               </h1>
-              <Button className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95">
-                <Plus className="h-4 w-4" />
-                Add
-              </Button>
+              <div className="flex gap-2">
+                <Button className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+                <Button variant="destructive" className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95">
+                  <Minus className="h-4 w-4 mr-1" />
+                  Sell
+                </Button>
+              </div>
             </div>
             <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">
               {cardDetails.setName} · #{cardDetails.setNumber}
@@ -229,10 +233,14 @@ function UserPortfolioCardDetailsPage() {
                 item.id === updatedTransaction.id ? updatedTransaction : item
               ),
             }));
-            toast({
-              title: "Transaction Updated",
-              description: "The transaction has been successfully updated.",
-            });
+          }}
+          onDelete={(deletedTransactions) => {
+            setTransactionHistory(prev => ({
+              ...prev,
+              items: prev.items.filter(item => 
+                !deletedTransactions.some(deletedItem => deletedItem.id === item.id)
+              ),
+            }));
           }}
         />
       </div>

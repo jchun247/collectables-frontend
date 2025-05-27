@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { useToast } from "@/hooks/use-toast";
 import UpdateTransactionDialog from './UpdateTransactionDialog';
+import DeleteTransactionDialog from './DeleteTransactionDialog';
 import { Loader2, AlertTriangle, ListOrdered, ChevronsLeft, ChevronLeft, ChevronsRight, ChevronRight } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import {
@@ -38,10 +41,77 @@ function TransactionHistoryTable({
 }) {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const { getAccessTokenSilently } = useAuth0();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setDeleteError(null);
+    let failedCount = 0;
+
+    try {
+      const accessToken = await getAccessTokenSilently();
+      
+      // Delete each selected transaction
+      for (const transaction of selectedTransactions) {
+        const response = await fetch(
+          `${apiBaseUrl}/collections/${collectionId}/transactions/${transaction.id}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          failedCount++;
+          console.error(`Failed to delete transaction ${transaction.id}`);
+        }
+      }
+
+      if (failedCount > 0) {
+        throw new Error(`Failed to delete ${failedCount} transaction(s)`);
+      }
+
+      // If all deletions were successful
+      onDelete(selectedTransactions);
+      toast({
+        title: "Transaction Deleted",
+        description: `Successfully deleted ${selectedTransactions.length} transaction${selectedTransactions.length === 1 ? '' : 's'}.`,
+      });
+      setIsDeleteDialogOpen(false);
+      setRowSelection({});
+
+      // Check if all transactions are deleted
+      const remainingTransactions = transactionHistory.items.filter(
+        item => !selectedTransactions.some(selected => selected.id === item.id)
+      );
+      
+      if (remainingTransactions.length === 0) {
+        // Navigate to portfolio view if all transactions are deleted
+        navigate(`/collections/portfolios/${collectionId}`);
+      }
+    } catch (error) {
+      setDeleteError(error.message);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteClick = (transactions) => {
+    setSelectedTransactions(Array.isArray(transactions) ? transactions : [transactions]);
+    setIsDeleteDialogOpen(true);
+  };
 
   const handleEdit = (transaction) => {
     setSelectedTransaction(transaction);
@@ -89,7 +159,7 @@ function TransactionHistoryTable({
 
   const columns = transactionHistoryTableColumns({ 
     onEdit: handleEdit, 
-    onDelete 
+    onDelete: handleDeleteClick
   });
 
   const tableInstance = useReactTable({
@@ -118,7 +188,7 @@ function TransactionHistoryTable({
             variant="destructive"
             size="sm"
             className="ml-4"
-            onClick={() => onDelete(
+            onClick={() => handleDeleteClick(
               tableInstance
                 .getFilteredSelectedRowModel()
                 .rows.map(row => row.original)
@@ -271,6 +341,14 @@ function TransactionHistoryTable({
         isSubmitting={isSubmitting}
         submissionError={dialogSubmissionError}
         onClose={() => setIsUpdateDialogOpen(false)}
+      />
+      <DeleteTransactionDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        isDeleting={isDeleting}
+        transactionsCount={selectedTransactions.length}
+        error={deleteError}
       />
     </div>
   );
