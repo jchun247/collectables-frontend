@@ -253,10 +253,10 @@ function TransactionHistoryTable({
                 <div className="py-12">
                   <ListOrdered className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500 mb-4" />
                   <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-1">
-                    No Transactions Yet
+                    No Transaction History
                   </h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400">
-                    There&apos;s no transaction history recorded for this card.
+                    No transactions have been recorded yet.
                   </p>
                 </div>
               </TableCell>

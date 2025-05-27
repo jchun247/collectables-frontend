@@ -23,6 +23,20 @@ export const transactionHistoryTableColumns = ({ onEdit, onDelete }) => [
     enableSorting: false,
   },
   {
+    id: 'transactionType',
+    header: 'Type',
+    cell: ({ row }) => {
+      const quantity = row.getValue('quantity');
+      const isSell = quantity < 0;
+      return (
+        <span className={isSell ? 'text-red-500' : 'text-green-500'}>
+          {isSell ? 'Sell' : 'Add'}
+        </span>
+      );
+    },
+    enableSorting: false,
+  },
+  {
     accessorKey: 'purchaseDate',
     header: ({ column }) => (
       <Button
@@ -65,7 +79,10 @@ export const transactionHistoryTableColumns = ({ onEdit, onDelete }) => [
         }`} />
       </Button>
     ),
-    cell: ({ row }) => `+${row.getValue('quantity')}`,
+    cell: ({ row }) => {
+      const quantity = row.getValue('quantity');
+      return `${quantity > 0 ? '+' : ''}${quantity}`;
+    },
     enableSorting: true,
   },
   {
