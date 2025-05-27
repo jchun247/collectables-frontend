@@ -205,18 +205,42 @@ export const formatModifier = (modifier) => {
 };
 
 /**
- * Formats a date string from YYYY-MM-DD to Month DD, YYYY
- * @param {string} dateStr - The date string to format
- * @returns {string} The formatted date string
+ * Formats a date or datetime string to a more readable format.
+ * Can be configured to show or hide time information if it exists in the string.
+ *
+ * @param {string} dateStr - The date ('YYYY-MM-DD') or datetime string to format.
+ * @param {boolean} [showTime=true] - Set to false to hide the time part even if it exists in the input string.
+ * @returns {string} The formatted date string.
  */
-export const formatDate = (dateStr) => {
+export const formatDate = (dateStr, showTime = false) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
+
+    const hasTime = dateStr.includes('T');
+    
+    // This logic correctly creates a Date object while avoiding timezone-related
+    // errors for date-only strings.
+    let date;
+    if (hasTime) {
+        date = new Date(dateStr);
+    } else {
+        const [year, month, day] = dateStr.split('-');
+        date = new Date(year, parseInt(month) - 1, day);
+    }
+
+    // Dynamically build the formatting options
+    const options = {
         year: 'numeric',
         month: 'long',
-        day: 'numeric'
-    });
+        day: 'numeric',
+    };
+
+    if (hasTime && showTime) {
+        options.hour = 'numeric';
+        options.minute = '2-digit';
+        options.hour12 = true;
+    }
+
+    return date.toLocaleString('en-US', options);
 };
 
 export const formatCurrency = (amount) => {

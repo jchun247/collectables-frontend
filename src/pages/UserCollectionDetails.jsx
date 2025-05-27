@@ -340,7 +340,7 @@ function UserCollectionDetails({ collectionType }) {
             <CardContent>
               <div className="text-xl font-bold text-slate-800 dark:text-slate-100">{formatDate(currentCollection.createdAt)}</div>
               <p className="mt-3 text-xs text-slate-500 dark:text-slate-400">
-                Last updated on: {formatDate(currentCollection.updatedAt)}
+                Last updated on: {formatDate(currentCollection.updatedAt, true)}
               </p>
             </CardContent>
           </Card>
