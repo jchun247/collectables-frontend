@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import StatCard from "@/components/StatCard";
 import TransactionHistoryTable from "@/components/TransactionHistoryTable";
 import CardCollectionEntryDialog from "@/components/CardCollectionEntryDialog";
+import SellCardDialog from "@/components/SellCardDialog";
 import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
 
 function UserPortfolioCardDetailsPage() {
@@ -14,7 +15,6 @@ function UserPortfolioCardDetailsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const cardId = location.state?.cardId;
-  // const quantity = location.state?.quantity;
   const condition = location.state?.condition;
   const finish = location.state?.finish;
   const { getAccessTokenSilently } = useAuth0();
@@ -28,6 +28,7 @@ function UserPortfolioCardDetailsPage() {
   const [cardError, setCardError] = useState(null);
   const [historyError, setHistoryError] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSellDialogOpen, setIsSellDialogOpen] = useState(false);
 
   useEffect(() => {
     const fetchCardDetails = async () => {
@@ -63,6 +64,52 @@ function UserPortfolioCardDetailsPage() {
 
     fetchCardDetails();
   }, [cardId, getAccessTokenSilently, apiBaseUrl]);
+
+  const handleSell = async (formData) => {
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            condition: formData.condition,
+            finish: formData.finish,
+            quantity: formData.quantity,
+            purchaseDate: formData.saleDate,
+            costBasis: formData.costBasis
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to sell card');
+      }
+
+      toast({
+        title: "Success",
+        description: "Card sold successfully"
+      });
+      
+      // Close the dialog
+      setIsSellDialogOpen(false);
+
+      // Also refresh from server to ensure consistency
+      await refreshTransactionHistory();
+    } catch (err) {
+      console.error('Error selling card:', err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || 'Failed to sell card'
+      });
+    }
+  };
 
   const handleSubmit = async (formData) => {
     try {
@@ -241,7 +288,11 @@ function UserPortfolioCardDetailsPage() {
                   <Plus className="h-4 w-4 mr-1" />
                   Add
                 </Button>
-                <Button variant="destructive" className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95">
+                <Button 
+                  variant="destructive" 
+                  onClick={() => setIsSellDialogOpen(true)}
+                  className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95"
+                >
                   <Minus className="h-4 w-4 mr-1" />
                   Sell
                 </Button>
@@ -323,6 +374,17 @@ function UserPortfolioCardDetailsPage() {
         selectedCardFinish={finish}
         disableConditionSelect={true}
         disableFinishSelect={true}
+      />
+
+      {/* Sell Card Dialog */}
+      <SellCardDialog
+        isOpen={isSellDialogOpen}
+        onOpenChange={setIsSellDialogOpen}
+        onSubmit={handleSell}
+        cardCondition={condition}
+        cardFinish={finish}
+        maxQuantity={totalQuantityFromHistory}
+        marketPrice={marketPrice}
       />
     </div>
   );
