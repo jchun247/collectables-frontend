@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { formatCardFinish, formatCardCondition } from '@/utils/textFormatters';
 
-const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId }) => {
+const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId, currentPortfolioId, disableCollectionSelect = false }) => {
   const { user, getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [collections, setCollections] = useState([]);
@@ -42,6 +42,17 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
   useEffect(() => {
     const fetchCollections = async () => {
       if (!isOpen) return;
+
+      // If we have a currentPortfolioId, set it as selected
+      if (currentPortfolioId) {
+        const portfolio = collections.find(c => c.id === parseInt(currentPortfolioId));
+        if (portfolio) {
+          const selectElement = document.querySelector('select[name="collection"]');
+          if (selectElement) {
+            selectElement.value = currentPortfolioId.toString();
+          }
+        }
+      }
       
       try {
         setIsLoading(true);
@@ -302,6 +313,8 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
             <Select 
               name="collection" 
               required
+              defaultValue={currentPortfolioId?.toString()}
+              disabled={disableCollectionSelect}
             >
               <SelectTrigger>
                 <SelectValue placeholder={`Select ${collectionConfig.label.toLowerCase()}`} />
@@ -352,7 +365,9 @@ CardCollectionEntryDialog.propTypes = {
     finish: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired
   })),
-  cardId: PropTypes.number.isRequired
+  cardId: PropTypes.number.isRequired,
+  currentPortfolioId: PropTypes.string,
+  disableCollectionSelect: PropTypes.bool
 };
 
 export default CardCollectionEntryDialog;

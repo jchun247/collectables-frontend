@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus, Minus } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/StatCard";
 import TransactionHistoryTable from "@/components/TransactionHistoryTable";
+import CardCollectionEntryDialog from "@/components/CardCollectionEntryDialog";
 import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
 
 function UserPortfolioCardDetailsPage() {
@@ -12,10 +14,11 @@ function UserPortfolioCardDetailsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const cardId = location.state?.cardId;
-  const quantity = location.state?.quantity;
+  // const quantity = location.state?.quantity;
   const condition = location.state?.condition;
   const finish = location.state?.finish;
   const { getAccessTokenSilently } = useAuth0();
+  const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [cardDetails, setCardDetails] = useState(null);
@@ -24,8 +27,9 @@ function UserPortfolioCardDetailsPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
   const [cardError, setCardError] = useState(null);
   const [historyError, setHistoryError] = useState(null);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchCardDetails = async () => {
       if (!cardId) return;
       
@@ -60,40 +64,97 @@ function UserPortfolioCardDetailsPage() {
     fetchCardDetails();
   }, [cardId, getAccessTokenSilently, apiBaseUrl]);
 
-  useEffect(() => {
-    const fetchTransactionHistory = async () => {
-      if (!params.portfolioId || !params.collectionCardId) return;
-      
-      try {
-        const token = await getAccessTokenSilently();
-        setIsLoadingHistory(true);
-        setHistoryError(null);
-        
-        const response = await fetch(
-          `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transaction-history`, 
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch transaction history');
+  const handleSubmit = async (formData) => {
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${formData.collectionId}/cards`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
         }
-        
-        const data = await response.json();
-        setTransactionHistory(data);
-      } catch (err) {
-        setHistoryError(err.message);
-      } finally {
-        setIsLoadingHistory(false);
-      }
-    };
+      );
 
-    fetchTransactionHistory();
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to add card to collection');
+      }
+
+      const newTransaction = await response.json();
+      
+      toast({
+        title: "Success",
+        description: "Card added to collection successfully"
+      });
+      
+      // Update the transaction history state immediately
+      setTransactionHistory(prev => ({
+        ...prev,
+        items: [...(prev.items || []), newTransaction].sort((a, b) => 
+          new Date(b.purchaseDate) - new Date(a.purchaseDate)
+        )
+      }));
+
+      // Close the dialog
+      setIsAddDialogOpen(false);
+
+      // Also refresh from server to ensure consistency
+      await refreshTransactionHistory();
+    } catch (err) {
+      console.error('Error adding card to collection:', err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: err.message || 'Failed to add card to collection'
+      });
+    }
+  };
+
+  const refreshTransactionHistory = useCallback(async () => {
+    if (!params.portfolioId || !params.collectionCardId) return;
+    
+    try {
+      setIsLoadingHistory(true);
+      setHistoryError(null);
+      
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transaction-history`, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          // Prevent caching to ensure fresh data
+          cache: 'no-store'
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch transaction history');
+      }
+      
+      const data = await response.json();
+      // Sort transactions by date (newest first) and create a new object to ensure state update
+      const sortedData = {
+        ...data,
+        items: [...data.items].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate))
+      };
+      setTransactionHistory(sortedData);
+    } catch (err) {
+      setHistoryError(err.message);
+    } finally {
+      setIsLoadingHistory(false);
+    }
   }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+
+  useEffect(() => {
+    refreshTransactionHistory();
+  }, [refreshTransactionHistory]);
 
   // Redirect if no cardId was passed
   if (!cardId) {
@@ -173,7 +234,10 @@ function UserPortfolioCardDetailsPage() {
                 {cardDetails.name}
               </h1>
               <div className="flex gap-2">
-                <Button className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95">
+                <Button 
+                  onClick={() => setIsAddDialogOpen(true)}
+                  className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95"
+                >
                   <Plus className="h-4 w-4 mr-1" />
                   Add
                 </Button>
@@ -200,7 +264,7 @@ function UserPortfolioCardDetailsPage() {
           
           {/* Stats Row */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <StatCard title="Your Quantity" value={quantity} icon={<Hash className="text-slate-500 dark:text-slate-400"/>} />
+            <StatCard title="Your Quantity" value={totalQuantityFromHistory} icon={<Hash className="text-slate-500 dark:text-slate-400"/>} />
             <StatCard title="Avg Cost / Card" value={`$${averageCost.toFixed(2)}`} /*isMoney={true}*/ icon={<DollarSign className="text-slate-500 dark:text-slate-400"/>} />
             <StatCard title="Total Market Value" value={`$${(marketPrice * totalQuantityFromHistory).toFixed(2)}`} isMoney={true} valueColorClass="text-green-500 dark:text-green-400" icon={<DollarSign className="text-slate-500 dark:text-slate-400"/>} />
             <StatCard title="Est. Return" value={`$${calculatedReturn.toFixed(2)}`} /*isMoney={true}*/ valueColorClass={calculatedReturn >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} icon={<TrendingUp className="text-slate-500 dark:text-slate-400"/>} />
@@ -244,6 +308,18 @@ function UserPortfolioCardDetailsPage() {
           }}
         />
       </div>
+
+      {/* Add Card Dialog */}
+      <CardCollectionEntryDialog
+        isOpen={isAddDialogOpen}
+        onOpenChange={setIsAddDialogOpen}
+        type="portfolio"
+        prices={cardDetails?.prices || []}
+        cardId={cardId}
+        onSubmit={handleSubmit}
+        currentPortfolioId={params.portfolioId}
+        disableCollectionSelect={true}
+      />
     </div>
   );
 }
