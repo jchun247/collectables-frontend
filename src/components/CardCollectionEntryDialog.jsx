@@ -20,7 +20,20 @@ import {
 } from "@/components/ui/select";
 import { formatCardFinish, formatCardCondition } from '@/utils/textFormatters';
 
-const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "portfolio", prices = [], cardId, currentPortfolioId, disableCollectionSelect = false }) => {
+const CardCollectionEntryDialog = ({ 
+  isOpen, 
+  onOpenChange, 
+  onSubmit, 
+  type = "portfolio", 
+  prices = [], 
+  cardId, 
+  currentPortfolioId, 
+  disableCollectionSelect = false,
+  selectedCardCondition,
+  selectedCardFinish,
+  disableConditionSelect = false,
+  disableFinishSelect = false
+}) => {
   const { user, getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [collections, setCollections] = useState([]);
@@ -99,18 +112,19 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
 
    // Effect to set the initial selected finish and condition
   useEffect(() => {
+    // If selected values are provided, use those, otherwise use first available
     if (prices.length > 0) {
-      const initialFinish = uniqueFinishes[0] || "";
+      const initialFinish = selectedCardFinish || uniqueFinishes[0] || "";
       setSelectedFinish(initialFinish);
       
-      const initialCondition = uniqueConditions[0] || "";
+      const initialCondition = selectedCardCondition || uniqueConditions[0] || "";
       setSelectedCondition(initialCondition);
     } else {
       // Reset if prices are cleared
       setSelectedFinish("");
       setSelectedCondition("");
     }
-  }, [prices, uniqueFinishes, uniqueConditions]); // N.B. uniqueFinishes/Conditions depend on prices
+  }, [prices, uniqueFinishes, uniqueConditions, selectedCardFinish, selectedCardCondition]);
 
   // Main effect to update marketPrice and unitPrice based on selections and useMarketPrice
   useEffect(() => {
@@ -192,7 +206,7 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
               required 
               value={selectedCondition}
               onValueChange={handleConditionChange}
-              disabled={uniqueConditions.length <= 1}
+              disabled={disableConditionSelect || uniqueConditions.length <= 1}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select condition" />
@@ -214,7 +228,7 @@ const CardCollectionEntryDialog = ({ isOpen, onOpenChange, onSubmit, type = "por
               required 
               defaultValue={selectedFinish}
               onValueChange={handleFinishChange}
-              disabled={uniqueFinishes.length <= 1}
+              disabled={disableFinishSelect || uniqueFinishes.length <= 1}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select finish" />
@@ -367,7 +381,11 @@ CardCollectionEntryDialog.propTypes = {
   })),
   cardId: PropTypes.number.isRequired,
   currentPortfolioId: PropTypes.string,
-  disableCollectionSelect: PropTypes.bool
+  disableCollectionSelect: PropTypes.bool,
+  selectedCardCondition: PropTypes.string,
+  selectedCardFinish: PropTypes.string,
+  disableConditionSelect: PropTypes.bool,
+  disableFinishSelect: PropTypes.bool
 };
 
 export default CardCollectionEntryDialog;

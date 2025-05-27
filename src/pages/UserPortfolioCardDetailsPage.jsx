@@ -319,6 +319,10 @@ function UserPortfolioCardDetailsPage() {
         onSubmit={handleSubmit}
         currentPortfolioId={params.portfolioId}
         disableCollectionSelect={true}
+        selectedCardCondition={condition}
+        selectedCardFinish={finish}
+        disableConditionSelect={true}
+        disableFinishSelect={true}
       />
     </div>
   );
