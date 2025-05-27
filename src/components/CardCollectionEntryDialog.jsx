@@ -55,17 +55,6 @@ const CardCollectionEntryDialog = ({
   useEffect(() => {
     const fetchCollections = async () => {
       if (!isOpen) return;
-
-      // If we have a currentPortfolioId, set it as selected
-      if (currentPortfolioId) {
-        const portfolio = collections.find(c => c.id === parseInt(currentPortfolioId));
-        if (portfolio) {
-          const selectElement = document.querySelector('select[name="collection"]');
-          if (selectElement) {
-            selectElement.value = currentPortfolioId.toString();
-          }
-        }
-      }
       
       try {
         setIsLoading(true);
