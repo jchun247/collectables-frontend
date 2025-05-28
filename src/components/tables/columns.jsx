@@ -23,18 +23,28 @@ export const transactionHistoryTableColumns = ({ onEdit, onDelete }) => [
     enableSorting: false,
   },
   {
-    id: 'transactionType',
-    header: 'Type',
+    accessorKey: 'transactionType',
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        className="-ml-4"
+      >
+        Type
+        <ArrowUpDown className={`h-4 w-4 transition-transform duration-200 ${
+          column.getIsSorted() === "asc" ? "transform rotate-180" : ""
+        }`} />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const quantity = row.getValue('quantity');
-      const isSell = quantity < 0;
+      const type = row.getValue('transactionType');
       return (
-        <span className={isSell ? 'text-red-500' : 'text-green-500'}>
-          {isSell ? 'Sell' : 'Add'}
+        <span className={type === 'SELL' ? 'text-red-500' : 'text-green-500'}>
+          {type === 'SELL' ? 'Sell' : 'Buy'}
         </span>
       );
     },
-    enableSorting: false,
+    enableSorting: true,
   },
   {
     accessorKey: 'purchaseDate',
@@ -80,8 +90,9 @@ export const transactionHistoryTableColumns = ({ onEdit, onDelete }) => [
       </Button>
     ),
     cell: ({ row }) => {
-      const quantity = row.getValue('quantity');
-      return `${quantity > 0 ? '+' : ''}${quantity}`;
+      const quantity = Math.abs(row.getValue('quantity'));
+      const type = row.getValue('transactionType');
+      return `${type === 'SELL' ? '-' : '+'}${quantity}`;
     },
     enableSorting: true,
   },

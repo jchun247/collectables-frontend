@@ -298,7 +298,7 @@ function UserPortfolioCardDetailsPage() {
                   className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95"
                 >
                   <Plus className="h-4 w-4 mr-1" />
-                  Add
+                  Buy
                 </Button>
                 <Button 
                   variant="destructive" 
