@@ -99,8 +99,17 @@ function UserPortfolioCardDetailsPage() {
       // Close the dialog
       setIsSellDialogOpen(false);
 
-      // Also refresh from server to ensure consistency
-      await refreshTransactionHistory();
+      // Refresh history and get updated data
+      const updatedHistory = await refreshTransactionHistory();
+
+      // Check if history is now empty and navigate if it is
+      if (updatedHistory && updatedHistory.items.length === 0) {
+        toast({
+          title: "Card Removed",
+          description: "Last holding sold. Returning to your portfolio."
+        });
+        navigate(`/collections/portfolios/${params.portfolioId}`);
+      }
     } catch (err) {
       console.error('Error selling card:', err);
       toast({
@@ -192,8 +201,10 @@ function UserPortfolioCardDetailsPage() {
         items: [...data.items].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate))
       };
       setTransactionHistory(sortedData);
+      return sortedData;
     } catch (err) {
       setHistoryError(err.message);
+      return null;
     } finally {
       setIsLoadingHistory(false);
     }
