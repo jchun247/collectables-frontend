@@ -368,7 +368,7 @@ CardCollectionEntryDialog.propTypes = {
     price: PropTypes.number.isRequired
   })),
   cardId: PropTypes.number.isRequired,
-  currentPortfolioId: PropTypes.number,
+  currentPortfolioId: PropTypes.string,
   disableCollectionSelect: PropTypes.bool,
   selectedCardCondition: PropTypes.string,
   selectedCardFinish: PropTypes.string,
