@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CollectionCard = ({ collection }) => {
-  const { id, name, description, public: isPublic, numProducts, currentValue, favourite: initialFavourite, collectionType, totalCostBasis } = collection;
+  const { id, name, description, public: isPublic, numProducts, favourite: initialFavourite, collectionType, currentValue, unrealizedGain } = collection;
   const navigate = useNavigate();
   const [isFavourite, setIsFavourite] = useState(initialFavourite);
 
@@ -49,8 +49,8 @@ const CollectionCard = ({ collection }) => {
         <p className="text-sm font-medium">
           Value: ${currentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           {collectionType === 'PORTFOLIO' && (
-            <span className={`ml-1 ${currentValue - totalCostBasis >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              ({((currentValue - totalCostBasis) >= 0 ? '+' : '')}{(currentValue - totalCostBasis).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
+            <span className={`ml-1 ${unrealizedGain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              ({unrealizedGain >= 0 ? '+' : ''}{unrealizedGain.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})
             </span>
           )}
         </p>
@@ -79,7 +79,7 @@ CollectionCard.propTypes = {
     numProducts: PropTypes.number.isRequired,
     currentValue: PropTypes.number.isRequired,
     favourite: PropTypes.bool.isRequired,
-    totalCostBasis: PropTypes.number
+    unrealizedGain: PropTypes.number
   }).isRequired
 };
 
