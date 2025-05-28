@@ -69,9 +69,9 @@ function UserPortfolioCardDetailsPage() {
     try {
       const token = await getAccessTokenSilently();
       const response = await fetch(
-        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}`,
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transactions`,
         {
-          method: 'DELETE',
+          method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -79,6 +79,7 @@ function UserPortfolioCardDetailsPage() {
           body: JSON.stringify({
             condition: formData.condition,
             finish: formData.finish,
+            transactionType: "SELL",
             quantity: formData.quantity,
             purchaseDate: formData.saleDate,
             costBasis: formData.costBasis
@@ -351,7 +352,7 @@ function UserPortfolioCardDetailsPage() {
           transactionHistory={transactionHistory}
           isLoading={isLoadingHistory}
           error={historyError}
-          collectionId={params.portfolioId}
+          collectionId={Number(params.portfolioId)}
           onEdit={(updatedTransaction) => {
             setTransactionHistory(prev => ({
               ...prev,
