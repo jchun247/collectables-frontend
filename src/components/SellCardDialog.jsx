@@ -30,7 +30,7 @@ const SellCardDialog = ({
 }) => {
   const [error, setError] = useState("");
   const [useMarketPrice, setUseMarketPrice] = useState(false);
-  const [costBasis, setCostBasis] = useState("");
+  const [salePrice, setSalePrice] = useState("");
   const [selectedCondition, setSelectedCondition] = useState("");
   const [selectedFinish, setSelectedFinish] = useState("");
 
@@ -39,7 +39,7 @@ const SellCardDialog = ({
 
   useEffect(() => {
     if (useMarketPrice) {
-      setCostBasis(marketPrice.toFixed(2));
+      setSalePrice(marketPrice.toFixed(2));
     }
   }, [useMarketPrice, marketPrice]);
 
@@ -62,7 +62,7 @@ const SellCardDialog = ({
       condition: cardCondition,
       finish: cardFinish,
       saleDate: form.get('saleDate'),
-      costBasis: parseFloat(costBasis) || 0,
+      salePrice: parseFloat(salePrice) || 0,
     });
   };
 
@@ -144,7 +144,7 @@ const SellCardDialog = ({
           </div>
 
           <div className="space-y-2 border-t border-border pt-4">
-            <Label htmlFor="costBasis">Sale Price Per Card</Label>
+            <Label htmlFor="salePrice">Sale Price Per Card</Label>
             
             {marketPrice > 0 && (
               <p className="text-sm text-muted-foreground pt-1">
@@ -154,22 +154,22 @@ const SellCardDialog = ({
 
             <div className="flex items-center gap-2">
               <Input 
-                id="costBasis"
-                name="costBasis"
+                id="salePrice"
+                name="salePrice"
                 required
                 type="number"
                 min="0"
                 placeholder="0.00"
-                value={costBasis}
+                value={salePrice}
                 step="0.01"
                 onChange={(e) => {
                   const value = e.target.value;
                   // Ensure only 2 decimal places
                   if (value.includes('.') && value.split('.')[1].length > 2) {
                     const fixed = parseFloat(value).toFixed(2);
-                    setCostBasis(fixed);
+                    setSalePrice(fixed);
                   } else {
-                    setCostBasis(value);
+                    setSalePrice(value);
                   }
                 }}
                 className="w-full [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -182,7 +182,7 @@ const SellCardDialog = ({
                   onCheckedChange={(checked) => {
                     setUseMarketPrice(checked);
                     if (!checked) {
-                      setCostBasis("");
+                      setSalePrice("");
                     }
                   }}
                 />
