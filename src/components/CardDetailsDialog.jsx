@@ -55,7 +55,6 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
       });
       setDialogState({ isOpen: false, type: null });
     } catch (err) {
-      console.error('Error adding card to collection:', err);
       toast({
         variant: "destructive",
         title: "Error",

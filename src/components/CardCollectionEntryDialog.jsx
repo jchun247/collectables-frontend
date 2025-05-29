@@ -81,7 +81,6 @@ const CardCollectionEntryDialog = ({
         setCollections(data.items);
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching collections:', err);
       } finally {
         setIsLoading(false);
       }
