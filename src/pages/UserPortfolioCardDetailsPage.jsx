@@ -4,12 +4,14 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus, Minus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import CardSettingsMenu from "@/components/CardSettingsMenu";
 import StatCard from "@/components/StatCard";
 import TransactionLedgerTable from "@/components/TransactionLedgerTable";
 import CardCollectionEntryDialog from "@/components/CardCollectionEntryDialog";
 import SellCardDialog from "@/components/SellCardDialog";
 import UpdateTransactionDialog from '@/components/UpdateTransactionDialog';
 import DeleteTransactionDialog from '@/components/DeleteTransactionDialog';
+import RemoveCardDialog from '@/components/RemoveCardDialog';
 import { MarketPriceHistoryChart } from "@/components/MarketPriceHistoryChart";
 import { createTransactionLedgerColumns } from '@/components/tables/columns';
 import { formatCardCondition, formatCardFinish, formatCurrency } from "@/utils/textFormatters";
@@ -51,6 +53,9 @@ function UserPortfolioCardDetailsPage() {
   const [selectedTransactions, setSelectedTransactions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dialogError, setDialogError] = useState(null);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState(null);
 
   const cardId = location.state?.cardId;
   const condition = location.state?.condition;
@@ -408,6 +413,41 @@ function UserPortfolioCardDetailsPage() {
     setDialogError(null);
   }, []);
 
+  const handleRemoveCard = useCallback(() => {
+    setIsRemoveDialogOpen(true);
+    setRemoveError(null);
+  }, []);
+
+  const onConfirmRemove = async () => {
+    setIsRemoving(true);
+    setRemoveError(null);
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}`,
+        {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Failed to remove card from collection');
+      }
+      
+      toast({
+        title: "Success",
+        description: "Card removed from collection"
+      });
+      
+      navigate(`/collections/portfolios/${params.portfolioId}`);
+    } catch (err) {
+      setRemoveError(err.message || 'Failed to remove card from collection');
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   const columns = useMemo(
     () => createTransactionLedgerColumns({
       onEdit: handleEditTransaction,
@@ -481,15 +521,23 @@ function UserPortfolioCardDetailsPage() {
         {/* Right Column: Details, Actions, Stats, Graph */}
         <div className="md:col-span-2 space-y-6">
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold">{cardDetails.name}</h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400">{cardDetails.setName} · #{cardDetails.setNumber}</p>
-              <p className="text-md font-semibold text-slate-700 dark:text-slate-300 mt-1">{formatCardCondition(condition)} · {formatCardFinish(finish)}</p>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h1 className="text-3xl lg:text-4xl font-bold">{cardDetails.name}</h1>
+                  <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">{cardDetails.setName} · #{cardDetails.setNumber}</p>
+                  <p className="text-md font-semibold text-slate-700 dark:text-slate-300 mt-1">{formatCardCondition(condition)} · {formatCardFinish(finish)}</p>
+                </div>
+                <CardSettingsMenu 
+                  cardId={cardId}
+                  onRemove={handleRemoveCard}
+                />
+              </div>
               <div className="flex items-center justify-between mt-4">
-                  <p className="text-4xl font-bold text-green-500 dark:text-green-400">${derivedStats.marketPrice.toFixed(2)}</p>
-                  <div className="flex gap-2">
-                      <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
-                      <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
-                  </div>
+                <p className="text-4xl font-bold text-green-500 dark:text-green-400">${derivedStats.marketPrice.toFixed(2)}</p>
+                <div className="flex gap-2">
+                  <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
+                  <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
+                </div>
               </div>
             </div>
 
@@ -582,6 +630,14 @@ function UserPortfolioCardDetailsPage() {
         isDeleting={isSubmitting}
         transactionsCount={selectedTransactions.length}
         error={dialogError}
+      />
+      <RemoveCardDialog
+        isOpen={isRemoveDialogOpen}
+        onClose={() => setIsRemoveDialogOpen(false)}
+        onConfirm={onConfirmRemove}
+        cardName={cardDetails.name}
+        isRemoving={isRemoving}
+        error={removeError}
       />
     </div>
   );
