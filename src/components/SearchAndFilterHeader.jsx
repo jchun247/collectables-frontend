@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useMemo } from 'react'
 import debounce from 'lodash/debounce'
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { Input } from "@/components/ui/input";
@@ -19,8 +19,8 @@ const SearchAndFilterHeader = ({
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
     // Create a stable debounced function for API calls
-    const debouncedSearchUpdate = useCallback(
-        debounce((value) => {
+    const debouncedSearchUpdate = useMemo(
+        () => debounce((value) => {
             setSearchQuery(value);
         }, 500),
         [setSearchQuery]
