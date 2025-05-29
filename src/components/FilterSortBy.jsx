@@ -3,10 +3,8 @@ import { ArrowUpDown } from "lucide-react";
 import PropTypes from "prop-types";
 // import { useState } from "react";
 
-const FilterSortBy = ({ sortBy, setSortBy }) => {
-    // const [sortBy, setSortBy] = useState(name);
-
-    const filterOptions = {
+const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
+    const filterOptions = customSortOptions || {
         'name': 'Name (A-Z)',
         'name-desc': 'Name (Z-A)',
         'price-asc': 'Price (Low to High)',
@@ -25,21 +23,16 @@ const FilterSortBy = ({ sortBy, setSortBy }) => {
                     </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                    {[
-                        { value: "name", label: "Name (A-Z)" },
-                        { value: "name-desc", label: "Name (Z-A)" },
-                        { value: "price-asc", label: "Price (Low to High)" },
-                        { value: "price-desc", label: "Price (High to Low)" }
-                        ].map((option) => (
+                    {Object.entries(filterOptions).map(([value, label]) => (
                         <SelectItem 
-                            key={option.value} 
-                            value={option.value}
+                            key={value} 
+                            value={value}
                             className="transition-colors hover:bg-primary hover:text-primary-foreground"
                         >
                             <div className="flex items-center gap-2 group">
                                 <ArrowUpDown className="h-4 w-4 transition-all duration-200 group-hover:scale-110 group-hover:rotate-180" />
                                 <span className="transition-transform duration-200 group-hover:translate-x-1">
-                                    {option.label}
+                                    {label}
                                 </span>
                             </div>
                         </SelectItem>
@@ -53,6 +46,7 @@ const FilterSortBy = ({ sortBy, setSortBy }) => {
 FilterSortBy.propTypes = {
     sortBy: PropTypes.string.isRequired,
     setSortBy: PropTypes.func.isRequired,
+    customSortOptions: PropTypes.objectOf(PropTypes.string)
 }
 
 export default FilterSortBy;

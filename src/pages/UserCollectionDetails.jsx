@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useLocation, Navigate, useNavigate } from 'react-router-dom'
 import { useAuth0 } from '@auth0/auth0-react';
 import PropTypes from 'prop-types'
+import SearchAndFilterHeader from '@/components/SearchAndFilterHeader';
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -17,6 +18,14 @@ import { AlertTriangle, ArrowLeft, Settings, Star, CalendarDays, ListOrdered, Lo
 import RenderCard from "@/components/RenderCard"
 import UpdateCollectionDialog from '../components/UpdateCollectionDialog'
 import { formatCurrency, formatDate } from "@/utils/textFormatters"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 function UserCollectionDetails({ collectionType }) {
   // Extract ID from URL based on collection type
@@ -37,10 +46,17 @@ function UserCollectionDetails({ collectionType }) {
   const [dialogSubmissionError, setDialogSubmissionError] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  // State for search and sort
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('calculatedTotalStackValue,desc');
+  const [filters, setFilters] = useState({});
+
   // State for fetching collection items
   const [collectionItems, setCollectionItems] = useState(null);
   const [isLoadingItems, setIsLoadingItems] = useState(true);
   const [fetchItemsError, setFetchItemsError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(12);
 
   const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
@@ -102,7 +118,7 @@ function UserCollectionDetails({ collectionType }) {
         const token = await getAccessTokenSilently();
         setIsLoadingItems(true);
         setFetchItemsError(null);
-        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards`, {
+        const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards?page=${currentPage}&cardName=${searchQuery}&sort=${sortBy}`, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -121,7 +137,7 @@ function UserCollectionDetails({ collectionType }) {
     }
 
     fetchCollectionItems()
-  }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently]);
+  }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently, currentPage, pageSize, searchQuery, sortBy]);
 
   if (isLoadingCollectionDetails) {
     return (
@@ -358,18 +374,39 @@ function UserCollectionDetails({ collectionType }) {
 
       {/* Collection Cards Section */}
       <section aria-labelledby="collection-items-heading">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <h2 id="collection-items-heading" className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
-              Cards in {collectionTypeLabel} ({isLoadingItems ? "..." : collectionItems?.totalItems ?? 0})
-            </h2>
-          </div>
+        <div className="flex flex-col gap-6 mb-6">
+          <h2 id="collection-items-heading" className="text-2xl font-semibold text-slate-800 dark:text-slate-100">
+            Cards in {collectionTypeLabel} ({isLoadingItems ? "..." : collectionItems?.totalItems ?? 0})
+          </h2>
+          
+          <SearchAndFilterHeader
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            filters={filters}
+            setFilters={setFilters}
+            hideFilters={true}
+            customSortOptions={{
+              'calculatedTotalStackValue,desc': 'Value (High to Low)',
+              'calculatedTotalStackValue,asc': 'Value (Low to High)',
+              'c.name,desc': 'Name (Z-A)',
+              'c.name,asc': 'Name (A-Z)'
+            }}
+          />
         </div>
         {isLoadingItems ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(collectionItems?.items?.length || 6)].map((_, index) => (
-              <div key={index} className="w-full aspect-[3/4] bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
-            ))}
+          <div>
+            {collectionItems && collectionItems.totalPages > 1 && (
+              <div className="text-center mb-6 text-sm text-slate-500 dark:text-slate-400">
+                Loading page {currentPage + 1}...
+              </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+              {[...Array(pageSize)].map((_, index) => (
+                <div key={index} className="w-full aspect-[3/4] bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
+              ))}
+            </div>
           </div>
         ) : fetchItemsError ? (
           <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
@@ -422,6 +459,43 @@ function UserCollectionDetails({ collectionType }) {
             <p className="text-slate-500 dark:text-slate-400">
               This {collectionType} is currently empty. Add some items to get started!
             </p>
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {collectionItems && collectionItems.totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                    className={!collectionItems.first ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+                    aria-disabled={collectionItems.first}
+                  />
+                </PaginationItem>
+                
+                {[...Array(collectionItems.totalPages)].map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink
+                      onClick={() => setCurrentPage(index)}
+                      isActive={currentPage === index}
+                      className="cursor-pointer"
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage(prev => Math.min(collectionItems.totalPages - 1, prev + 1))}
+                    className={!collectionItems.last ? "cursor-pointer" : "cursor-not-allowed opacity-50"}
+                    aria-disabled={collectionItems.last}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         )}
       </section>

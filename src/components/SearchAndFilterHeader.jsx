@@ -9,10 +9,12 @@ import { Button } from "@/components/ui/button";
 import PropTypes from 'prop-types';
 
 
-const SearchAndFilterHeader = ({ searchQuery, setSearchQuery, 
+const SearchAndFilterHeader = ({ 
+    searchQuery, setSearchQuery, 
     sortBy, setSortBy, 
     filters, setFilters,
-    hideFilters = false }) => {
+    hideFilters = false,
+    customSortOptions }) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
@@ -60,7 +62,11 @@ const SearchAndFilterHeader = ({ searchQuery, setSearchQuery,
 
                 <div className="flex items-center gap-4">
                     <span className="text-sm text-muted-foreground">Sort by:</span>
-                    <FilterSortBy sortBy={sortBy} setSortBy={setSortBy} />
+                    <FilterSortBy 
+                        sortBy={sortBy} 
+                        setSortBy={setSortBy}
+                        customSortOptions={customSortOptions}
+                    />
                     {!hideFilters && (
                         <Sheet>
                             <SheetTrigger asChild>
@@ -96,7 +102,8 @@ SearchAndFilterHeader.propTypes = {
     filters: PropTypes.object.isRequired,
     setFilters: PropTypes.func.isRequired,
     fetchCards: PropTypes.func,
-    hideFilters: PropTypes.bool
+    hideFilters: PropTypes.bool,
+    customSortOptions: PropTypes.objectOf(PropTypes.string)
 }
 
 export default SearchAndFilterHeader;
