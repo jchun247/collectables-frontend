@@ -441,11 +441,11 @@ function UserCollectionDetails({ collectionType }) {
               >
                 <RenderCard
                   card={item.card}
-                  showQuantity={true}
                   quantity={item.quantity}
                   showDetails={true}
                   finish={item.finish}
                   condition={item.condition}
+                  stackValue={item.currentValue}
                 />
               </div>
             ))}
