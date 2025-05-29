@@ -1,35 +1,127 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import { ArrowLeft, AlertTriangle, TrendingUp, Hash, DollarSign, Loader2, Plus, Minus } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import StatCard from "@/components/StatCard";
-import TransactionHistoryTable from "@/components/TransactionHistoryTable";
+import TransactionLedgerTable from "@/components/TransactionLedgerTable";
 import CardCollectionEntryDialog from "@/components/CardCollectionEntryDialog";
 import SellCardDialog from "@/components/SellCardDialog";
-import { formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
+import UpdateTransactionDialog from '@/components/UpdateTransactionDialog';
+import DeleteTransactionDialog from '@/components/DeleteTransactionDialog';
+import { MarketPriceHistoryChart } from "@/components/MarketPriceHistoryChart";
+import { createTransactionLedgerColumns } from '@/components/tables/columns';
+import { formatCardCondition, formatCardFinish, formatCurrency } from "@/utils/textFormatters";
 
 function UserPortfolioCardDetailsPage() {
   const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const cardId = location.state?.cardId;
-  const condition = location.state?.condition;
-  const finish = location.state?.finish;
   const { getAccessTokenSilently } = useAuth0();
   const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [cardDetails, setCardDetails] = useState(null);
-  const [transactionHistory, setTransactionHistory] = useState({ items: [] });
+  const [priceHistory, setPriceHistory] = useState([]);
+  const [transactions, setTransactions] = useState([]); 
+  const [portfolioStats, setPortfolioStats] = useState({
+    currentValue: 0,
+    totalCostBasis: 0,
+    unrealizedGain: 0,
+    realizedGain: 0,
+  });
   const [isLoadingCard, setIsLoadingCard] = useState(true);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [isLoadingPriceHistory, setIsLoadingPriceHistory] = useState(true);
   const [cardError, setCardError] = useState(null);
+  const [priceHistoryError, setPriceHistoryError] = useState(null);
   const [historyError, setHistoryError] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSellDialogOpen, setIsSellDialogOpen] = useState(false);
 
+  // State for the transaction history table
+  const [sorting, setSorting] = useState([]);
+  const [rowSelection, setRowSelection] = useState({});
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 5 });
+  
+  const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [selectedTransactions, setSelectedTransactions] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dialogError, setDialogError] = useState(null);
+
+  const cardId = location.state?.cardId;
+  const condition = location.state?.condition;
+  const finish = location.state?.finish;
+
+  const fetchPortfolioStats = useCallback(async () => {
+    if (!params.portfolioId || !params.collectionCardId) return;
+    
+    // We can share the history loading/error state for simplicity
+    setIsLoadingHistory(true);
+    setHistoryError(null);
+
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}`, 
+        {
+          headers: {'Authorization': `Bearer ${token}` }
+        }
+      );
+      if (!response.ok) throw new Error('Failed to fetch portfolio stats');
+      
+      const statsData = await response.json();
+      
+      setPortfolioStats({
+        currentValue: statsData.currentValue ?? 0,
+        totalCostBasis: statsData.totalCostBasis ?? 0,
+        unrealizedGain: statsData.unrealizedGain ?? 0,
+        realizedGain: statsData.realizedGain ?? 0,
+      });
+    } catch (err) {
+      // Set a generic error as this could be one of two fetches
+      setHistoryError(err.message);
+    } finally {
+      // Note: loading will be set to false by refreshTransactionHistory
+    }
+  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+
+  const refreshTransactionHistory = useCallback(async () => {
+    if (!params.portfolioId || !params.collectionCardId) return null;
+    
+    try {
+      setIsLoadingHistory(true);
+      setHistoryError(null);
+      
+      const token = await getAccessTokenSilently();
+      const response = await fetch(
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transaction-history`, 
+        {
+          headers: {'Authorization': `Bearer ${token}` },
+          cache: 'no-store'
+        }
+      );
+      
+      if (!response.ok) throw new Error('Failed to fetch transaction history');
+      
+      const transactionData = await response.json();
+      
+      const sortedItems = [...(transactionData.items || [])].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate));
+      setTransactions(sortedItems);
+      setRowSelection({});
+
+    } catch (err) {
+      setHistoryError(err.message);
+      return null;
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+
+  // Fetch card details
   useEffect(() => {
     const fetchCardDetails = async () => {
       if (!cardId) return;
@@ -62,70 +154,46 @@ function UserPortfolioCardDetailsPage() {
       }
     };
 
-    fetchCardDetails();
-  }, [cardId, getAccessTokenSilently, apiBaseUrl]);
-
-  const handleSell = async (formData) => {
+    const fetchPriceHistory = async () => {
+    if (!cardId) return;
     try {
+      setIsLoadingPriceHistory(true);
       const token = await getAccessTokenSilently();
-      const response = await fetch(
-        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transactions`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            condition: formData.condition,
-            finish: formData.finish,
-            transactionType: "SELL",
-            quantity: formData.quantity,
-            purchaseDate: formData.saleDate,
-            costBasis: formData.costBasis
-          })
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to sell card');
-      }
-
-      toast({
-        title: "Success",
-        description: "Card sold successfully"
+      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-      
-      // Close the dialog
-      setIsSellDialogOpen(false);
-
-      // Refresh history and get updated data
-      const updatedHistory = await refreshTransactionHistory();
-
-      // Check if history is now empty and navigate if it is
-      if (updatedHistory && updatedHistory.items.length === 0) {
-        toast({
-          title: "Card Removed",
-          description: "Last holding sold. Returning to your portfolio."
-        });
-        navigate(`/collections/portfolios/${params.portfolioId}`);
-      }
+      if (!response.ok) throw new Error("Failed to fetch price history");
+      const historyData = await response.json();
+      setPriceHistory(historyData);
     } catch (err) {
-      console.error('Error selling card:', err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: err.message || 'Failed to sell card'
-      });
+      setPriceHistoryError(err.message);
+    } finally {
+      setIsLoadingPriceHistory(false);
     }
   };
 
-  const handleSubmit = async (formData) => {
+    fetchCardDetails();
+    fetchPortfolioStats();
+    refreshTransactionHistory();
+    fetchPriceHistory();
+  }, [cardId, getAccessTokenSilently, apiBaseUrl, fetchPortfolioStats, refreshTransactionHistory]);
+
+  const derivedStats = useMemo(() => {
+      const buys = transactions.filter(t => t.transactionType === 'BUY');
+      const sells = transactions.filter(t => t.transactionType === 'SELL');
+
+      const quantityHeld = buys.reduce((sum, t) => sum + t.quantity, 0) - sells.reduce((sum, t) => sum + t.quantity, 0);
+      const avgCostPerCard = quantityHeld > 0 ? (portfolioStats.totalCostBasis / quantityHeld) : 0;
+      const marketPrice = cardDetails?.prices.find(p => p.condition === condition && p.finish === finish)?.price || 0;
+      
+      return { quantityHeld, avgCostPerCard, marketPrice };
+    }, [transactions, portfolioStats.totalCostBasis, cardDetails, condition, finish]);
+
+  const handleBuySubmit = async (formData) => {
     try {
       const token = await getAccessTokenSilently();
       const response = await fetch(
-        `${apiBaseUrl}/collections/${formData.collectionId}/cards`,
+        `${apiBaseUrl}/collections/${params.portfolioId}/cards`,
         {
           method: 'POST',
           headers: {
@@ -149,20 +217,15 @@ function UserPortfolioCardDetailsPage() {
       });
       
       // Update the transaction history state immediately
-      setTransactionHistory(prev => ({
-        ...prev,
-        items: [...(prev.items || []), newTransaction].sort((a, b) => 
-          new Date(b.purchaseDate) - new Date(a.purchaseDate)
-        )
-      }));
+      setTransactions(prevTransactions => 
+        [...prevTransactions, newTransaction].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate))
+      );
 
       // Close the dialog
       setIsAddDialogOpen(false);
 
-      // Also refresh from server to ensure consistency
-      await refreshTransactionHistory();
+      await Promise.all([fetchPortfolioStats(), refreshTransactionHistory()]);
     } catch (err) {
-      console.error('Error adding card to collection:', err);
       toast({
         variant: "destructive",
         title: "Error",
@@ -171,49 +234,187 @@ function UserPortfolioCardDetailsPage() {
     }
   };
 
-  const refreshTransactionHistory = useCallback(async () => {
-    if (!params.portfolioId || !params.collectionCardId) return;
-    
+  const handleSellSubmit = async (formData) => {
+    // check if this is the last item being sold
+    if (formData.quantity >= derivedStats.quantityHeld) {
+      // if so, perform the sale and navigate back to portfolio
+      try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(
+          `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transactions`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              condition: formData.condition,
+              finish: formData.finish,
+              transactionType: "SELL",
+              quantity: formData.quantity,
+              purchaseDate: formData.saleDate,
+              costBasis: formData.costBasis
+            })
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to sell card');
+        }
+
+        toast({
+          title: "Last Holding Sold",
+          description: "Returning to your portfolio."
+        });
+        navigate(`/collections/portfolios/${params.portfolioId}`);
+      } catch (err) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: err.message || 'Failed to sell card'
+        });
+      }
+    } else {
+      // Otherwise, proceed with sale as normal and refresh data
+      try {
+        const token = await getAccessTokenSilently();
+        const response = await fetch(
+          `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transactions`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              condition: formData.condition,
+              finish: formData.finish,
+              transactionType: "SELL",
+              quantity: formData.quantity,
+              purchaseDate: formData.saleDate,
+              costBasis: formData.salePrice
+            })
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to sell card');
+        }
+
+        toast({
+          title: "Success",
+          description: "Card sold successfully"
+        });
+        
+        // Close the dialog
+        setIsSellDialogOpen(false);
+
+        // Refresh history and get updated data
+        const updatedData = await refreshTransactionHistory();
+        const quantityHeld = (updatedData?.items || []).filter(t => t.transactionType === "BUY").reduce((s,i) => s + i.quantity, 0) - (updatedData?.items || []).filter(t => t.transactionType === "SELL").reduce((s,i) => s + i.quantity, 0);
+
+        // If the last holding was sold, navigate back to portfolio
+        if (updatedData && quantityHeld <= 0) {
+          toast({ 
+            title: "Last Holding Sold", 
+            description: "Returning to your portfolio." 
+          });
+          navigate(`/collections/portfolios/${params.portfolioId}`);
+        }
+        await Promise.all([fetchPortfolioStats(), refreshTransactionHistory()]);
+      } catch (err) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: err.message || 'Failed to sell card'
+        });
+      }
+    }
+  };
+
+  const onUpdateSubmit = async (updatedTransactionData) => {
+    setIsSubmitting(true);
+    setDialogError(null);
     try {
-      setIsLoadingHistory(true);
-      setHistoryError(null);
-      
       const token = await getAccessTokenSilently();
       const response = await fetch(
-        `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transaction-history`, 
+        `${apiBaseUrl}/collections/${params.portfolioId}/transactions/${selectedTransaction.id}`,
         {
+          method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          // Prevent caching to ensure fresh data
-          cache: 'no-store'
+          body: JSON.stringify(updatedTransactionData),
         }
       );
+      if (!response.ok) throw new Error('Failed to update transaction');
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch transaction history');
+      toast({ title: "Success", description: "Transaction updated." });
+      setIsUpdateDialogOpen(false);
+      await Promise.all([fetchPortfolioStats(), refreshTransactionHistory()]);
+    } catch (err) {
+      setDialogError(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onConfirmDelete = async () => {
+    setIsSubmitting(true);
+    setDialogError(null);
+    try {
+      const token = await getAccessTokenSilently();
+      // Loop through selected transactions and delete them
+      for (const transaction of selectedTransactions) {
+        const response = await fetch(`${apiBaseUrl}/collections/${params.portfolioId}/transactions/${transaction.id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to delete transaction ${transaction.id}. Please try again.`);
+        }
       }
       
-      const data = await response.json();
-      // Sort transactions by date (newest first) and create a new object to ensure state update
-      const sortedData = {
-        ...data,
-        items: [...data.items].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate))
-      };
-      setTransactionHistory(sortedData);
-      return sortedData;
+      toast({ title: "Success", description: `Deleted ${selectedTransactions.length} transaction(s).` });
+      setIsDeleteDialogOpen(false);
+      setSelectedTransactions([]);
+      await Promise.all([fetchPortfolioStats(), refreshTransactionHistory()]);
     } catch (err) {
-      setHistoryError(err.message);
-      return null;
+      setDialogError(err.message);
     } finally {
-      setIsLoadingHistory(false);
+      setIsSubmitting(false);
     }
-  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+  };
 
-  useEffect(() => {
-    refreshTransactionHistory();
-  }, [refreshTransactionHistory]);
+  const handleEditTransaction = useCallback((transaction) => {
+    setSelectedTransaction(transaction);
+    setIsUpdateDialogOpen(true);
+    setDialogError(null);
+  }, []);
+
+  const handleDeleteTransaction = useCallback((transaction) => {
+    setSelectedTransactions([transaction]);
+    setIsDeleteDialogOpen(true);
+    setDialogError(null);
+  }, []);
+  
+  const handleDeleteSelected = useCallback((transactions) => {
+    setSelectedTransactions(transactions);
+    setIsDeleteDialogOpen(true);
+    setDialogError(null);
+  }, []);
+
+  const columns = useMemo(
+    () => createTransactionLedgerColumns({
+      onEdit: handleEditTransaction,
+      onDelete: handleDeleteTransaction,
+    }), 
+    [handleEditTransaction, handleDeleteTransaction]
+  );
 
   // Redirect if no cardId was passed
   if (!cardId) {
@@ -254,15 +455,6 @@ function UserPortfolioCardDetailsPage() {
     );
   }
 
-  const averageCost = transactionHistory.items.length > 0
-    ? (transactionHistory.items.reduce((sum, item) => sum + (item.costBasis * item.quantity), 0) /
-       transactionHistory.items.reduce((sum, item) => sum + item.quantity, 0))
-    : 0;
-  const marketPrice = cardDetails.prices.find(p => p.condition === condition && p.finish === finish)?.price || 0;
-  const totalQuantityFromHistory = transactionHistory.items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalCostBasis = transactionHistory.items.reduce((sum, item) => sum + (item.costBasis * item.quantity), 0);
-  const calculatedReturn = (marketPrice * totalQuantityFromHistory) - totalCostBasis;
-
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       {/* Back Button */}
@@ -277,98 +469,75 @@ function UserPortfolioCardDetailsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {/* Left Column: Card Image */}
-        <div className="md:col-span-1 flex justify-center md:justify-start">
-          <img
-            src={cardDetails.images.find(img => img.resolution === "HIGH_RES")?.url || '/placeholder-image.png'} // Added fallback
-            alt={cardDetails.name}
-            className="w-full max-w-sm md:max-w-full rounded-lg shadow-xl object-contain max-h-[50vh] md:max-h-[70vh]"
-          />
+        <div className="md:col-span-1 flex justify-center items-start">
+          <div className="w-full max-w-sm">
+            <img 
+              src={cardDetails.images.find(img => img.resolution === "HIGH_RES")?.url || '/placeholder-image.png'} 
+              alt={cardDetails.name} 
+              className="h-auto w-full rounded-lg shadow-xl" />            
+          </div>
         </div>
+
         {/* Right Column: Details, Actions, Stats, Graph */}
         <div className="md:col-span-2 space-y-6">
-          {/* Card Info */}
-          <div>
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-2">
-              <h1 className="text-3xl lg:text-4xl font-bold text-slate-800 dark:text-slate-100 leading-tight">
-                {cardDetails.name}
-              </h1>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => setIsAddDialogOpen(true)}
-                  className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95"
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Buy
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  onClick={() => setIsSellDialogOpen(true)}
-                  className="w-full sm:w-auto flex-shrink-0 transition-all duration-200 ease-in-out hover:shadow-md hover:-translate-y-px active:scale-95"
-                >
-                  <Minus className="h-4 w-4 mr-1" />
-                  Sell
-                </Button>
+            <div>
+              <h1 className="text-3xl lg:text-4xl font-bold">{cardDetails.name}</h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400">{cardDetails.setName} · #{cardDetails.setNumber}</p>
+              <p className="text-md font-semibold text-slate-700 dark:text-slate-300 mt-1">{formatCardCondition(condition)} · {formatCardFinish(finish)}</p>
+              <div className="flex items-center justify-between mt-4">
+                  <p className="text-4xl font-bold text-green-500 dark:text-green-400">${derivedStats.marketPrice.toFixed(2)}</p>
+                  <div className="flex gap-2">
+                      <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
+                      <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
+                  </div>
               </div>
             </div>
-            <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">
-              {cardDetails.setName} · #{cardDetails.setNumber}
-            </p>
-            <p className="text-md text-slate-600 dark:text-slate-400 mt-1">
-              {formatCardCondition(condition)} · {formatCardFinish(finish)}
-            </p>
-            <p className="text-3xl lg:text-4xl font-bold text-green-500 dark:text-green-400 mt-3">
-              ${marketPrice.toFixed(2)}
-            </p>
-            {/* Optional: Link to detailed sales history if different from transaction history below */}
-            {/* <a href="#" className="text-sm text-sky-600 dark:text-sky-500 hover:underline mt-1 inline-flex items-center">
-              View Detailed Sales History <ExternalLink className="ml-1 h-3 w-3" />
-            </a> */}
-          </div>
-          
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <StatCard title="Your Quantity" value={totalQuantityFromHistory} icon={<Hash className="text-slate-500 dark:text-slate-400"/>} />
-            <StatCard title="Avg Cost / Card" value={`$${averageCost.toFixed(2)}`} /*isMoney={true}*/ icon={<DollarSign className="text-slate-500 dark:text-slate-400"/>} />
-            <StatCard title="Total Market Value" value={`$${(marketPrice * totalQuantityFromHistory).toFixed(2)}`} isMoney={true} valueColorClass="text-green-500 dark:text-green-400" icon={<DollarSign className="text-slate-500 dark:text-slate-400"/>} />
-            <StatCard title="Est. Return" value={`$${calculatedReturn.toFixed(2)}`} /*isMoney={true}*/ valueColorClass={calculatedReturn >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400'} icon={<TrendingUp className="text-slate-500 dark:text-slate-400"/>} />
+
+          {/* Holdings Summary */}
+          <div className="pt-4 border-t">
+             <h3 className="text-xl font-semibold mb-3">Your Holdings</h3>
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard title="Quantity Held" value={derivedStats.quantityHeld} icon={<Hash />} />
+                <StatCard title="Avg Cost / Card" value={formatCurrency(derivedStats.avgCostPerCard)} icon={<DollarSign />} />
+                <StatCard title="Total Cost Basis" value={formatCurrency(portfolioStats.totalCostBasis)} icon={<DollarSign />} />
+                <StatCard title="Total Market Value" value={formatCurrency(portfolioStats.currentValue)} valueColorClass="text-green-500" icon={<DollarSign />} />
+             </div>
           </div>
 
-          {/* Price History Graph Placeholder */}
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-3 text-slate-700 dark:text-slate-200">Market Price History</h3>
-            <div className="bg-slate-100 dark:bg-slate-700/50 p-4 rounded-lg min-h-[200px] sm:min-h-[250px] flex items-center justify-center shadow-sm border border-slate-200 dark:border-slate-700">
-              <p className="text-slate-500 dark:text-slate-400 text-center">
-                <TrendingUp className="h-10 w-10 mx-auto mb-2 opacity-50" />
-                Price History Chart Placeholder
-              </p>
-            </div>
+          {/* Performance Summary */}
+          <div className="pt-4 border-t">
+             <h3 className="text-xl font-semibold mb-3">Performance</h3>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <StatCard title="Unrealized Gain/Loss" value={formatCurrency(portfolioStats.unrealizedGain)} valueColorClass={portfolioStats.unrealizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<TrendingUp />} />
+                <StatCard title="Realized Gain/Loss" value={formatCurrency(portfolioStats.realizedGain)} valueColorClass={portfolioStats.realizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<DollarSign />} />
+             </div>
+          </div>
+
+          {/* Price History Graph */}
+          <div className="pt-4 border-t">
+              <MarketPriceHistoryChart 
+                data={priceHistory} 
+                isLoading={isLoadingPriceHistory} 
+                error={priceHistoryError} 
+              />
           </div>
         </div>
       </div>
 
       {/* Transaction History Section */}
-      <div className="mt-12">
-        <TransactionHistoryTable 
-          transactionHistory={transactionHistory}
+      <div className="pt-8">
+        <TransactionLedgerTable
+          data={transactions}
+          columns={columns}
           isLoading={isLoadingHistory}
           error={historyError}
-          collectionId={Number(params.portfolioId)}
-          onEdit={(updatedTransaction) => {
-            setTransactionHistory(prev => ({
-              ...prev,
-              items: prev.items.map(item => 
-                item.id === updatedTransaction.id ? updatedTransaction : item
-              ),
-            }));
-          }}
-          onDelete={(deletedTransactions) => {
-            setTransactionHistory(prev => ({
-              ...prev,
-              items: prev.items.filter(item => 
-                !deletedTransactions.some(deletedItem => deletedItem.id === item.id)
-              ),
-            }));
-          }}
+          sorting={sorting}
+          setSorting={setSorting}
+          rowSelection={rowSelection}
+          setRowSelection={setRowSelection}
+          pagination={pagination}
+          setPagination={setPagination}
+          onDeleteSelected={handleDeleteSelected}
         />
       </div>
 
@@ -379,7 +548,7 @@ function UserPortfolioCardDetailsPage() {
         type="portfolio"
         prices={cardDetails?.prices || []}
         cardId={cardId}
-        onSubmit={handleSubmit}
+        onSubmit={handleBuySubmit}
         currentPortfolioId={params.portfolioId}
         disableCollectionSelect={true}
         selectedCardCondition={condition}
@@ -392,11 +561,27 @@ function UserPortfolioCardDetailsPage() {
       <SellCardDialog
         isOpen={isSellDialogOpen}
         onOpenChange={setIsSellDialogOpen}
-        onSubmit={handleSell}
+        onSubmit={handleSellSubmit}
         cardCondition={condition}
         cardFinish={finish}
-        maxQuantity={totalQuantityFromHistory}
-        marketPrice={marketPrice}
+        maxQuantity={derivedStats.quantityHeld}
+        marketPrice={derivedStats.marketPrice}
+      />
+      <UpdateTransactionDialog
+        isOpen={isUpdateDialogOpen}
+        onClose={() => setIsUpdateDialogOpen(false)}
+        transaction={selectedTransaction}
+        onSubmit={onUpdateSubmit}
+        isSubmitting={isSubmitting}
+        submissionError={dialogError}
+      />
+      <DeleteTransactionDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onConfirm={onConfirmDelete}
+        isDeleting={isSubmitting}
+        transactionsCount={selectedTransactions.length}
+        error={dialogError}
       />
     </div>
   );

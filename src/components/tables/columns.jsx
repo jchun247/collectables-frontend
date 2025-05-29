@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatDate, formatCardCondition, formatCardFinish } from "@/utils/textFormatters";
 
-export const transactionHistoryTableColumns = ({ onEdit, onDelete }) => [
+export const createTransactionLedgerColumns = ({ onEdit, onDelete }) => [
   {
     id: "select",
     header: ({ table }) => (
