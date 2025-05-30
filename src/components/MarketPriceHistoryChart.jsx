@@ -130,7 +130,7 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
           </CardDescription>
         </div>
         {uniqueFinishes.length > 1 && (
-          <Popover modal={true}>
+          <Popover modal={false}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -147,7 +147,10 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
                   <div
                     key={finish}
                     className="flex items-center space-x-2 cursor-pointer py-1 px-2 hover:bg-accent hover:text-accent-foreground rounded-sm"
-                    onClick={() => handleFinishChange(finish)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent Popover from closing
+                      handleFinishChange(finish);
+                    }}
                   >
                     <Checkbox
                       id={`finish-${finish}`}
