@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import CardDetailsTab from './CardDetailsTab';
-import CardPriceHistoryTab from './CardPriceHistoryTab';
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -13,11 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
-import { Plus, Star } from 'lucide-react';
+import { Plus, Star, Loader2, AlertTriangle } from 'lucide-react';
 import CardCollectionEntryDialog from './CardCollectionEntryDialog';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import AuthPromptDialog from './AuthPromptDialog';
+import { MarketPriceHistoryChart } from './MarketPriceHistoryChart';
+import { useCardPriceHistory } from '@/hooks/useCardPriceHistory';
 
 const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
   const navigate = useNavigate();
@@ -26,6 +27,22 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [dialogState, setDialogState] = useState({ isOpen: false, type: null });
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  const { 
+    priceHistory, 
+    isLoadingPriceHistory, 
+    priceHistoryError, 
+    selectedPriceRange, 
+    setSelectedPriceRange,
+    fetchPriceHistory
+  } = useCardPriceHistory(cardDetails?.id, '3m', isOpen); // Fetch only when dialog is open
+
+  useEffect(() => {
+    if (!isOpen) {
+      // Reset price range when dialog closes
+      setSelectedPriceRange('3m');
+    }
+  }, [isOpen, setSelectedPriceRange]);
 
   if (!cardDetails) return null;
 
@@ -148,7 +165,50 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </TabsContent>
               
               <TabsContent value="prices" className="mt-4">
-                <CardPriceHistoryTab prices={cardDetails.priceHistory} />
+                <div className="mb-4">
+                  <div className="flex flex-wrap gap-2">
+                    {['1m', '3m', '6m', '1y'].map(range => (
+                      <Button
+                        key={range}
+                        variant={selectedPriceRange === range ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => {
+                          if (selectedPriceRange !== range) {
+                            setSelectedPriceRange(range);
+                          }
+                        }}
+                        disabled={isLoadingPriceHistory}
+                        className={`transition-all duration-150 ease-in-out ${
+                          selectedPriceRange === range
+                            ? 'bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white dark:text-white'
+                            : 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700'
+                        }`}
+                      >
+                        {range.toUpperCase()}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {isLoadingPriceHistory ? (
+                  <div className="flex justify-center items-center min-h-[300px]">
+                    <Loader2 className="h-8 w-8 animate-spin text-sky-600 dark:text-sky-500" />
+                  </div>
+                ) : priceHistoryError ? (
+                  <div className="flex flex-col justify-center items-center min-h-[300px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
+                    <AlertTriangle className="h-8 w-8 mb-2" />
+                    <p className="font-semibold text-center">Error loading price history</p>
+                    <p className="text-sm text-center max-w-md mb-3">{priceHistoryError}</p>
+                    <Button variant="outline" size="sm" onClick={fetchPriceHistory}>
+                      Try Again
+                    </Button>
+                  </div>
+                ) : (
+                  <MarketPriceHistoryChart
+                    data={priceHistory?.items}
+                    selectedPriceRange={selectedPriceRange}
+                  />
+                )}
               </TabsContent>
             </Tabs>
 

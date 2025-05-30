@@ -15,6 +15,7 @@ import RemoveCardDialog from '@/components/RemoveCardDialog';
 import { MarketPriceHistoryChart } from "@/components/MarketPriceHistoryChart";
 import { createTransactionLedgerColumns } from '@/components/tables/columns';
 import { formatCardCondition, formatCardFinish, formatCurrency } from "@/utils/textFormatters";
+import { useCardPriceHistory } from '@/hooks/useCardPriceHistory';
 
 function UserPortfolioCardDetailsPage() {
   const params = useParams();
@@ -25,7 +26,6 @@ function UserPortfolioCardDetailsPage() {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [cardDetails, setCardDetails] = useState(null);
-  const [priceHistory, setPriceHistory] = useState([]);
   const [transactions, setTransactions] = useState([]); 
   const [portfolioStats, setPortfolioStats] = useState({
     currentValue: 0,
@@ -35,12 +35,20 @@ function UserPortfolioCardDetailsPage() {
   });
   const [isLoadingCard, setIsLoadingCard] = useState(true);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-  const [isLoadingPriceHistory, setIsLoadingPriceHistory] = useState(true);
   const [cardError, setCardError] = useState(null);
-  const [priceHistoryError, setPriceHistoryError] = useState(null);
   const [historyError, setHistoryError] = useState(null);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSellDialogOpen, setIsSellDialogOpen] = useState(false);
+
+  const cardId = location.state?.cardId;
+  const { 
+    priceHistory, 
+    isLoadingPriceHistory, 
+    priceHistoryError, 
+    selectedPriceRange, 
+    setSelectedPriceRange,
+    fetchPriceHistory
+  } = useCardPriceHistory(cardId);
 
   // State for the transaction history table
   const [sorting, setSorting] = useState([]);
@@ -57,7 +65,6 @@ function UserPortfolioCardDetailsPage() {
   const [isRemoving, setIsRemoving] = useState(false);
   const [removeError, setRemoveError] = useState(null);
 
-  const cardId = location.state?.cardId;
   const condition = location.state?.condition;
   const finish = location.state?.finish;
 
@@ -126,6 +133,7 @@ function UserPortfolioCardDetailsPage() {
     }
   }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
 
+
   // Fetch card details
   useEffect(() => {
     const fetchCardDetails = async () => {
@@ -159,29 +167,11 @@ function UserPortfolioCardDetailsPage() {
       }
     };
 
-    const fetchPriceHistory = async () => {
-    if (!cardId) return;
-    try {
-      setIsLoadingPriceHistory(true);
-      const token = await getAccessTokenSilently();
-      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (!response.ok) throw new Error("Failed to fetch price history");
-      const historyData = await response.json();
-      setPriceHistory(historyData);
-    } catch (err) {
-      setPriceHistoryError(err.message);
-    } finally {
-      setIsLoadingPriceHistory(false);
-    }
-  };
-
     fetchCardDetails();
     fetchPortfolioStats();
     refreshTransactionHistory();
-    fetchPriceHistory();
   }, [cardId, getAccessTokenSilently, apiBaseUrl, fetchPortfolioStats, refreshTransactionHistory]);
+
 
   const derivedStats = useMemo(() => {
       const buys = transactions.filter(t => t.transactionType === 'BUY');
@@ -562,12 +552,52 @@ function UserPortfolioCardDetailsPage() {
           </div>
 
           {/* Price History Graph */}
-          <div className="pt-4 border-t">
-              <MarketPriceHistoryChart 
-                data={priceHistory} 
-                isLoading={isLoadingPriceHistory} 
-                error={priceHistoryError} 
+          <div className="pt-6 border-t">
+            <div className="mb-4">
+              <h3 className="text-xl font-semibold mb-3">Market Price History</h3>
+              <div className="flex flex-wrap gap-2">
+                {['1m', '3m', '6m', '1y'].map(range => (
+                  <Button
+                    key={range}
+                    variant={selectedPriceRange === range ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => {
+                      if (selectedPriceRange !== range) {
+                        setSelectedPriceRange(range);
+                      }
+                    }}
+                    disabled={isLoadingPriceHistory}
+                    className={`transition-all duration-150 ease-in-out ${
+                      selectedPriceRange === range
+                        ? 'bg-sky-600 hover:bg-sky-700 dark:bg-sky-500 dark:hover:bg-sky-600 text-white dark:text-white'
+                        : 'text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    {range.toUpperCase()}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {isLoadingPriceHistory ? (
+              <div className="flex justify-center items-center min-h-[300px]">
+                <Loader2 className="h-8 w-8 animate-spin text-sky-600 dark:text-sky-500" />
+              </div>
+            ) : priceHistoryError ? (
+              <div className="flex flex-col justify-center items-center min-h-[300px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
+                <AlertTriangle className="h-8 w-8 mb-2" />
+                <p className="font-semibold text-center">Error loading price history</p>
+                <p className="text-sm text-center max-w-md mb-3">{priceHistoryError}</p>
+                <Button variant="outline" size="sm" onClick={fetchPriceHistory}>
+                  Try Again
+                </Button>
+              </div>
+            ) : (
+              <MarketPriceHistoryChart
+                data={priceHistory?.items}
+                selectedPriceRange={selectedPriceRange}
               />
+            )}
           </div>
         </div>
       </div>
