@@ -37,8 +37,8 @@ const CardDetailsTab = ({ cardDetails }) => {
         <div>
           <h3 className="font-semibold mb-2">Abilities</h3>
           <div className="space-y-3">
-            {cardDetails.pokemonDetails.abilities.sort((a, b) => a.id - b.id).map((ability) => (
-              <div key={ability.id} className="border rounded-lg p-3">
+            {cardDetails.pokemonDetails.abilities.sort((a, b) => a.id - b.id).map((ability, index) => (
+              <div key={ability.id ?? `ability-${index}`} className="border rounded-lg p-3">
                 <div className="flex items-center">
                   <span className="font-medium">{ability.name}</span>
                 </div>
@@ -53,17 +53,17 @@ const CardDetailsTab = ({ cardDetails }) => {
         <div>
           <h3 className="font-semibold mb-2">Attacks</h3>
           <div className="space-y-3">
-            {cardDetails.pokemonDetails.attacks.sort((a, b) => a.id - b.id).map((attack) => (
-              <div key={attack.id} className="border rounded-lg p-3">
+            {cardDetails.pokemonDetails.attacks.sort((a, b) => a.id - b.id).map((attack, index) => (
+              <div key={attack.id ?? `attack-${index}`} className="border rounded-lg p-3">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">{attack.name}</span>
                   <span>{attack.damage}</span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">{attack.text}</p>
                 <div className="mt-1 flex gap-1">
-                  {attack.cost?.sort((a, b) => a.id - b.id).map((costItem) => (
+                  {attack.cost?.sort((a, b) => a.id - b.id).map((costItem, index) => (
                     <img
-                      key={costItem.id}
+                      key={costItem.id ?? `cost-${index}`}
                       src={energyTypeImages[costItem.cost]}
                       alt={costItem.cost}
                       className="w-6 h-6"
@@ -80,8 +80,8 @@ const CardDetailsTab = ({ cardDetails }) => {
         <div className="mt-4">
           <h3 className="font-semibold mb-2">Rules</h3>
           <div className="space-y-3">
-            {cardDetails.rules.sort((a, b) => a.id - b.id).map((rule) => (
-              <div key={rule.id} className="border rounded-lg p-3">
+            {cardDetails.rules.sort((a, b) => a.id - b.id).map((rule, index) => (
+              <div key={rule.id ?? `rule-${index}`} className="border rounded-lg p-3">
                 <p className="text-sm text-muted-foreground">{rule.text}</p>
               </div>
             ))}
