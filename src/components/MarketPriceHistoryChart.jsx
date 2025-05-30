@@ -121,7 +121,7 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
   const chartData = processedData;
 
   return (
-    <Card className="shadow-sm border border-slate-200 dark:border-slate-700">
+    <Card className={`shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col w-full h-full`}>
       <CardHeader className="flex flex-row justify-between items-center">
         <div>
           <CardTitle>Market Price History</CardTitle>
@@ -130,7 +130,7 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
           </CardDescription>
         </div>
         {uniqueFinishes.length > 1 && (
-          <Popover>
+          <Popover modal={true}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -167,8 +167,11 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
           </Popover>
         )}
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
+      <CardContent className="flex-grow overflow-hidden">
+        <ChartContainer 
+          config={chartConfig} 
+          className={`h-full w-full`}
+        >
           <LineChart
             accessibilityLayer
             data={chartData}
