@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { MarketPriceHistoryChart } from "@/components/MarketPriceHistoryChart";
 import { useCardPriceHistory } from '@/hooks/useCardPriceHistory';
 
-function CardPriceHistorySection({ cardId, dialogIsOpen }) {
+function CardPriceHistorySection({ cardId }) {
   const priceHistoryRef = useRef(null);
 
   const { 
@@ -15,7 +15,7 @@ function CardPriceHistorySection({ cardId, dialogIsOpen }) {
     selectedPriceRange, 
     setSelectedPriceRange,
     fetchPriceHistory
-  } = useCardPriceHistory(cardId, '3m', dialogIsOpen); // Pass dialogIsOpen to hook
+  } = useCardPriceHistory(cardId, '3m');
 
   return (
     <div className="pt-6 border-t" ref={priceHistoryRef}>
@@ -73,8 +73,7 @@ function CardPriceHistorySection({ cardId, dialogIsOpen }) {
 }
 
 CardPriceHistorySection.propTypes = {
-  cardId: PropTypes.string.isRequired,
-  dialogIsOpen: PropTypes.bool, // Optional, for CardDetailsDialog context
+  cardId: PropTypes.number.isRequired,
 };
 
 export default CardPriceHistorySection;

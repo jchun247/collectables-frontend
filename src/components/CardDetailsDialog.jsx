@@ -148,7 +148,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               </TabsContent>
               
               <TabsContent value="prices" className="mt-4">
-                <CardPriceHistorySection cardId={cardDetails.id} dialogIsOpen={isOpen} />
+                <CardPriceHistorySection cardId={cardDetails.id} />
               </TabsContent>
             </Tabs>
 
