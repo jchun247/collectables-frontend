@@ -446,6 +446,7 @@ function UserCollectionDetails({ collectionType }) {
                   finish={item.finish}
                   condition={item.condition}
                   stackValue={item.currentValue}
+                  preventDialogOnCardClick={true}
                 />
               </div>
             ))}

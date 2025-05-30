@@ -31,15 +31,16 @@ const getDisplayPrice = (prices, finish = null, condition = null) => {
     return price.toFixed(2);
 };
 
-const RenderCard = ({ card, quantity = null, showDetails = false, finish = null, condition = null, stackValue = 0 }) => {
+const RenderCard = ({ card, quantity = null, showDetails = false, finish = null, condition = null, stackValue = 0 , preventDialogOnCardClick=false}) => {
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [cardDetails, setCardDetails] = useState(null);
 
-    const handleCardClick = useCallback(async (e) => {
-        e.preventDefault();
+    const openDetailsDialogHandler = useCallback(async (e) => {
+        if (e) e.stopPropagation();
+        if (e && e.preventDefault) e.preventDefault();
         try {
             const response = await fetch(`${apiBaseUrl}/cards/${card.id}`);
             
@@ -56,10 +57,11 @@ const RenderCard = ({ card, quantity = null, showDetails = false, finish = null,
     }, [apiBaseUrl, card.id]);
 
     return (
-        <div onClick={handleCardClick}>
+        <div>
             <Card
                 key={card.id}
                 className="relative group cursor-pointer overflow-hidden"
+                onClick={preventDialogOnCardClick ? undefined : openDetailsDialogHandler}
             >
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10" />
                 <CardContent className="p-0">
@@ -153,8 +155,7 @@ const RenderCard = ({ card, quantity = null, showDetails = false, finish = null,
                 onOpenChange={setIsDialogOpen}
                 cardDetails={cardDetails}
             />
-        </div>
-            
+        </div> 
     )
 }
 
@@ -164,7 +165,8 @@ RenderCard.propTypes = {
     showDetails: PropTypes.bool,
     finish: PropTypes.string,
     condition: PropTypes.string,
-    stackValue: PropTypes.number
+    stackValue: PropTypes.number,
+    preventDialogOnCardClick: PropTypes.bool
 }
 
 export default RenderCard;
