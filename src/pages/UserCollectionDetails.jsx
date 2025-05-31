@@ -460,6 +460,16 @@ function UserCollectionDetails({ collectionType }) {
               </div>
             ))}
           </div>
+        ) : searchQuery ? (
+          <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
+            <Info className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500 mb-4" />
+            <h3 className="text-xl font-semibold text-slate-700 dark:text-slate-200 mb-2">
+              No Results Found
+            </h3>
+            <p className="text-slate-500 dark:text-slate-400">
+              No items matched your search for &quot;{searchQuery}&quot;. Try a different search term.
+            </p>
+          </div>
         ) : (
           <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
             <Info className="mx-auto h-12 w-12 text-slate-400 dark:text-slate-500 mb-4" />
