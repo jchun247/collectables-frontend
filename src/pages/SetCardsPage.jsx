@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
@@ -113,6 +115,15 @@ const SetCardsPage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/sets`)}
+              className="-ml-2 mb-4 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Sets
+            </Button>
             {/* Set Header */}
             {setDetails && (
                 <div className="mb-8 bg-accent/50 rounded-lg p-6 shadow-md">
