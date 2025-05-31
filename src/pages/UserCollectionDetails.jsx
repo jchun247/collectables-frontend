@@ -17,6 +17,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { AlertTriangle, ArrowLeft, Settings, Star, CalendarDays, ListOrdered, Loader2, Info, Globe } from "lucide-react"
 import RenderCard from "@/components/RenderCard"
 import UpdateCollectionDialog from '../components/UpdateCollectionDialog'
+import PortfolioValueHistorySection from '@/components/PortfolioValueHistorySection';
 import { formatCurrency, formatDate } from "@/utils/textFormatters"
 import {
   Pagination,
@@ -371,6 +372,14 @@ function UserCollectionDetails({ collectionType }) {
           </Card>
         </div>
       </section>
+
+      {/* Portfolio Value History Section (conditionally rendered) */}
+      {collectionType === 'portfolio' && (
+        <section aria-labelledby="portfolio-value-history-heading">
+          <h2 id="portfolio-value-history-heading" className="sr-only">Portfolio Value History</h2>
+          <PortfolioValueHistorySection collectionId={collectionId} />
+        </section>
+      )}
 
       {/* Collection Cards Section */}
       <section aria-labelledby="collection-items-heading">
