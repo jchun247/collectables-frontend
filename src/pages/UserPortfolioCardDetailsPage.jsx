@@ -541,12 +541,14 @@ function UserPortfolioCardDetailsPage() {
                 <StatCard title="Realized Gain/Loss" value={formatCurrency(portfolioStats.realizedGain)} valueColorClass={portfolioStats.realizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<DollarSign />} />
              </div>
           </div>
-          <CardPriceHistorySection cardId={cardId} />
         </div>
       </div>
 
+      {/* Price History Section */}
+      <CardPriceHistorySection cardId={cardId} />
+
       {/* Transaction History Section */}
-      <div className="pt-8">
+      <div className="pt-2">
         <TransactionLedgerTable
           data={transactions}
           columns={columns}
