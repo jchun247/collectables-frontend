@@ -47,7 +47,7 @@ const SetCardsPage = () => {
                 });
 
                 if (sortOption) queryParams.set('sortOption', sortOption);
-                if (searchQuery) queryParams.set('query', searchQuery);
+                if (searchQuery) queryParams.set('searchQuery', searchQuery);
                 
                 const response = await fetch(`${apiBaseUrl}/cards?${queryParams}`);
 
