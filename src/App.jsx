@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Toaster } from "@/components/ui/toaster";
 import Header from './components/Header'
 import Profile from './pages/Profile'
-import LandingPage from './components/LandingPage'
+import LandingPage from './pages/LandingPage'
 import ExplorePage from './pages/ExplorePage';
 import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
@@ -18,7 +18,8 @@ const App = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <Toaster />
-      <Routes>
+      <main className="pt-12"> {/* Add padding top to offset fixed header */}
+        <Routes>
         <Route path="/" element={
           isAuthenticated ? <Navigate to="/explore" replace /> : <LandingPage />
         }/>
@@ -32,7 +33,8 @@ const App = () => {
         <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/login" />
         <Route path="/signup" />
-      </Routes>
+        </Routes>
+      </main>
     </div>
   )
 }
