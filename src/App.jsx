@@ -18,7 +18,7 @@ const App = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       <Toaster />
-      <main className="pt-12"> {/* Add padding top to offset fixed header */}
+      <main className="pt-14"> {/* Add padding top to offset fixed header */}
         <Routes>
         <Route path="/" element={
           isAuthenticated ? <Navigate to="/explore" replace /> : <LandingPage />
