@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from "react";
 import PropTypes from "prop-types"; // Import PropTypes
 import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
-import { TrendingUp, ChevronDown } from "lucide-react";
+import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -120,13 +120,88 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
 
   const chartData = processedData;
 
+  const descriptionText = useMemo(() => {
+    switch (selectedPriceRange) {
+      case "3_months":
+        return "Market prices over the last 3 months.";
+      case "6_months":
+        return "Market prices over the last 6 months.";
+      case "1_year":
+        return "Market prices over the last 1 year.";
+      case "all_time":
+        return "Overall market price history.";
+      default:
+        return "Market price history.";
+    }
+  }, [selectedPriceRange]);
+
+  const footerStats = useMemo(() => {
+    if (!chartData || chartData.length === 0 ) {
+      return { dateRangeText: "N/A", changes: [] };
+    }
+
+    const firstDataPoint = chartData[0];
+    const lastDataPoint = chartData[chartData.length - 1];
+
+    const startDate = firstDataPoint.date; // Already formatted "Mon Day"
+    const endDate = chartData.length > 1 ? lastDataPoint.date : startDate;
+    const dateRangeText = (chartData.length > 1 && startDate !== endDate) ? `${startDate} - ${endDate}` : startDate;
+
+    if (selectedFinishes.length === 0) {
+        return { dateRangeText, changes: [] };
+    }
+
+    const changes = selectedFinishes.map(finish => {
+      const startPrice = firstDataPoint[finish];
+      const endPrice = lastDataPoint[finish];
+      let percentageChange = null;
+      let trendIcon = null;
+      let priceDetailText = "Price data not available for this period.";
+
+      if (startPrice !== undefined && endPrice !== undefined && chartData.length > 1) {
+        priceDetailText = `From $${startPrice.toFixed(2)} to $${endPrice.toFixed(2)}`;
+        if (startPrice > 0) {
+          percentageChange = ((endPrice - startPrice) / startPrice) * 100;
+        } else if (endPrice > 0) {
+          percentageChange = Infinity; // Represents a rise from zero
+        } else {
+          percentageChange = 0; // From 0 to 0 or 0 to undefined
+        }
+      } else if (startPrice !== undefined && chartData.length === 1) {
+          priceDetailText = `Current: $${startPrice.toFixed(2)}`;
+          percentageChange = null; // No change for a single point
+      } else if (endPrice !== undefined && chartData.length === 1) { // Should be same as startPrice if length is 1
+          priceDetailText = `Current: $${endPrice.toFixed(2)}`;
+          percentageChange = null;
+      }
+
+
+      if (percentageChange !== null && isFinite(percentageChange)) {
+        if (percentageChange > 0) trendIcon = <TrendingUp className="h-4 w-4 text-green-500" />;
+        else if (percentageChange < 0) trendIcon = <TrendingDown className="h-4 w-4 text-red-500" />;
+      } else if (percentageChange === Infinity) {
+        trendIcon = <TrendingUp className="h-4 w-4 text-green-500" />;
+      }
+
+      return {
+        finishLabel: chartConfig[finish]?.label || finish,
+        percentageChange,
+        trendIcon,
+        priceDetailText,
+        hasDataInRange: startPrice !== undefined || endPrice !== undefined,
+      };
+    }).filter(item => item.hasDataInRange);
+
+    return { dateRangeText, changes };
+  }, [chartData, selectedFinishes, chartConfig]);
+
   return (
     <Card className={`shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col w-full h-full`}>
       <CardHeader className="flex flex-row justify-between items-center">
         <div>
           <CardTitle>Market Price History</CardTitle>
           <CardDescription>
-            Showing price data for the last 6+ months
+            {descriptionText}
           </CardDescription>
         </div>
         {uniqueFinishes.length > 1 && (
@@ -226,17 +301,46 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
         </ChartContainer>
         )}
       </CardContent>
-      <CardFooter>
-        <div className="flex w-full items-start gap-2 text-sm">
-          <div className="grid gap-2">
-            <div className="flex items-center gap-2 font-medium leading-none">
-              Trending up since last month <TrendingUp className="h-4 w-4" />
-            </div>
-            <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              January 2025 - May 2025
-            </div>
-          </div>
+      <CardFooter className="flex flex-col items-start gap-3 pt-4 text-sm border-t">
+        <div className="text-xs text-muted-foreground self-end w-full text-right">
+          Date range: {footerStats.dateRangeText}
         </div>
+        {footerStats.changes.length > 0 ? (
+          footerStats.changes.map((stat, index) => (
+            <div key={index} className="grid gap-1 w-full">
+              <div className="flex items-center justify-between gap-2 font-medium leading-none">
+                <span className="truncate" title={stat.finishLabel}>{stat.finishLabel}:</span>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  {stat.percentageChange !== null && isFinite(stat.percentageChange) ? (
+                    <>
+                      <span className={stat.percentageChange > 0 ? "text-green-600" : stat.percentageChange < 0 ? "text-red-600" : ""}>
+                        {stat.percentageChange > 0 ? "+" : ""}
+                        {stat.percentageChange.toFixed(1)}%
+                      </span>
+                      {stat.trendIcon}
+                    </>
+                  ) : stat.percentageChange === Infinity ? (
+                    <>
+                      <span className="text-green-600">From $0</span>
+                      {stat.trendIcon}
+                    </>
+                  ) : (
+                    <span>No trend</span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center justify-start gap-2 text-xs text-muted-foreground">
+                <span>{stat.priceDetailText}</span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-muted-foreground w-full text-center py-2">
+            {(!rawData || rawData.length === 0) ? "No price history data available." :
+             selectedFinishes.length > 0 ? "No price data for selected finishes in this period." :
+             "Select finishes to see trend data."}
+          </div>
+        )}
       </CardFooter>
     </Card>
   );
