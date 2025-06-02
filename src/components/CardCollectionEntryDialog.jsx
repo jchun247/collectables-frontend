@@ -34,7 +34,7 @@ const CardCollectionEntryDialog = ({
   disableConditionSelect = false,
   disableFinishSelect = false
 }) => {
-  const { user, getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [collections, setCollections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -53,8 +53,8 @@ const CardCollectionEntryDialog = ({
   }[type];
 
   useEffect(() => {
-    const fetchCollections = async () => {
-      if (!isOpen) return;
+  const fetchCollections = async () => {
+    if (!isOpen || !isAuthenticated || !user?.sub) return;
       
       try {
         setIsLoading(true);
@@ -87,7 +87,7 @@ const CardCollectionEntryDialog = ({
     };
 
     fetchCollections();
-  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently, user.sub]);
+  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently, isAuthenticated, user?.sub]);
 
   const [useMarketPrice, setUseMarketPrice] = useState(false);
   const [selectedFinish, setSelectedFinish] = useState("");
