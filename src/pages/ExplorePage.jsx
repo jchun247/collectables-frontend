@@ -3,6 +3,7 @@ import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import { Button } from "@/components/ui/button";
 import RenderCard from '../components/RenderCard';
+import { CardSkeleton } from "@/components/ui/cardskeleton";
 
 const ExplorePage = () => {
     const PAGE_SIZE = 15; // Match backend pagination size
@@ -176,12 +177,10 @@ const ExplorePage = () => {
                                 </div>
                             ))}
                             {/* Display loading skeletons  */}
-                    {isLoadingMore && (
+                            {isLoadingMore && (
                                 <>
                                     {[...Array(Math.min(PAGE_SIZE, 5))].map((_, i) => (
-                                        <div key={`loading-${i}`}>
-                                            <LoadingCardGrid count={1} />
-                                        </div>
+                                        <CardSkeleton key={`loading-skeleton-${i}`} />
                                     ))}
                                 </>
                             )}
