@@ -2,15 +2,43 @@ import { Link } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@/components/ui/button";
 import { Menu, User, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Header = () => {
     const { loginWithRedirect, isAuthenticated, user } = useAuth0();
-
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showHeader, setShowHeader] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+    const headerRef = useRef(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            const headerHeight = headerRef.current ? headerRef.current.offsetHeight : 0;
+
+            if (currentScrollY > lastScrollY && currentScrollY > headerHeight) {
+                // Scrolling down and header is out of view
+                setShowHeader(false);
+            } else if (currentScrollY < lastScrollY) {
+                // Scrolling up
+                setShowHeader(true);
+            }
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [lastScrollY]);
 
     return (
-        <header className="border-b">
+        <header 
+            ref={headerRef}
+            className={`border-b z-50 bg-background fixed top-0 left-0 right-0 transition-transform duration-300 ease-in-out ${
+                showHeader ? "translate-y-0" : "-translate-y-full"
+            }`}
+        >
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -100,9 +128,9 @@ const Header = () => {
             </div>
 
             {/* Mobile Menu */}
-            <div className={`absolute top-16 left-0 right-0 bg-background border-b md:hidden transform transition-all duration-300 ${
+            <div className={`absolute top-16 left-0 right-0 bg-background border-b md:hidden transform transition-all duration-300 z-50 ${
                 isMobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-[-10px] opacity-0 pointer-events-none'
-            }`}>
+            }`}> {/* Re-added z-50 */}
                     <div className="container mx-auto px-4 py-4">
                         <nav className="flex flex-col space-y-4">
                             <Link
@@ -126,13 +154,13 @@ const Header = () => {
                             >
                                 Portfolio
                             </Link>
-                            <Link
+                            {/* <Link
                                 to="/community"
                                 className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 Community
-                            </Link>
+                            </Link> */}
                         </nav>
                     </div>
                 </div>
