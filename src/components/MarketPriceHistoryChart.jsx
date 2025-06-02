@@ -171,9 +171,14 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
         )}
       </CardHeader>
       <CardContent className="flex-grow overflow-hidden">
-        <ChartContainer 
-          config={chartConfig} 
-          className={`h-full w-full`}
+        {(!rawData || rawData.length === 0) ? (
+          <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+            No price history data available
+          </div>
+        ) : (
+          <ChartContainer 
+            config={chartConfig} 
+            className={`h-full w-full`}
         >
           <LineChart
             accessibilityLayer
@@ -219,6 +224,7 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
             ))}
           </LineChart>
         </ChartContainer>
+        )}
       </CardContent>
       <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
