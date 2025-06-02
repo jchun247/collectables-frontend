@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAuth0 } from "@auth0/auth0-react";
 
 export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMount = true) => {
-  const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [priceHistory, setPriceHistory] = useState({ items: [] });
@@ -32,15 +30,12 @@ export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMou
     }
   
     try {
-      const token = await getAccessTokenSilently();
       const params = new URLSearchParams({
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
       });
 
-      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
+      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch price history");
@@ -53,7 +48,7 @@ export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMou
     } finally {
       setIsLoadingPriceHistory(false);
     }
-  }, [cardId, selectedPriceRange, getAccessTokenSilently, apiBaseUrl]);
+  }, [cardId, selectedPriceRange, apiBaseUrl]);
 
   useEffect(() => {
     if (fetchOnMount && cardId) {
