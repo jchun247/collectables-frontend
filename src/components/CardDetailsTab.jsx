@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { formatCardFinish, formatCardCondition, formatCardRarity, formatCardSubtype, formatModifier, formatCardText } from '@/utils/textFormatters';
+import { formatCardFinish, formatCardCondition, formatCardRarity, formatCardSubtype, formatModifier, formatCardText, formatTimeAgo } from '@/utils/textFormatters';
 import energyTypeImages from '@/utils/energyTypeImages';
 
 const CardDetailsTab = ({ cardDetails }) => {
@@ -24,8 +24,15 @@ const CardDetailsTab = ({ cardDetails }) => {
                     <div className="font-medium">{formatCardFinish(price.finish)}</div>
                     <div className="text-sm text-muted-foreground">{formatCardCondition(price.condition)}</div>
                   </div>
-                  <div className="text-lg font-semibold text-green-500">
-                    ${price.price.toFixed(2)}
+                  <div className="text-right">
+                    <div className="text-lg font-semibold text-green-500">
+                      ${price.price.toFixed(2)}
+                    </div>
+                    {price.updatedAt && (
+                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        {formatTimeAgo(price.updatedAt)}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

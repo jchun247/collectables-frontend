@@ -249,3 +249,29 @@ export const formatCurrency = (amount) => {
       currency: 'USD'
     }).format(amount)
 };
+
+// Helper function to format time ago
+export const formatTimeAgo = (dateString) => {
+  if (!dateString) return null;
+
+  const updatedAtDate = new Date(dateString);
+  const now = new Date();
+  // Ensure 'now' is not before 'updatedAtDate'
+  const diffInMilliseconds = Math.max(0, now.getTime() - updatedAtDate.getTime());
+
+  const totalSeconds = Math.floor(diffInMilliseconds / 1000);
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
+
+  if (totalDays > 0) {
+    return `Last updated: ${totalDays} day${totalDays === 1 ? '' : 's'} ago`;
+  }
+  if (totalHours > 0) {
+    return `Last updated: ${totalHours} hour${totalHours === 1 ? '' : 's'} ago`;
+  }
+  if (totalMinutes > 0) {
+    return `Last updated: ${totalMinutes} minute${totalMinutes === 1 ? '' : 's'} ago`;
+  }
+  return "Last updated: just now";
+};

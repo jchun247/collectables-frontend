@@ -13,7 +13,7 @@ import UpdateTransactionDialog from '@/components/UpdateTransactionDialog';
 import DeleteTransactionDialog from '@/components/DeleteTransactionDialog';
 import RemoveCardDialog from '@/components/RemoveCardDialog';
 import { createTransactionLedgerColumns } from '@/components/tables/columns';
-import { formatCardCondition, formatCardFinish, formatCurrency } from "@/utils/textFormatters";
+import { formatCardCondition, formatCardFinish, formatCurrency, formatTimeAgo } from "@/utils/textFormatters";
 import CardPriceHistorySection from "@/components/CardPriceHistorySection";
 
 function UserPortfolioCardDetailsPage() {
@@ -171,8 +171,9 @@ function UserPortfolioCardDetailsPage() {
       const quantityHeld = buys.reduce((sum, t) => sum + t.quantity, 0) - sells.reduce((sum, t) => sum + t.quantity, 0);
       const avgCostPerCard = quantityHeld > 0 ? (portfolioStats.totalCostBasis / quantityHeld) : 0;
       const marketPrice = cardDetails?.prices.find(p => p.condition === condition && p.finish === finish)?.price || 0;
+      const marketPriceUpdatedAt = cardDetails?.prices.find(p => p.condition === condition && p.finish === finish)?.updatedAt;
       
-      return { quantityHeld, avgCostPerCard, marketPrice };
+      return { quantityHeld, avgCostPerCard, marketPrice, marketPriceUpdatedAt };
     }, [transactions, portfolioStats.totalCostBasis, cardDetails, condition, finish]);
 
   const handleBuySubmit = async (formData) => {
@@ -514,7 +515,14 @@ function UserPortfolioCardDetailsPage() {
                 />
               </div>
               <div className="flex items-center justify-between mt-4">
-                <p className="text-4xl font-bold text-green-500 dark:text-green-400">${derivedStats.marketPrice.toFixed(2)}</p>
+                <div>
+                  <p className="text-4xl font-bold text-green-500 dark:text-green-400">${derivedStats.marketPrice.toFixed(2)}</p>
+                  {derivedStats.marketPriceUpdatedAt && (
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      {formatTimeAgo(derivedStats.marketPriceUpdatedAt)}
+                    </p>
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
                   <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
