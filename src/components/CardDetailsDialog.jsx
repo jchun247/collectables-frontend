@@ -9,10 +9,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"; // Added Tooltip imports
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
-import { Plus, Star } from 'lucide-react';
+import { Plus, Star, ExternalLink } from 'lucide-react'; // Added ExternalLink
 import CardCollectionEntryDialog from './CardCollectionEntryDialog';
 import { useState } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
@@ -73,7 +79,10 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[90vw] md:max-w-[75vw] lg:max-w-[60vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent 
+        className="w-[90vw] md:max-w-[75vw] lg:max-w-[60vw] max-h-[90vh] overflow-y-auto"
+        onOpenAutoFocus={(e) => e.preventDefault()} // Prevent auto-focus on the first element
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>{cardDetails.name}</DialogTitle>
         </DialogHeader>
@@ -97,9 +106,31 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
           </div>
           <div className="space-y-2">
             <div className="flex flex-col md:flex-row md:flex-wrap md:items-start md:justify-between gap-x-4 gap-y-2 mb-4">
-              <h2 className="text-4xl font-bold truncate md:flex-grow md:min-w-0">{cardDetails.name}</h2>
+              <div className="flex items-center gap-x-2 md:flex-grow md:min-w-0">
+                <h2 className="text-4xl font-bold truncate">{cardDetails.name}</h2>
+                {cardDetails && cardDetails.id && (
+                  <TooltipProvider delayDuration={300}>
+                    <Tooltip delayDuration={300}>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => navigate(`/cards/${cardDetails.id}`)}
+                          aria-label="View card details page"
+                          className="ml-2 flex-shrink-0"
+                        >
+                          <ExternalLink className="h-5 w-5" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Card Details Page</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
-                <Button 
+                <Button
                   variant="secondary"
                   className="w-full sm:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
                   onClick={() => handleCollectionAction('list')}
