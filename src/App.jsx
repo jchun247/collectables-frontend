@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage'
 import ExplorePage from './pages/ExplorePage';
 import SetsPage from './pages/SetsPage';
 import SetCardsPage from './pages/SetCardsPage';
+import CardDetailsPage from './pages/CardDetailsPage';
 import UserCollection from './pages/UserCollection';
 import UserCollectionDetails from './pages/UserCollectionDetails';
 import UserPortfolioCardDetailsPage from './pages/UserPortfolioCardDetailsPage';
@@ -31,6 +32,7 @@ const App = () => {
         <Route path="/collections/portfolios/:portfolioId" element={<UserCollectionDetails collectionType="portfolio" />} />
         <Route path="/collections/portfolios/:portfolioId/card/:collectionCardId" element={<UserPortfolioCardDetailsPage />} />
         <Route path="/sets/:setId" element={<SetCardsPage />} />
+        <Route path="/cards/:cardId" element={<CardDetailsPage />} />
         <Route path="/login" />
         <Route path="/signup" />
         </Routes>
