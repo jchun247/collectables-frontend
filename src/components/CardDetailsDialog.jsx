@@ -129,10 +129,10 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                   </TooltipProvider>
                 )}
               </div>
-              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 md:flex-grow">
                 <Button
                   variant="secondary"
-                  className="w-full sm:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
+                  className="w-full sm:flex-1 hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
                   onClick={() => handleCollectionAction('list')}
                 >
                   <Star className="mr-2 h-4 w-4"/>
@@ -140,7 +140,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                 </Button>
                 <Button 
                   variant="default"
-                  className="w-full sm:w-auto hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
+                  className="w-full sm:flex-1 hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"
                   onClick={() => handleCollectionAction('portfolio')}
                 >
                   <Plus className="mr-2 h-4 w-4"/>
