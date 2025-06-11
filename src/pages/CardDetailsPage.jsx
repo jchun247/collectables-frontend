@@ -160,7 +160,7 @@ function CardDetailsPage() {
         <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:flex-wrap md:items-start md:justify-between gap-x-4 gap-y-2">
             <h1 className="text-3xl lg:text-4xl font-bold truncate md:flex-grow md:min-w-0">{cardDetails.name}</h1>
-            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 md:flex-grow">
               <Button 
                 variant="secondary"
                 className="w-full sm:flex-1 hover:opacity-50 transition-opacity duration-200 whitespace-nowrap flex items-center justify-center"

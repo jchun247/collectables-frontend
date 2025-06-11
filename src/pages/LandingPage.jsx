@@ -2,7 +2,6 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import FeatureCard from "@/components/FeatureCard";
-// import StatCard from "@/components/StatCard"; // Removed unused import
 import { ArrowRight, Sparkles, Search, TrendingUp, Folder, Share2, Bell, BarChart3 } from "lucide-react"; // Removed Package, Users, BarChartHorizontalBig
 
 const LandingPage = () => {
