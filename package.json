@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build:data": "node scripts/fetchSetsData.js",
-    "build": "npm run build:data && vite build",
-    "build:staging": "npm run build:data && vite build --mode staging",
+    "build": "NODE_ENV=development npm run build:data && vite build",
+    "build:staging": "NODE_ENV=staging npm run build:data && vite build --mode staging",
     "lint": "eslint .",
     "preview": "vite preview"
   },

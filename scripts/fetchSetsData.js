@@ -11,10 +11,11 @@ const __dirname = dirname(__filename);
 
 // Initialize environment variables and API URL
 function initializeEnv() {
-  dotenv.config({ path: '.env.development' });
+  const env = process.env.NODE_ENV || 'development';
+  dotenv.config({ path: `.env.${env}` });
   const apiBaseUrl = process.env.API_BASE_URL;
   if (!apiBaseUrl) {
-    throw new Error('API_BASE_URL is not defined in .env.development');
+    throw new Error(`API_BASE_URL is not defined in .env.${env}`);
   }
   return apiBaseUrl;
 }
