@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
-import setsData from "@/data/sets.json";
+import { useSets } from "@/hooks/useSets";
 import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters"
 
 const SetCardsPage = () => {
@@ -21,6 +21,7 @@ const SetCardsPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("name");
     const [filters, setFilters] = useState({});
+    const { setsData, loading: setsLoading, error: setsError } = useSets();
 
     // Reference for the intersection observer
     const observer = useRef();
@@ -28,10 +29,10 @@ const SetCardsPage = () => {
     const lastCardRef = useRef();
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    // Find set details from sets.json
-    const setDetails = Object.values(setsData.setsBySeries)
-        .flat()
-        .find(set => set.id === setId);
+    // Find set details from the context
+    const setDetails = setsData 
+        ? Object.values(setsData.setsBySeries).flat().find(set => set.id === setId)
+        : null;
 
     const fetchSetCards = useCallback(async (pageNum = 0, isInitial = true) => {
         if (isInitial) {
@@ -112,6 +113,14 @@ const SetCardsPage = () => {
             }
         };
     }, [hasMore, loading, isLoadingMore, currentPage, fetchSetCards]);
+
+    if (setsLoading) {
+        return <div className="container mx-auto px-4 py-8 text-center">Loading set details...</div>;
+    }
+
+    if (setsError) {
+        return <div className="container mx-auto px-4 py-8 text-center text-red-500">{setsError}</div>;
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">
