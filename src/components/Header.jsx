@@ -134,13 +134,6 @@ const Header = () => {
                     <div className="container mx-auto px-4 py-4">
                         <nav className="flex flex-col space-y-4">
                             <Link
-                                to="/profile"
-                                className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                            >
-                                Profile
-                            </Link>
-                            <Link
                                 to="/explore"
                                 className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -148,19 +141,19 @@ const Header = () => {
                                 Explore
                             </Link>
                             <Link
-                                to="/portfolio"
+                                to="/sets"
                                 className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
-                                Portfolio
+                                Sets
                             </Link>
-                            {/* <Link
-                                to="/community"
+                            <Link
+                                to="/collections"
                                 className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
-                                Community
-                            </Link> */}
+                                Collections
+                            </Link>
                         </nav>
                     </div>
                 </div>
