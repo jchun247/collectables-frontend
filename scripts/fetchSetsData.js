@@ -4,21 +4,9 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import * as dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
-// Initialize environment variables and API URL
-function initializeEnv() {
-  const env = process.env.NODE_ENV || 'development';
-  dotenv.config({ path: `.env.${env}` });
-  const apiBaseUrl = process.env.API_BASE_URL;
-  if (!apiBaseUrl) {
-    throw new Error(`API_BASE_URL is not defined in .env.${env}`);
-  }
-  return apiBaseUrl;
-}
 
 async function fetchWithAuth(url) {
   const response = await fetch(url);
@@ -62,7 +50,10 @@ async function fetchAllData(apiBaseUrl) {
 // Main execution
 async function main() {
   try {
-    const apiBaseUrl = initializeEnv();
+    const apiBaseUrl = process.env.API_BASE_URL;
+    if (!apiBaseUrl) {
+      throw new Error('API_BASE_URL environment variable is not set');
+    }
     await fetchAllData(apiBaseUrl);
   } catch (error) {
     console.error('Failed to execute script:', error);
