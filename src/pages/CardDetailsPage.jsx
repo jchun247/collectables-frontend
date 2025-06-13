@@ -29,13 +29,7 @@ function CardDetailsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(`${apiBaseUrl}/cards/${cardId}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(`${apiBaseUrl}/cards/${cardId}`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to fetch card details');
@@ -47,7 +41,7 @@ function CardDetailsPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [cardId, getAccessTokenSilently, apiBaseUrl]);
+  }, [cardId, apiBaseUrl]);
 
   useEffect(() => {
     fetchCardDetails();
