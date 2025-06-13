@@ -1,6 +1,7 @@
-import { Route, Routes, Navigate } from 'react-router-dom'
+import { Route, Routes, Navigate, Outlet } from 'react-router-dom'
 import { useAuth0 } from "@auth0/auth0-react";
 import { Toaster } from "@/components/ui/toaster";
+import { SetsProvider } from './context/SetsContext';
 import Header from './components/Header'
 import Profile from './pages/Profile'
 import LandingPage from './pages/LandingPage'
@@ -11,6 +12,12 @@ import CardDetailsPage from './pages/CardDetailsPage';
 import UserCollection from './pages/UserCollection';
 import UserCollectionDetails from './pages/UserCollectionDetails';
 import UserPortfolioCardDetailsPage from './pages/UserPortfolioCardDetailsPage';
+
+const SetsLayout = () => (
+  <SetsProvider>
+    <Outlet />
+  </SetsProvider>
+);
 
 const App = () => {
   const { isAuthenticated } = useAuth0();
@@ -26,12 +33,14 @@ const App = () => {
         }/>
         <Route path="/profile" element={<Profile />}/>
         <Route path="/explore" element={<ExplorePage />}/>
-        <Route path="/sets" element={<SetsPage />} />
+        <Route element={<SetsLayout />}>
+          <Route path="/sets" element={<SetsPage />} />
+          <Route path="/sets/:setId" element={<SetCardsPage />} />
+        </Route>
         <Route path="/collections" element={<UserCollection />}/>
         <Route path="/collections/lists/:listId" element={<UserCollectionDetails collectionType="list" />} />
         <Route path="/collections/portfolios/:portfolioId" element={<UserCollectionDetails collectionType="portfolio" />} />
         <Route path="/collections/portfolios/:portfolioId/card/:collectionCardId" element={<UserPortfolioCardDetailsPage />} />
-        <Route path="/sets/:setId" element={<SetCardsPage />} />
         <Route path="/cards/:cardId" element={<CardDetailsPage />} />
         <Route path="/login" />
         <Route path="/signup" />

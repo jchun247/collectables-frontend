@@ -1,49 +1,53 @@
-import { useState, useMemo, useEffect } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import setsData from "@/data/sets.json"
-import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters"
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSets } from "@/hooks/useSets";
+import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters";
 
 const SetsPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedSeries, setSelectedSeries] = useState(() => 
-    searchParams.get("series") || "SCARLET_AND_VIOLET"
-  );
+  const { setsData, loading, error } = useSets();
+  const [selectedSeries, setSelectedSeries] = useState(null);
 
-  // Update selected series when URL changes
+  // Effect to set the initial selected series once data is loaded
+  useEffect(() => {
+    if (setsData && !selectedSeries) {
+      const seriesParam = searchParams.get("series");
+      if (seriesParam && setsData.series.includes(seriesParam)) {
+        setSelectedSeries(seriesParam);
+      } else if (setsData.series.length > 0) {
+        const sortedSeries = sortSeries(setsData.series);
+        setSelectedSeries(sortedSeries[0]);
+      }
+    }
+  }, [setsData, selectedSeries, searchParams]);
+
+  // Effect to sync selected series with URL search params
   useEffect(() => {
     const seriesParam = searchParams.get("series");
     if (seriesParam && seriesParam !== selectedSeries) {
       setSelectedSeries(seriesParam);
     }
   }, [searchParams, selectedSeries]);
-  const series = useMemo(() => {
-    // Sort series from newest to oldest
+  const sortSeries = (seriesToSort) => {
     const seriesOrder = {
-      "SCARLET_AND_VIOLET": 1,
-      "SWORD_AND_SHIELD": 2,
-      "SUN_AND_MOON": 3,
-      "XY": 4,
-      "BLACK_AND_WHITE": 5,
-      "HEARTGOLD_AND_SOULSILVER": 6,
-      "PLATINUM": 7,
-      "DIAMOND_AND_PEARL": 8,
-      "POP" :9,
-      "NP": 10,
-      "EX": 11,
-      "E_CARD": 12,
-      "NEO": 13,
-      "GYM": 14,
-      "BASE": 15,
-      "OTHER": 16
+      "SCARLET_AND_VIOLET": 1, "SWORD_AND_SHIELD": 2, "SUN_AND_MOON": 3,
+      "XY": 4, "BLACK_AND_WHITE": 5, "HEARTGOLD_AND_SOULSILVER": 6,
+      "PLATINUM": 7, "DIAMOND_AND_PEARL": 8, "POP": 9, "NP": 10, "EX": 11,
+      "E_CARD": 12, "NEO": 13, "GYM": 14, "BASE": 15, "OTHER": 16
     };
-    
-    return [...setsData.series].sort((a, b) => seriesOrder[a] - seriesOrder[b]);
-  }, []);
-  const sets = selectedSeries ? 
-    [...setsData.setsBySeries[selectedSeries]].sort((a, b) => 
+    return [...seriesToSort].sort((a, b) => (seriesOrder[a] || 99) - (seriesOrder[b] || 99));
+  };
+
+  const series = useMemo(() => setsData ? sortSeries(setsData.series) : [], [setsData]);
+  const sets = useMemo(() => {
+    if (!selectedSeries || !setsData || !setsData.setsBySeries[selectedSeries]) {
+      return [];
+    }
+    return [...setsData.setsBySeries[selectedSeries]].sort((a, b) => 
       new Date(b.releaseDate) - new Date(a.releaseDate)
-    ) : [];
+    );
+  }, [selectedSeries, setsData]);
  
   const handleSeriesClick = (seriesName) => {
     setSelectedSeries(seriesName);
@@ -75,6 +79,14 @@ const SetsPage = () => {
     }
   };
   
+  if (loading) {
+    return <div className="container mx-auto px-4 py-8 text-center">Loading sets...</div>;
+  }
+
+  if (error) {
+    return <div className="container mx-auto px-4 py-8 text-center text-red-500">{error}</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
