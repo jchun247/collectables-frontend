@@ -21,15 +21,7 @@ function initializeEnv() {
 }
 
 async function fetchWithAuth(url) {
-  // Note: During build time we use a special build token, 
-  // this should be set in your CI/CD environment
-  const token = process.env.BUILD_TOKEN;
-  
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error(`API call failed: ${response.statusText}`);
