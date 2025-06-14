@@ -51,7 +51,7 @@ const LandingPage = () => {
                     aria-label="hero"
                 className="relative container mx-auto rounded-lg shadow-xl overflow-hidden bg-cover bg-center bg-no-repeat my-6 md:my-10"
                 style={{ 
-                    backgroundImage: "url('https://collectables-app-frontend-staging.s3.us-east-2.amazonaws.com/cynthia_hero.jpg')",
+                    backgroundImage: "url('https://collectables-app-frontend-staging.s3.us-east-2.amazonaws.com/hero-images/cynthia_hero.jpg')",
                     minHeight: 'clamp(380px, 55vh, 550px)' // Responsive height: min, preferred, max
                 }}
             >
