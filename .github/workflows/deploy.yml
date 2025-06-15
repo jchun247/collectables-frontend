@@ -7,95 +7,82 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  build-and-test:
+  build-and-deploy-staging:
+    name: Build and Deploy to Staging
     runs-on: ubuntu-latest
-    
+    if: github.ref == 'refs/heads/dev'
+    environment: staging
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
         cache: 'npm'
-        
+
     - name: Install dependencies
       run: npm ci
-      
-    - name: Build project (staging)
-      if: github.ref == 'refs/heads/dev'
+
+    - name: Build project for staging
       env:
         VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-        VITE_AUTH0_DOMAIN: ${{ vars.VITE_AUTH0_DOMAIN }}
-        VITE_AUTH0_CLIENT_ID: ${{ vars.VITE_AUTH0_CLIENT_ID }}
-        VITE_AUTH0_AUDIENCE: ${{ vars.VITE_AUTH0_AUDIENCE }}
-      run: |
-        echo "VITE_API_BASE_URL for staging is $VITE_API_BASE_URL"
-        npm run build:staging
+        VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
+        VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
+        VITE_AUTH0_AUDIENCE: ${{ secrets.VITE_AUTH0_AUDIENCE }}
+      run: npm run build:staging
 
-    - name: Build project (production)
-      if: github.ref == 'refs/heads/main'
-      run: npm run build:production
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-files
-        path: dist/
-
-  deploy-staging:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev'
-    environment: staging
-    
-    steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-files
-        path: dist/
-        
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
-        
-    - name: Deploy to S3 staging
-      run: |
-        aws s3 sync dist/ s3://${{ vars.S3_BUCKET_NAME }} --delete --exclude "hero-images/*"
-        
-    - name: Invalidate CloudFront staging
-      run: |
-        aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/index.html" "/manifest.json"
 
-  deploy-production:
-    needs: build-and-test
+    - name: Deploy to S3 staging
+      run: aws s3 sync ./dist s3://${{ vars.S3_BUCKET_NAME }} --delete
+
+    - name: Invalidate CloudFront staging
+      run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+
+  build-and-deploy-production:
+    name: Build and Deploy to Production
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment: production
-    
+
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-        name: build-files
-        path: dist/
-        
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build project for production
+      env:
+        VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+        VITE_AUTH0_DOMAIN: ${{ secrets.VITE_AUTH0_DOMAIN }}
+        VITE_AUTH0_CLIENT_ID: ${{ secrets.VITE_AUTH0_CLIENT_ID }}
+        VITE_AUTH0_AUDIENCE: ${{ secrets.VITE_AUTH0_AUDIENCE }}
+      run: npm run build:production
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ vars.AWS_REGION }}
-        
+
     - name: Deploy to S3 production
-      run: |
-        aws s3 sync dist/ s3://${{ vars.S3_BUCKET_NAME }} --delete --exclude "hero-images/*"
-        
+      run: aws s3 sync ./dist s3://${{ vars.S3_BUCKET_NAME }} --delete
+
     - name: Invalidate CloudFront production
-      run: |
-        aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/index.html" "/manifest.json"
+      run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
