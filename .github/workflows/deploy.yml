@@ -2,15 +2,15 @@ name: Deploy to AWS S3 and CloudFront
 
 on:
   push:
-    branches: [ main, dev ]
+    branches: [ main, staging ]
   pull_request:
-    branches: [ main, dev ]
+    branches: [ main, staging ]
 
 jobs:
   build-and-deploy-staging:
     name: Build and Deploy to Staging
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/staging'
     environment: staging
 
     steps:
@@ -82,7 +82,7 @@ jobs:
         aws-region: ${{ vars.AWS_REGION }}
 
     - name: Deploy to S3 production
-      run: aws s3 sync ./dist s3://${{ vars.S3_BUCKET_NAME }} --delete
+      run: aws s3 sync ./dist s3://${{ vars.S3_BUCKET_NAME }} --delete --exclude "hero-images/*"
 
     - name: Invalidate CloudFront production
       run: aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
