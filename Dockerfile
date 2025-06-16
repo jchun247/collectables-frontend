@@ -10,7 +10,10 @@ RUN npm run build
 FROM node:18-alpine
 WORKDIR /app
 COPY --from=build /app/dist /app/dist
+COPY --from=build /app/public /app/public
 COPY package*.json ./
-RUN npm install --omit=dev
+COPY vite.config.ts .
+COPY index.html .
+RUN npm install
 EXPOSE 4173
-CMD ["npm", "run", "preview"]
+CMD ["npx", "vite", "preview", "--host"]
