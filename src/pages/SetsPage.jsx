@@ -6,21 +6,22 @@ import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters";
 const SetsPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { setsData, loading, error } = useSets();
+  const { setsData, loading, error, getSetsForSeries } = useSets();
   const [selectedSeries, setSelectedSeries] = useState(null);
 
   // Effect to set the initial selected series once data is loaded
   useEffect(() => {
-    if (setsData && !selectedSeries) {
+    if (setsData && setsData.series.length > 0 && !selectedSeries) {
       const seriesParam = searchParams.get("series");
-      if (seriesParam && setsData.series.includes(seriesParam)) {
-        setSelectedSeries(seriesParam);
-      } else if (setsData.series.length > 0) {
-        const sortedSeries = sortSeries(setsData.series);
-        setSelectedSeries(sortedSeries[0]);
-      }
+      const seriesToSelect =
+        seriesParam && setsData.series.includes(seriesParam)
+          ? seriesParam
+          : sortSeries(setsData.series)[0];
+
+      setSelectedSeries(seriesToSelect);
+      getSetsForSeries(seriesToSelect);
     }
-  }, [setsData, selectedSeries, searchParams]);
+  }, [setsData, selectedSeries, searchParams, getSetsForSeries]);
 
   // Effect to sync selected series with URL search params
   useEffect(() => {
@@ -52,6 +53,7 @@ const SetsPage = () => {
   const handleSeriesClick = (seriesName) => {
     setSelectedSeries(seriesName);
     setSearchParams({ series: seriesName });
+    getSetsForSeries(seriesName);
   };
  
   const handleKeyDown = (e, seriesName) => {
