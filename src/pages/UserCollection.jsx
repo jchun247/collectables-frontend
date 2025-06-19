@@ -41,14 +41,6 @@ const UserCollection = () => {
 
   const MIN_SKELETON_DISPLAY_TIME = 300; // milliseconds
 
-  // State for aggregated stats
-  const [collectionAggregates, setCollectionAggregates] = useState({
-    totalPortfoliosValue: 0,
-    totalCardsInPortfolios: 0,
-    isLoading: true,
-    error: null,
-  });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionError, setSubmissionError] = useState(null);
 
@@ -127,7 +119,6 @@ const UserCollection = () => {
       setShowAuthDialog(true);
       setPortfoliosData(prev => ({ ...prev, isLoading: false }));
       setListsData(prev => ({ ...prev, isLoading: false }));
-      setCollectionAggregates(prev => ({ ...prev, isLoading: false }));
       return;
     }
 
@@ -226,10 +217,10 @@ const UserCollection = () => {
   const handleCreatePortfolio = (data) => handleCreateCollection(data, 'portfolio', setShowPortfolioDialog);
   const handleCreateList = (data) => handleCreateCollection(data, 'list', setShowListDialog);
 
-  const isLoading = portfoliosData.isLoading || listsData.isLoading || collectionAggregates.isLoading;
-  const globalError = portfoliosData.error || listsData.error || collectionAggregates.error; // Show first error encountered
+  const isLoading = portfoliosData.isLoading || listsData.isLoading;
+  const globalError = portfoliosData.error || listsData.error;
 
-  if (isAuthLoading || (isLoading && !showAuthDialog && portfoliosData.items.length === 0 && listsData.items.length === 0 && collectionAggregates.isLoading)) {
+  if (isAuthLoading || (isLoading && !showAuthDialog && portfoliosData.items.length === 0 && listsData.items.length === 0)) {
     return (
       <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-12 w-12 animate-spin text-sky-600 dark:text-sky-500" />
