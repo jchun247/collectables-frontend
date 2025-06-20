@@ -153,13 +153,16 @@ const CardCollectionEntryDialog = ({
     }
     
     const form = new FormData(e.target);
+    const purchaseDate = type === 'portfolio' 
+      ? form.get('purchaseDate') 
+      : new Date().toISOString().split('T')[0];
 
     const submitData = {
       cardId,
       condition: selectedCondition,
       finish: selectedFinish,
       quantity: form.get('quantity'),
-      purchaseDate: form.get('purchaseDate'),
+      purchaseDate,
       costBasis: type === 'portfolio' ? parseFloat(unitPrice) || 0 : 0,
       collectionId: disableCollectionSelect ? Number(currentPortfolioId) : Number(form.get('collection'))
     };
@@ -280,34 +283,36 @@ const CardCollectionEntryDialog = ({
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="purchaseDate">Purchase Date</Label>
-            <Input
-              id="purchaseDate"
-              name="purchaseDate"
-              type="date"
-              required
-              defaultValue={new Date().toISOString().split('T')[0]}
-              max={new Date().toISOString().split('T')[0]}
-              className={`text-foreground [color-scheme:normal] [&::-webkit-calendar-picker-indicator]:text-foreground [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:[filter:invert(1)] ${dateError ? "border-red-500" : ""}`}
-              onChange={(e) => {
-                const selectedDate = new Date(e.target.value);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                if (selectedDate > today) {
-                  setDateError("Purchase date cannot be in the future");
-                } else {
-                  setDateError("");
-                }
-              }}
-            />
-            {dateError && (
-              <p className="text-sm text-red-500 mt-1">
-                {dateError}
-              </p>
-            )}
-          </div>
+          {type === "portfolio" && (
+            <div className="space-y-2">
+              <Label htmlFor="purchaseDate">Purchase Date</Label>
+              <Input
+                id="purchaseDate"
+                name="purchaseDate"
+                type="date"
+                required
+                defaultValue={new Date().toISOString().split('T')[0]}
+                max={new Date().toISOString().split('T')[0]}
+                className={`text-foreground [color-scheme:normal] [&::-webkit-calendar-picker-indicator]:text-foreground [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:[filter:invert(1)] ${dateError ? "border-red-500" : ""}`}
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  
+                  if (selectedDate > today) {
+                    setDateError("Purchase date cannot be in the future");
+                  } else {
+                    setDateError("");
+                  }
+                }}
+              />
+              {dateError && (
+                <p className="text-sm text-red-500 mt-1">
+                  {dateError}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="collection">{collectionConfig.label}</Label>
