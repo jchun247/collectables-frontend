@@ -11,7 +11,7 @@ const ExplorePage = () => {
     const [cards, setCards] = useState([]);
 
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortOption, setSortOption] = useState("name");
+    const [sortOption, setSortOption] = useState("name-asc");
     const [filters, setFilters] = useState({
         game: {},
         productType: 'cards',

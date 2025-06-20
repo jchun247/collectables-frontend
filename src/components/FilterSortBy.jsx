@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
     const filterOptions = customSortOptions || {
-        'name': 'Name (A-Z)',
+        'name-asc': 'Name (A-Z)',
         'name-desc': 'Name (Z-A)',
         'price-asc': 'Price (Low to High)',
         'price-desc': 'Price (High to Low)',
