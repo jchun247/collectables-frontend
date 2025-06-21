@@ -19,7 +19,7 @@ const SetCardsPage = () => {
     const [hasMore, setHasMore] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortOption, setSortOption] = useState("name");
+    const [sortOption, setSortOption] = useState("price-desc");
     const [filters, setFilters] = useState({});
     const { setsData, loading: setsLoading, error: setsError } = useSets();
 
