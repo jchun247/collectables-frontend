@@ -1,7 +1,6 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowUpDown } from "lucide-react";
 import PropTypes from "prop-types";
-// import { useState } from "react";
 
 const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
     const filterOptions = customSortOptions || {

@@ -241,7 +241,7 @@ function UserPortfolioCardDetailsPage() {
               transactionType: "SELL",
               quantity: formData.quantity,
               purchaseDate: formData.saleDate,
-              costBasis: formData.costBasis
+              costBasis: formData.salePrice
             })
           }
         );
