@@ -7,6 +7,8 @@ import FilterSidebar from './FilterSidebar';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import PropTypes from 'prop-types';
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 
 const SearchAndFilterHeader = ({ 
@@ -14,7 +16,12 @@ const SearchAndFilterHeader = ({
     sortBy, setSortBy, 
     filters, setFilters,
     hideFilters = false,
-    customSortOptions }) => {
+    hideSortBy = false,
+    customSortOptions,
+    showHideSoldCards = false,
+    hideSoldCards,
+    setHideSoldCards
+}) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
 
@@ -61,12 +68,26 @@ const SearchAndFilterHeader = ({
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <span className="text-sm text-muted-foreground">Sort by:</span>
-                    <FilterSortBy 
-                        sortBy={sortBy} 
-                        setSortBy={setSortBy}
-                        customSortOptions={customSortOptions}
-                    />
+                    {showHideSoldCards && (
+                        <div className="flex items-center space-x-2">
+                            <Checkbox 
+                                id="hide-sold-cards" 
+                                checked={hideSoldCards}
+                                onCheckedChange={setHideSoldCards}
+                            />
+                            <Label htmlFor="hide-sold-cards">Hide sold cards</Label>
+                        </div>
+                    )}
+                    {!hideSortBy && (
+                        <>
+                            <span className="text-sm text-muted-foreground">Sort by:</span>
+                            <FilterSortBy 
+                                sortBy={sortBy} 
+                                setSortBy={setSortBy}
+                                customSortOptions={customSortOptions}
+                            />
+                        </>
+                    )}
                     {!hideFilters && (
                         <Sheet>
                             <SheetTrigger asChild>
@@ -103,7 +124,11 @@ SearchAndFilterHeader.propTypes = {
     setFilters: PropTypes.func.isRequired,
     fetchCards: PropTypes.func,
     hideFilters: PropTypes.bool,
-    customSortOptions: PropTypes.objectOf(PropTypes.string)
+    hideSortBy: PropTypes.bool,
+    customSortOptions: PropTypes.objectOf(PropTypes.string),
+    showHideSoldCards: PropTypes.bool,
+    hideSoldCards: PropTypes.bool,
+    setHideSoldCards: PropTypes.func
 }
 
 export default SearchAndFilterHeader;

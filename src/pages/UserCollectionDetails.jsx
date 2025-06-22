@@ -51,6 +51,7 @@ function UserCollectionDetails({ collectionType }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('calculatedTotalStackValue,desc');
   const [filters, setFilters] = useState({});
+  const [hideSoldCards, setHideSoldCards] = useState(true);
 
   // State for fetching collection items
   const [collectionItems, setCollectionItems] = useState(null);
@@ -139,6 +140,13 @@ function UserCollectionDetails({ collectionType }) {
 
     fetchCollectionItems()
   }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently, currentPage, pageSize, searchQuery, sortBy]);
+
+  const filteredItems = collectionItems?.items?.filter(item => {
+    if (hideSoldCards) {
+      return item.quantity > 0;
+    }
+    return true;
+  });
 
   if (isLoadingCollectionDetails) {
     return (
@@ -396,6 +404,9 @@ function UserCollectionDetails({ collectionType }) {
             filters={filters}
             setFilters={setFilters}
             hideFilters={true}
+            showHideSoldCards={true}
+            hideSoldCards={hideSoldCards}
+            setHideSoldCards={setHideSoldCards}
             customSortOptions={{
               'calculatedTotalStackValue,desc': 'Value (High to Low)',
               'calculatedTotalStackValue,asc': 'Value (Low to High)',
@@ -427,9 +438,9 @@ function UserCollectionDetails({ collectionType }) {
               {fetchItemsError}
             </p>
           </div>
-        ) : collectionItems?.items?.length > 0 ? (
+        ) : filteredItems?.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
-            {collectionItems.items.map((item) => (
+            {filteredItems.map((item) => (
               <div
                 key={item.id}
                 onClick={() => {

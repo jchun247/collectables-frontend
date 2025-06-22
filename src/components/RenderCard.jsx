@@ -134,12 +134,12 @@ const RenderCard = ({ card, quantity = null, showDetails = false, finish = null,
                                 <div className="text-right">
                                 <span className="text-lg font-semibold text-green-500 leading-tight">
                                     {/* If quantity > 1, display stackValue. Otherwise, display per-unit price as primary. */}
-                                    {(quantity && quantity > 1) ? 
-                                        (stackValue ? `$${stackValue.toFixed(2)}` : '$0.00') : 
-                                        `$${getDisplayPrice(card.prices, finish, condition)}`
+                                    {quantity > 1
+                                        ? (stackValue ? `$${stackValue.toFixed(2)}` : '$0.00')
+                                        : `$${getDisplayPrice(card.prices, finish, condition) || '0.00'}`
                                     }
                                 </span>
-                                {(quantity && quantity > 1) && (
+                                {quantity > 1 && (
                                     <span className="block text-xs text-slate-500 dark:text-slate-400 leading-snug">
                                         {quantity} &times; ${getDisplayPrice(card.prices, finish, condition)}/ea
                                     </span>
