@@ -7,6 +7,10 @@ const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
     const filterOptions = customSortOptions || {
         'name-asc': 'Name (A-Z)',
         'name-desc': 'Name (Z-A)',
+        'rarity-asc': 'Rarity (Low to High)',
+        'rarity-desc': 'Rarity (High to Low)',
+        // 'number-asc': 'Number (Low to High)',
+        // 'number-desc': 'Number (High to Low)',
         'price-asc': 'Price (Low to High)',
         'price-desc': 'Price (High to Low)',
     };
