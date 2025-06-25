@@ -204,6 +204,10 @@ const SetCardsPage = () => {
                 filters={filters}
                 setFilters={setFilters}
                 hideFilters={true}
+                customSortOptions={{
+                    'setNumber-asc': 'Set Number (Low to High)',
+                    'setNumber-desc': 'Set Number (High to Low)',
+                }}
             />
 
             {/* Error State */}

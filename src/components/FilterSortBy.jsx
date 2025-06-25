@@ -3,16 +3,20 @@ import { ArrowUpDown } from "lucide-react";
 import PropTypes from "prop-types";
 
 const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
-    const filterOptions = customSortOptions || {
+    const defaultFilterOptions = {
         'name-asc': 'Name (A-Z)',
         'name-desc': 'Name (Z-A)',
         'rarity-asc': 'Rarity (Low to High)',
         'rarity-desc': 'Rarity (High to Low)',
-        'setNumber-asc': 'Set Number (Low to High)',
-        'setNumber-desc': 'Set Number (High to Low)',
         'price-asc': 'Price (Low to High)',
         'price-desc': 'Price (High to Low)',
     };
+
+    const filterOptions = {
+        ...defaultFilterOptions,
+        ...customSortOptions
+    };
+
     return (
         <>
             {/* Sort by options */}
