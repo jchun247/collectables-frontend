@@ -155,6 +155,46 @@ const Header = () => {
                                 Collections
                             </Link>
                         </nav>
+
+                        {/* Auth */}
+                        <div className="flex flex-col space-y-4 mt-4">
+                            {isAuthenticated ? (
+                                <Link
+                                    to="/profile"
+                                    className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Profile
+                                </Link>
+                            ) : (
+                                 <>
+                                     <Link
+                                         to="#"
+                                         className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
+                                         onClick={() => {
+                                             loginWithRedirect();
+                                             setIsMobileMenuOpen(false);
+                                         }}
+                                     >
+                                         Log in
+                                     </Link>
+                                     <Link
+                                         to="#"
+                                         className="text-sm font-medium text-primary transition-colors duration-200 hover:text-gray-600"
+                                         onClick={() => {
+                                             loginWithRedirect({
+                                                 authorizationParams: {
+                                                     screen_hint: "signup",
+                                                 },
+                                             });
+                                             setIsMobileMenuOpen(false);
+                                         }}
+                                     >
+                                         Sign up
+                                     </Link>
+                                 </>
+                             )}
+                        </div>
                     </div>
                 </div>
         </header>
