@@ -8,8 +8,8 @@ const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
         'name-desc': 'Name (Z-A)',
         'rarity-asc': 'Rarity (Low to High)',
         'rarity-desc': 'Rarity (High to Low)',
-        // 'number-asc': 'Number (Low to High)',
-        // 'number-desc': 'Number (High to Low)',
+        'setNumber-asc': 'Set Number (Low to High)',
+        'setNumber-desc': 'Set Number (High to Low)',
         'price-asc': 'Price (Low to High)',
         'price-desc': 'Price (High to Low)',
     };
@@ -17,7 +17,7 @@ const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
         <>
             {/* Sort by options */}
             <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-[200px] transition-colors hover:border-primary bg-background">
+                <SelectTrigger className="w-full sm:w-[250px] transition-colors hover:border-primary bg-background">
                     <SelectValue>
                         <div className="flex items-center gap-2">
                             <ArrowUpDown className="h-4 w-4 transition-transform group-hover:scale-110" />
