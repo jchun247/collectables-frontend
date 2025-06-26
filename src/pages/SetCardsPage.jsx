@@ -43,7 +43,7 @@ const SetCardsPage = () => {
         
         try {
                 const queryParams = new URLSearchParams({
-                    setId,
+                    setIds: setId,
                     page: pageNum,
                 });
 
