@@ -12,11 +12,22 @@ const ExplorePage = () => {
 
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("name-asc");
+    const [selectedSets, setSelectedSets] = useState([]);
     const [filters, setFilters] = useState({
-        game: {},
-        productType: 'cards',
-        condition: 'NEAR_MINT'
+        condition: 'NEAR_MINT',
+        finishes: {},
+        minPrice: 0,
+        maxPrice: 9999,
+        setIds: [],
     });
+
+    useEffect(() => {
+        const selectedIds = selectedSets.map(set => set.id);
+        setFilters(prev => ({
+            ...prev,
+            setIds: selectedIds
+        }));
+    }, [selectedSets]);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
@@ -45,12 +56,20 @@ const ExplorePage = () => {
             if (sortOption) queryParams.sortOption = sortOption;
             if (searchQuery) queryParams.searchQuery = searchQuery;
             // Get selected games from the game object
-            const selectedGames = Object.entries(filters.game || {})
-                .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
-                .map(([game]) => game);
-            if (selectedGames.length > 0) queryParams.games = selectedGames.join(',');
+            // const selectedGames = Object.entries(filters.game || {})
+            //     .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
+            //     .map(([game]) => game);
+            // if (selectedGames.length > 0) queryParams.games = selectedGames.join(',');
             // if (filters.productType) queryParams.productType = filters.productType;
             if (filters.condition) queryParams.condition = filters.condition;
+            if (filters.minPrice) queryParams.minPrice = filters.minPrice;
+            if (filters.maxPrice) queryParams.maxPrice = filters.maxPrice;
+            // Get selected finishes from the finish object
+            const selectedFinishes = Object.entries(filters.finishes || {})
+                .filter(([_, isSelected]) => isSelected) // eslint-disable-line no-unused-vars
+                .map(([finish]) => finish);
+            if (selectedFinishes.length > 0) queryParams.finishes = selectedFinishes.join(',')
+            if (filters.setIds && filters.setIds.length > 0) queryParams.setIds = filters.setIds.join(',');
 
             const response = await fetch(`${apiBaseUrl}/cards?${new URLSearchParams(queryParams)}`);
 
@@ -130,6 +149,8 @@ const ExplorePage = () => {
                     sortBy={sortOption} setSortBy={setSortOption} 
                     filters={filters} setFilters={setFilters}
                     fetchCards={fetchCards}
+                    selectedSets={selectedSets}
+                    setSelectedSets={setSelectedSets}
                 />
 
                 { /* Error State */}

@@ -20,7 +20,9 @@ const SearchAndFilterHeader = ({
     customSortOptions,
     showHideSoldCards = false,
     hideSoldCards,
-    setHideSoldCards
+    setHideSoldCards,
+    selectedSets,
+    setSelectedSets
 }) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -41,15 +43,31 @@ const SearchAndFilterHeader = ({
     };
 
 
-    const activeFiltersCount = Object.entries(filters).reduce((count, [category, value]) => {
-      if (category === 'game') {
-        // For game (checkbox), count true values
-        return count + Object.values(value).filter(Boolean).length;
-      } else {
-        // For condition and productType (radio), count if value exists
-        return count + (value ? 1 : 0);
-      }
-    }, 0);
+    const activeFiltersCount = useMemo(() => {
+        let count = 0;
+
+        // Count selected sets
+        if (selectedSets && selectedSets.length > 0) {
+            count += selectedSets.length;
+        }
+
+        // Count condition filter
+        if (filters.condition) {
+            count++;
+        }
+
+        // Count finish filters
+        if (filters.finishes) {
+            count += Object.values(filters.finishes).filter(Boolean).length;
+        }
+
+        // Count price range filter if it's not the default
+        if (filters.minPrice !== 0 || filters.maxPrice !== 9999) {
+            count++;
+        }
+
+        return count;
+    }, [filters, selectedSets]);
   
     return (
         <>
@@ -105,7 +123,7 @@ const SearchAndFilterHeader = ({
                                 <SheetHeader>
                                     <SheetTitle>Filters</SheetTitle>
                                 </SheetHeader>
-                                <FilterSidebar filters={filters} setFilters={setFilters} />
+                                <FilterSidebar filters={filters} setFilters={setFilters} selectedSets={selectedSets} setSelectedSets={setSelectedSets} />
                             </SheetContent>
                         </Sheet>
                     )}
@@ -128,7 +146,9 @@ SearchAndFilterHeader.propTypes = {
     customSortOptions: PropTypes.objectOf(PropTypes.string),
     showHideSoldCards: PropTypes.bool,
     hideSoldCards: PropTypes.bool,
-    setHideSoldCards: PropTypes.func
+    setHideSoldCards: PropTypes.func,
+    selectedSets: PropTypes.array,
+    setSelectedSets: PropTypes.func
 }
 
 export default SearchAndFilterHeader;
