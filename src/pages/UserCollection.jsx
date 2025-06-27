@@ -220,7 +220,7 @@ const UserCollection = () => {
   const isLoading = portfoliosData.isLoading || listsData.isLoading;
   const globalError = portfoliosData.error || listsData.error;
 
-  if (isAuthLoading || (isLoading && !showAuthDialog && portfoliosData.items.length === 0 && listsData.items.length === 0)) {
+  if (isAuthLoading) {
     return (
       <div className="container mx-auto p-6 flex items-center justify-center min-h-[400px]">
         <Loader2 className="h-12 w-12 animate-spin text-sky-600 dark:text-sky-500" />
