@@ -166,7 +166,7 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
               >
                 {cardDetails.setName}
                 </button>
-              <span className="font-medium">#{cardDetails.setNumber}</span>
+              <span className="font-medium">{cardDetails.combinedSetNumber}</span>
             </div>
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="w-full grid grid-cols-2">
