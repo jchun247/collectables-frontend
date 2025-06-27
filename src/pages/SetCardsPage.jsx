@@ -50,6 +50,16 @@ const SetCardsPage = () => {
                 if (sortOption) queryParams.set('sortOption', sortOption);
                 if (searchQuery) queryParams.set('searchQuery', searchQuery);
                 
+                if (filters.condition) queryParams.set('condition', filters.condition);
+                if (filters.finishes) {
+                    const selectedFinishes = Object.keys(filters.finishes).filter(key => filters.finishes[key]);
+                    if (selectedFinishes.length > 0) {
+                        queryParams.set('finishes', selectedFinishes.join(','));
+                    }
+                }
+                if (filters.minPrice) queryParams.set('minPrice', filters.minPrice);
+                if (filters.maxPrice) queryParams.set('maxPrice', filters.maxPrice);
+
                 const response = await fetch(`${apiBaseUrl}/cards?${queryParams}`);
 
                 if (!response.ok) {
@@ -72,14 +82,14 @@ const SetCardsPage = () => {
                 setLoading(false);
                 setIsLoadingMore(false);
             }
-    }, [setId, apiBaseUrl, PAGE_SIZE, searchQuery, sortOption]);
+    }, [setId, apiBaseUrl, PAGE_SIZE, searchQuery, sortOption, filters]);
 
     // Effect for search/filter changes and initial load
     useEffect(() => {
         setCards([]);
         setCurrentPage(0);
         fetchSetCards(0, true);
-    }, [setId, fetchSetCards, searchQuery, sortOption]);
+    }, [setId, fetchSetCards, searchQuery, sortOption, filters]);
 
     // Set up intersection observer
     useEffect(() => {
@@ -196,14 +206,14 @@ const SetCardsPage = () => {
             )}
 
             {/* Search and Filter Header */}
-                <SearchAndFilterHeader 
+            <SearchAndFilterHeader 
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 sortBy={sortOption}
                 setSortBy={setSortOption}
                 filters={filters}
                 setFilters={setFilters}
-                hideFilters={true}
+                showSetIdDropdown={false}
                 customSortOptions={{
                     'setNumber-asc': 'Set Number (Low to High)',
                     'setNumber-desc': 'Set Number (High to Low)',

@@ -22,7 +22,8 @@ const SearchAndFilterHeader = ({
     hideSoldCards,
     setHideSoldCards,
     selectedSets,
-    setSelectedSets
+    setSelectedSets,
+    showSetIdDropdown
 }) => {
     
     const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
@@ -123,7 +124,7 @@ const SearchAndFilterHeader = ({
                                 <SheetHeader>
                                     <SheetTitle>Filters</SheetTitle>
                                 </SheetHeader>
-                                <FilterSidebar filters={filters} setFilters={setFilters} selectedSets={selectedSets} setSelectedSets={setSelectedSets} />
+                                <FilterSidebar filters={filters} setFilters={setFilters} selectedSets={selectedSets} setSelectedSets={setSelectedSets} showSetIdDropdown={showSetIdDropdown} />
                             </SheetContent>
                         </Sheet>
                     )}
@@ -148,7 +149,8 @@ SearchAndFilterHeader.propTypes = {
     hideSoldCards: PropTypes.bool,
     setHideSoldCards: PropTypes.func,
     selectedSets: PropTypes.array,
-    setSelectedSets: PropTypes.func
+    setSelectedSets: PropTypes.func,
+    showSetIdDropdown: PropTypes.bool
 }
 
 export default SearchAndFilterHeader;

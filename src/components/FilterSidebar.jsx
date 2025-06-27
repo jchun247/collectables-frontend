@@ -5,7 +5,7 @@ import PriceSlider from './PriceSlider';
 import CheckBoxFilterSection from './CheckBoxFilterSection';
 import { Button } from "@/components/ui/button";
 
-const FilterSidebar = ({ filters, setFilters, selectedSets, setSelectedSets }) => {
+const FilterSidebar = ({ filters, setFilters, selectedSets, setSelectedSets, showSetIdDropdown = true }) => {
 
     const filterOptions = {
         condition: [
@@ -51,7 +51,7 @@ const FilterSidebar = ({ filters, setFilters, selectedSets, setSelectedSets }) =
 
     return (
         <div className="space-y-2 py-4">
-            <SetIdDropdown filters={filters} setFilters={setFilters} selectedSets={selectedSets} setSelectedSets={setSelectedSets} />
+            {showSetIdDropdown && <SetIdDropdown filters={filters} setFilters={setFilters} selectedSets={selectedSets} setSelectedSets={setSelectedSets} />}
             <PriceSlider filters={filters} setFilters={setFilters} />
             <CheckBoxFilterSection title="Finish" options={filterOptions.finishes} category="finishes" filters={filters} handleFilterChange={handleFilterChange} />
             <RadioFilterSection title="Condition" options={filterOptions.condition} category="condition" 
@@ -65,7 +65,8 @@ FilterSidebar.propTypes = {
     filters: PropTypes.object.isRequired,
     setFilters: PropTypes.func.isRequired,
     selectedSets: PropTypes.array.isRequired,
-    setSelectedSets: PropTypes.func.isRequired
+    setSelectedSets: PropTypes.func.isRequired,
+    showSetIdDropdown: PropTypes.bool
 }
 
 export default FilterSidebar
