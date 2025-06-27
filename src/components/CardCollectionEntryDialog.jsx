@@ -67,7 +67,7 @@ const CardCollectionEntryDialog = ({
           queryParams.append('type', 'LIST');
         }
         
-        const response = await fetch(`${apiBaseUrl}/collections/users/${user.sub}?${queryParams}`, {
+        const response = await fetch(`${apiBaseUrl}/collections/users/${encodeURIComponent(user.sub)}?${queryParams}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

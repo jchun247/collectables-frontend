@@ -63,7 +63,7 @@ const UserCollection = () => {
 
     try {
       const token = await getAccessTokenSilently();
-      const response = await fetch(`${apiBaseUrl}/collections/users/${user.sub}?type=${collectionType}&page=${page}&size=${pageSize}`, {
+      const response = await fetch(`${apiBaseUrl}/collections/users/${encodeURIComponent(user.sub)}?type=${collectionType}&page=${page}&size=${pageSize}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -64,7 +64,7 @@ const Profile = () => {
                 return;
             }
             
-            const response = await fetch(`https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/users/${user.sub}`, {
+            const response = await fetch(`https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/users/${encodeURIComponent(user.sub)}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
