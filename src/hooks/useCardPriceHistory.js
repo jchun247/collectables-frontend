@@ -3,14 +3,14 @@ import { useState, useEffect, useCallback } from 'react';
 export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMount = true) => {
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [priceHistory, setPriceHistory] = useState({ items: [] });
+  const [priceHistory, setPriceHistory] = useState([]);
   const [isLoadingPriceHistory, setIsLoadingPriceHistory] = useState(true);
   const [priceHistoryError, setPriceHistoryError] = useState(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState(initialPriceRange);
 
   const fetchPriceHistory = useCallback(async () => {
     if (!cardId) {
-      setPriceHistory({ items: [] });
+      setPriceHistory([]);
       setIsLoadingPriceHistory(false);
       return;
     }
@@ -35,7 +35,7 @@ export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMou
         endDate: endDate.toISOString(),
       });
 
-      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history?${params.toString()}`);
+      const response = await fetch(`${apiBaseUrl}/cards/${cardId}/price-history/chart?${params.toString()}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch price history");
@@ -44,7 +44,7 @@ export const useCardPriceHistory = (cardId, initialPriceRange = '3m', fetchOnMou
       setPriceHistory(historyData);
     } catch (err) {
       setPriceHistoryError(err.message);
-      setPriceHistory({ items: [] });
+      setPriceHistory([]);
     } finally {
       setIsLoadingPriceHistory(false);
     }

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
+import PropTypes from "prop-types";
 import { Line, LineChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import { TrendingUp, TrendingDown, ChevronDown } from "lucide-react";
 import {
@@ -43,44 +43,42 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
       };
     }
 
-    const filteredDataByRange = rawData.filter(item => {
-      const itemDate = new Date(item.timestamp);
-      const now = new Date();
-      let startDate;
+    // Clean the incoming data and sort it chronologically.
+    const sortedData = rawData
+      .map(item => {
+        const dateObj = new Date(item.timestamp);
+        if (isNaN(dateObj.getTime())) {
+          return null; // Discard invalid items
+        }
+        return { ...item, dateObj };
+      })
+      .filter(Boolean) // Remove nulls
+      .sort((a, b) => a.dateObj - b.dateObj); // Sort by date
 
-      switch (selectedPriceRange) {
-        case "3_months":
-          startDate = new Date(now.setMonth(now.getMonth() - 3));
-          break;
-        case "6_months":
-          startDate = new Date(now.setMonth(now.getMonth() - 6));
-          break;
-        case "1_year":
-          startDate = new Date(now.setFullYear(now.getFullYear() - 1));
-          break;
-        case "all_time":
-        default:
-          return true; // No date filtering for "all_time"
-      }
-      return itemDate >= startDate;
-    });
+    // Group the sorted data by day for the chart display.
+    const groupedByDate = sortedData.reduce((acc, item) => {
+      const year = item.dateObj.getUTCFullYear();
+      const month = item.dateObj.getUTCMonth();
+      const day = item.dateObj.getUTCDate();
+      const groupingKey = `${year}-${month}-${day}`;
 
-    const groupedByDate = filteredDataByRange.reduce((acc, item) => {
-      const date = new Date(item.timestamp).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-      if (!acc[date]) {
-        acc[date] = { date };
+      if (!acc[groupingKey]) {
+        const displayDate = item.dateObj.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          timeZone: "UTC",
+        });
+        acc[groupingKey] = { date: displayDate };
       }
-      acc[date][item.finish] = item.price;
+      acc[groupingKey][item.finish] = item.price;
       return acc;
     }, {});
 
     const dataPoints = Object.values(groupedByDate);
-
+    
+    // Chart configuration
     const finishes = new Set();
-    filteredDataByRange.forEach((item) => finishes.add(item.finish));
+    sortedData.forEach((item) => finishes.add(item.finish));
     const sortedFinishes = Array.from(finishes).sort();
 
     const dynamicChartConfig = sortedFinishes.reduce((acc, finish, index) => {
@@ -96,13 +94,13 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
       };
       return acc;
     }, {});
-
+    
     return {
       processedData: dataPoints,
       chartConfig: dynamicChartConfig,
       uniqueFinishes: sortedFinishes,
     };
-  }, [rawData, selectedPriceRange]);
+  }, [rawData]);
 
   useEffect(() => {
     if (uniqueFinishes.length > 0 && selectedFinishes.length === 0) {
@@ -128,8 +126,6 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
         return "Market prices over the last 6 months.";
       case "1_year":
         return "Market prices over the last 1 year.";
-      case "all_time":
-        return "Overall market price history.";
       default:
         return "Market price history.";
     }
@@ -269,13 +265,7 @@ export function MarketPriceHistoryChart({ data: rawData, selectedPriceRange }) {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => {
-                const date = new Date(value);
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                });
-              }}
+              tickFormatter={(value) => value}
             />
             <YAxis
               tickLine={false}

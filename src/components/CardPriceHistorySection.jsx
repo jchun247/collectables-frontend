@@ -63,7 +63,7 @@ function CardPriceHistorySection({ cardId }) {
           </div>
         ) : (
           <MarketPriceHistoryChart
-            data={priceHistory?.items}
+            data={priceHistory}
             selectedPriceRange={selectedPriceRange}
           />
         )}
