@@ -14,8 +14,7 @@ import {
 } from "@/components/ui/chart";
 
 const CHART_COLOR = "hsl(var(--chart-1))";
-
-export function PortfolioValueHistoryChart({ data: rawData, selectedPriceRange, yAxisLabel }) {
+export function PortfolioValueHistoryChart({ data: rawData, yAxisLabel }) {
   const { processedData, chartConfig } = useMemo(() => {
     if (!rawData || rawData.length === 0) {
       return {
@@ -24,29 +23,16 @@ export function PortfolioValueHistoryChart({ data: rawData, selectedPriceRange, 
       };
     }
 
-    const filteredDataByRange = rawData.filter(item => {
-      const itemDate = new Date(item.timestamp);
-      const now = new Date();
-      let startDate;
-
-      switch (selectedPriceRange) {
-        case '1m': startDate = new Date(new Date().setMonth(now.getMonth() - 1)); break;
-        case '3m': startDate = new Date(new Date().setMonth(now.getMonth() - 3)); break;
-        case '6m': startDate = new Date(new Date().setMonth(now.getMonth() - 6)); break;
-        case '1y': startDate = new Date(new Date().setFullYear(now.getFullYear() - 1)); break;
-        default: startDate = new Date(new Date().setMonth(now.getMonth() - 3)); // Default to 3m
-      }
-      return itemDate >= startDate;
-    });
-    
-    const dataPoints = filteredDataByRange.map(item => ({
-      date: new Date(item.timestamp).toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: selectedPriceRange === '1y' || (new Date(item.timestamp).getFullYear() !== new Date().getFullYear()) ? "numeric" : undefined,
-      }),
-      value: item.value,
-    })).sort((a, b) => new Date(a.date) - new Date(b.date)); // Ensure data is sorted by date for the chart
+    const dataPoints = rawData
+      .map(item => ({
+        date: new Date(item.timestamp).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          timeZone: "UTC",
+          year: new Date(item.timestamp).getUTCFullYear() !== new Date().getUTCFullYear() ? "numeric" : undefined,
+        }),
+        value: item.value,
+      })).sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const dynamicChartConfig = {
       value: {
@@ -59,7 +45,7 @@ export function PortfolioValueHistoryChart({ data: rawData, selectedPriceRange, 
       processedData: dataPoints,
       chartConfig: dynamicChartConfig,
     };
-  }, [rawData, selectedPriceRange, yAxisLabel]);
+  }, [rawData, yAxisLabel]);
 
   const chartData = processedData;
 
@@ -104,7 +90,6 @@ export function PortfolioValueHistoryChart({ data: rawData, selectedPriceRange, 
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              // tickFormatter removed as dataPoints.date is already formatted
             />
             <YAxis
               dataKey="value"
@@ -141,7 +126,7 @@ PortfolioValueHistoryChart.propTypes = {
       value: PropTypes.number.isRequired,
       timestamp: PropTypes.string.isRequired,
     })
-  ), // Data can be initially null or undefined
+  ),
   selectedPriceRange: PropTypes.string.isRequired,
   yAxisLabel: PropTypes.string,
 };

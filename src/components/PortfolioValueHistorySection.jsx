@@ -17,12 +17,14 @@ function PortfolioValueHistorySection({ collectionId }) {
     fetchValueHistory
   } = usePortfolioValueHistory(collectionId, '3m');
 
+  const ranges = ['1m', '3m', '6m', '1y'];
+
   return (
     <div className="pt-6 border-t" ref={valueHistoryRef}>
       <div className="mb-4">
         <h3 className="text-xl font-semibold mb-3">Portfolio Value History</h3>
         <div className="flex flex-wrap gap-2">
-          {['1m', '3m', '6m', '1y'].map(range => (
+          {ranges.map(range => (
             <Button
               key={range}
               variant={selectedPriceRange === range ? 'default' : 'outline'}
@@ -62,7 +64,7 @@ function PortfolioValueHistorySection({ collectionId }) {
           </div>
         ) : (
           <PortfolioValueHistoryChart
-            data={valueHistory?.items}
+            data={valueHistory}
             selectedPriceRange={selectedPriceRange}
           />
         )}

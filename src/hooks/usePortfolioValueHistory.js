@@ -5,14 +5,14 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
   const { getAccessTokenSilently } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-  const [valueHistory, setValueHistory] = useState({ items: [] });
+  const [valueHistory, setValueHistory] = useState([]);
   const [isLoadingValueHistory, setIsLoadingValueHistory] = useState(true);
   const [valueHistoryError, setValueHistoryError] = useState(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState(initialPriceRange);
 
   const fetchValueHistory = useCallback(async () => {
     if (!collectionId) {
-      setValueHistory({ items: [] });
+      setValueHistory([]);
       setIsLoadingValueHistory(false);
       return;
     }
@@ -28,7 +28,7 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
       case '3m': startDate.setMonth(endDate.getMonth() - 3); break;
       case '6m': startDate.setMonth(endDate.getMonth() - 6); break;
       case '1y': startDate.setFullYear(endDate.getFullYear() - 1); break;
-      default: startDate.setMonth(endDate.getMonth() - 3); // Default fallback to 3m as per CardPriceHistory
+      default: startDate.setMonth(endDate.getMonth() - 3);
     }
   
     try {
@@ -38,7 +38,7 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
         endDate: endDate.toISOString(),
       });
 
-      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/value-history?${params.toString()}`, {
+      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/value-history/chart?${params.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
 
@@ -50,7 +50,7 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
       setValueHistory(historyData);
     } catch (err) {
       setValueHistoryError(err.message);
-      setValueHistory({ items: [] });
+      setValueHistory([]);
     } finally {
       setIsLoadingValueHistory(false);
     }
@@ -59,10 +59,10 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
   useEffect(() => {
     if (fetchOnMount && collectionId) {
       fetchValueHistory();
-    } else if (!fetchOnMount) {
+    } else {
       setIsLoadingValueHistory(false);
     }
-  }, [collectionId, selectedPriceRange, fetchValueHistory, fetchOnMount]); // Ensure selectedPriceRange triggers refetch
+  }, [collectionId, fetchOnMount, fetchValueHistory]);
 
   return {
     valueHistory,
