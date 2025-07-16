@@ -23,16 +23,17 @@ export function PortfolioValueHistoryChart({ data: rawData, yAxisLabel }) {
       };
     }
 
-    const dataPoints = rawData
-      .map(item => ({
-        date: new Date(item.timestamp).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          timeZone: "UTC",
-          year: new Date(item.timestamp).getUTCFullYear() !== new Date().getUTCFullYear() ? "numeric" : undefined,
-        }),
-        value: item.value,
-      })).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const sortedData = [...rawData].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    const dataPoints = sortedData.map(item => ({
+      date: new Date(item.timestamp).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+        year: new Date(item.timestamp).getUTCFullYear() !== new Date().getUTCFullYear() ? "numeric" : undefined,
+      }),
+      value: item.value,
+    }));
 
     const dynamicChartConfig = {
       value: {
@@ -106,7 +107,7 @@ export function PortfolioValueHistoryChart({ data: rawData, yAxisLabel }) {
             />
             <Line
               dataKey="value"
-              type="natural"
+              type="monotone"
               stroke={chartConfig.value?.color}
               strokeWidth={2}
               dot={false}
