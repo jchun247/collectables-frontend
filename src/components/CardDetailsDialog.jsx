@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import CardDetailsTab from './CardDetailsTab';
-import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -19,62 +18,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
 import { Plus, Star, ExternalLink } from 'lucide-react'; // Added ExternalLink
-import CardCollectionEntryDialog from './CardCollectionEntryDialog';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 import AuthPromptDialog from './AuthPromptDialog';
 import CardPriceHistorySection from './CardPriceHistorySection';
 
-const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
+const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails, onAction }) => {
   const navigate = useNavigate();
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0();
-  const { toast } = useToast();
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-  const [dialogState, setDialogState] = useState({ isOpen: false, type: null });
+  const { isAuthenticated } = useAuth0();
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
+  const prices = useMemo(() => cardDetails?.prices || [], [cardDetails]);
+
   if (!cardDetails) return null;
-
-  const handleSubmit = async (formData) => {
-    try {
-      const token = await getAccessTokenSilently();
-      const response = await fetch(
-        `${apiBaseUrl}/collections/${formData.collectionId}/cards`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData)
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add card to collection');
-      }
-
-      toast({
-        title: "Success",
-        description: "Card added to collection successfully"
-      });
-      setDialogState({ isOpen: false, type: null });
-    } catch (err) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: err.message || 'Failed to add card to collection'
-      });
-    }
-  };
 
   const handleCollectionAction = (type) => {
     if (!isAuthenticated) {
       setShowAuthPrompt(true);
       return;
     }
-    setDialogState({ isOpen: true, type });
+    if (onAction) {
+      onAction(type, cardDetails, prices);
+    }
   };
 
   return (
@@ -146,17 +111,6 @@ const CardDetailsDialog = ({ isOpen, onOpenChange, cardDetails }) => {
                   <Plus className="mr-2 h-4 w-4"/>
                   Add to Portfolio
                 </Button>
-                <CardCollectionEntryDialog 
-                  isOpen={dialogState.isOpen}
-                  onOpenChange={(isOpen) => setDialogState({ 
-                    isOpen, 
-                    type: isOpen ? dialogState.type : null 
-                  })}
-                  type={dialogState.type || "portfolio"}
-                  prices={cardDetails.prices}
-                  cardId={cardDetails.id}
-                  onSubmit={handleSubmit}
-                />
               </div>
             </div>
             <div className="flex flex-col space-y-1">
@@ -199,6 +153,7 @@ CardDetailsDialog.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onOpenChange: PropTypes.func.isRequired,
   cardDetails: PropTypes.object,
+  onAction: PropTypes.func,
 };
 
 export default CardDetailsDialog;

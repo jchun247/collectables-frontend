@@ -1,8 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import PropTypes from 'prop-types';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
-import CardDetailsDialog from './CardDetailsDialog';
 import { RARITY_IMAGES } from '@/utils/rarityImages';
 import { useNavigate } from "react-router-dom";
 import { navigateToSet } from "@/utils/navigation";
@@ -32,36 +31,15 @@ const getDisplayPrice = (prices, finish = null, condition = null) => {
 };
 
 const RenderCard = ({ card, quantity = null, showDetails = false, finish = null, condition = null, stackValue = 0 , preventDialogOnCardClick=false}) => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
     const [imageLoaded, setImageLoaded] = useState(false);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [cardDetails, setCardDetails] = useState(null);
-
-    const openDetailsDialogHandler = useCallback(async (e) => {
-        if (e) e.stopPropagation();
-        if (e && e.preventDefault) e.preventDefault();
-        try {
-            const response = await fetch(`${apiBaseUrl}/cards/${card.id}`);
-            
-            if (!response.ok) {
-                throw new Error("Failed to fetch card details");
-            }
-            
-            const data = await response.json();
-            setCardDetails(data);
-            setIsDialogOpen(true);
-        } catch (error) {
-            console.error('Error fetching card details:', error);
-        }
-    }, [apiBaseUrl, card.id]);
 
     return (
         <div>
             <Card
                 key={card.id}
                 className="relative group cursor-pointer overflow-hidden"
-                onClick={preventDialogOnCardClick ? undefined : openDetailsDialogHandler}
+                onClick={preventDialogOnCardClick ? undefined : (e) => e.stopPropagation()}
             >
                 <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10" />
                 <CardContent className="p-0">
@@ -150,12 +128,7 @@ const RenderCard = ({ card, quantity = null, showDetails = false, finish = null,
                     </div>
                 </CardContent>
             </Card>
-            <CardDetailsDialog
-                isOpen={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                cardDetails={cardDetails}
-            />
-        </div> 
+        </div>
     )
 }
 

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import {
   Dialog,
@@ -35,6 +35,7 @@ const CardCollectionEntryDialog = ({
   disableFinishSelect = false
 }) => {
   const { user, getAccessTokenSilently, isAuthenticated } = useAuth0();
+  const sub = user?.sub;
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [collections, setCollections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,22 +53,16 @@ const CardCollectionEntryDialog = ({
     }
   }[type];
 
-  useEffect(() => {
-  const fetchCollections = async () => {
-    if (!isOpen || !isAuthenticated || !user?.sub) return;
+  const fetchCollections = useCallback(async () => {
+    if (!isAuthenticated || !sub) return;
       
       try {
         setIsLoading(true);
         setError(null);
         const token = await getAccessTokenSilently();
-        const queryParams = new URLSearchParams();
-        if (type === 'portfolio') {
-          queryParams.append('type', 'PORTFOLIO');
-        } else {
-          queryParams.append('type', 'LIST');
-        }
+        const queryParams = new URLSearchParams({ type: type.toUpperCase() });
         
-        const response = await fetch(`${apiBaseUrl}/collections/users/${encodeURIComponent(user.sub)}?${queryParams}`, {
+        const response = await fetch(`${apiBaseUrl}/collections/users/${encodeURIComponent(sub)}?${queryParams}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -84,35 +79,39 @@ const CardCollectionEntryDialog = ({
       } finally {
         setIsLoading(false);
       }
-    };
+  }, [type, apiBaseUrl, isAuthenticated, sub, getAccessTokenSilently]);
 
-    fetchCollections();
-  }, [isOpen, type, apiBaseUrl, getAccessTokenSilently, isAuthenticated, user?.sub]);
+  useEffect(() => {
+    if (isOpen) {
+        fetchCollections();
+    }
+  }, [isOpen, fetchCollections]);
 
   const [useMarketPrice, setUseMarketPrice] = useState(false);
-  const [selectedFinish, setSelectedFinish] = useState("");
-  const [selectedCondition, setSelectedCondition] = useState("");
   const [marketPrice, setMarketPrice] = useState(0);
   const [unitPrice, setUnitPrice] = useState("");
 
   const uniqueFinishes = useMemo(() => [...new Set(prices.map(p => p.finish))], [prices]);
   const uniqueConditions = useMemo(() => [...new Set(prices.map(p => p.condition))], [prices]);
 
-   // Effect to set the initial selected finish and condition
+  const initialFinish = useMemo(() => {
+    return selectedCardFinish || uniqueFinishes[0] || "";
+  }, [selectedCardFinish, uniqueFinishes]);
+
+  const initialCondition = useMemo(() => {
+    return selectedCardCondition || uniqueConditions[0] || "";
+  }, [selectedCardCondition, uniqueConditions]);
+
+  const [selectedFinish, setSelectedFinish] = useState(initialFinish);
+  const [selectedCondition, setSelectedCondition] = useState(initialCondition);
+
   useEffect(() => {
-    // If selected values are provided, use those, otherwise use first available
-    if (prices.length > 0) {
-      const initialFinish = selectedCardFinish || uniqueFinishes[0] || "";
-      setSelectedFinish(initialFinish);
-      
-      const initialCondition = selectedCardCondition || uniqueConditions[0] || "";
-      setSelectedCondition(initialCondition);
-    } else {
-      // Reset if prices are cleared
-      setSelectedFinish("");
-      setSelectedCondition("");
-    }
-  }, [prices, uniqueFinishes, uniqueConditions, selectedCardFinish, selectedCardCondition]);
+    setSelectedFinish(initialFinish);
+  }, [initialFinish]);
+
+  useEffect(() => {
+    setSelectedCondition(initialCondition);
+  }, [initialCondition]);
 
   // Main effect to update marketPrice and unitPrice based on selections and useMarketPrice
   useEffect(() => {
@@ -216,7 +215,7 @@ const CardCollectionEntryDialog = ({
             <Select 
               name="finish" 
               required 
-              defaultValue={selectedFinish}
+              value={selectedFinish}
               onValueChange={handleFinishChange}
               disabled={disableFinishSelect || uniqueFinishes.length <= 1}
             >

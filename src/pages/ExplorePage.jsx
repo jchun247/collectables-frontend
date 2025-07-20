@@ -4,11 +4,25 @@ import LoadingCardGrid from '../components/LoadingCardGrid';
 import { Button } from "@/components/ui/button";
 import RenderCard from '../components/RenderCard';
 import { CardSkeleton } from "@/components/ui/cardskeleton";
+import CardDetailsDialog from '../components/CardDetailsDialog';
+import CardCollectionEntryDialog from '../components/CardCollectionEntryDialog';
+import { useAuth0 } from '@auth0/auth0-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ExplorePage = () => {
     const PAGE_SIZE = 15; // Match backend pagination size
+    const { getAccessTokenSilently } = useAuth0();
+    const { toast } = useToast();
 
     const [cards, setCards] = useState([]);
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+    const [collectionEntryState, setCollectionEntryState] = useState({
+        isOpen: false,
+        type: null,
+        cardDetails: null,
+        prices: [],
+    });
 
     const [searchQuery, setSearchQuery] = useState("");
     const [sortOption, setSortOption] = useState("name-asc");
@@ -42,6 +56,72 @@ const ExplorePage = () => {
     const lastCardRef = useRef();
 
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+    const handleCardClick = async (card) => {
+        try {
+            const response = await fetch(`${apiBaseUrl}/cards/${card.id}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch card details");
+            }
+            const data = await response.json();
+            setSelectedCard(data);
+            setIsDetailsOpen(true);
+        } catch (error) {
+            console.error('Error fetching card details:', error);
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to fetch card details.",
+            });
+        }
+    };
+
+    const handleAction = (type, cardDetails, prices) => {
+        setIsDetailsOpen(false);
+        // Allow the first dialog to close before opening the next one.
+        setTimeout(() => {
+            setCollectionEntryState({
+                isOpen: true,
+                type,
+                cardDetails,
+                prices,
+            });
+        }, 100); // A small delay is often sufficient
+    };
+
+    const handleSubmit = async (formData) => {
+        try {
+            const token = await getAccessTokenSilently();
+            const response = await fetch(
+                `${apiBaseUrl}/collections/${formData.collectionId}/cards`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                }
+            );
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to add card to collection');
+            }
+
+            toast({
+                title: "Success",
+                description: "Card added to collection successfully"
+            });
+            setCollectionEntryState({ isOpen: false, type: null, cardDetails: null, prices: [] });
+        } catch (err) {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: err.message || 'Failed to add card to collection'
+            });
+        }
+    };
 
     const fetchCards = useCallback(async (pageNum = 0, isInitial = true) => {
         if (isInitial) {
@@ -188,12 +268,14 @@ const ExplorePage = () => {
                         {/* Render cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
                             {cards.map((card, index) => (
-                                <div 
+                                <div
                                     key={`${card.name}-${index}`}
                                     ref={index === cards.length - 1 ? lastCardRef : null}
+                                    onClick={() => handleCardClick(card)}
                                 >
-                                    <RenderCard 
+                                    <RenderCard
                                         card={card}
+                                        preventDialogOnCardClick={true}
                                     />
                                 </div>
                             ))}
@@ -217,12 +299,32 @@ const ExplorePage = () => {
                         {/* End of results state */}
                         {!hasMore && cards.length > 0 && (
                             <div className="text-center py-8">
-                                <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
+                                <p className="text-muted-foreground">You've reached the end of the list.</p>
                             </div>
                         )}
                     </>
                 )}
             </div>
+
+            {selectedCard && (
+                <CardDetailsDialog
+                    isOpen={isDetailsOpen}
+                    onOpenChange={setIsDetailsOpen}
+                    cardDetails={selectedCard}
+                    onAction={handleAction}
+                />
+            )}
+
+            {collectionEntryState.isOpen && (
+                <CardCollectionEntryDialog
+                    isOpen={collectionEntryState.isOpen}
+                    onOpenChange={(isOpen) => setCollectionEntryState({ ...collectionEntryState, isOpen })}
+                    type={collectionEntryState.type}
+                    prices={collectionEntryState.prices}
+                    cardId={collectionEntryState.cardDetails.id}
+                    onSubmit={handleSubmit}
+                />
+            )}
         </div>
     )
 }
