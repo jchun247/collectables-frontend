@@ -171,7 +171,10 @@ const CardCollectionEntryDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent 
+        className="sm:max-w-[500px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>{collectionConfig.title}</DialogTitle>
         </DialogHeader>
@@ -190,7 +193,8 @@ const CardCollectionEntryDialog = ({
           
           <div className="space-y-2">
             <Label htmlFor="condition">Condition</Label>
-            <Select 
+            <Select
+              modal={false}
               name="condition" 
               required 
               value={selectedCondition}
@@ -212,7 +216,8 @@ const CardCollectionEntryDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="finish">Finish</Label>
-            <Select 
+            <Select
+              modal={false}
               name="finish" 
               required 
               value={selectedFinish}
@@ -315,7 +320,8 @@ const CardCollectionEntryDialog = ({
 
           <div className="space-y-2">
             <Label htmlFor="collection">{collectionConfig.label}</Label>
-            <Select 
+            <Select
+              modal={false}
               name="collection" 
               required
               defaultValue={currentPortfolioId?.toString()}

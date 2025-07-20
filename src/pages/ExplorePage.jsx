@@ -86,7 +86,7 @@ const ExplorePage = () => {
                 cardDetails,
                 prices,
             });
-        }, 100); // A small delay is often sufficient
+        }, 200); // Match the dialog's animation duration
     };
 
     const handleSubmit = async (formData) => {
