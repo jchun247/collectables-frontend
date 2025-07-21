@@ -299,7 +299,7 @@ const ExplorePage = () => {
                         {/* End of results state */}
                         {!hasMore && cards.length > 0 && (
                             <div className="text-center py-8">
-                                <p className="text-muted-foreground">You've reached the end of the list.</p>
+                                <p className="text-muted-foreground">You&apos;ve reached the end of the list.</p>
                             </div>
                         )}
                     </>
