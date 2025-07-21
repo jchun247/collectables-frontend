@@ -19,6 +19,10 @@ import RenderCard from "@/components/RenderCard"
 import UpdateCollectionDialog from '../components/UpdateCollectionDialog'
 import PortfolioValueHistorySection from '@/components/PortfolioValueHistorySection';
 import { formatCurrency, formatDate } from "@/utils/textFormatters"
+import { ListCardSettingsMenu } from '@/components/ListCardSettingsMenu';
+import UpdateListCardDialog from '@/components/UpdateListCardDialog';
+import RemoveCardDialog from '@/components/RemoveCardDialog';
+import { useToast } from "@/hooks/use-toast";
 import {
   Pagination,
   PaginationContent,
@@ -61,7 +65,30 @@ function UserCollectionDetails({ collectionType }) {
   const [pageSize] = useState(12);
 
   const { getAccessTokenSilently } = useAuth0();
+  const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+  // State for list card editing
+  const [isUpdateCardDialogOpen, setIsUpdateCardDialogOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [isUpdatingCard, setIsUpdatingCard] = useState(false);
+  const [updateCardError, setUpdateCardError] = useState(null);
+
+  // State for removing a card
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState(null);
+
+  const [editFormData, setEditFormData] = useState(null);
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSelectChange = (name, value) => {
+    setEditFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -112,6 +139,20 @@ function UserCollectionDetails({ collectionType }) {
     fetchDetails();
   }, [collectionId, collectionType, location.state?.collection, apiBaseUrl, getAccessTokenSilently]);
 
+  useEffect(() => {
+    if (selectedCard) {
+      const initialConditions = [...new Set(selectedCard.card.prices.map(p => p.condition))];
+      const initialFinishes = [...new Set(selectedCard.card.prices.map(p => p.finish))];
+      setEditFormData({
+        quantity: selectedCard.quantity || 1,
+        condition: selectedCard.condition || initialConditions[0] || 'NEAR_MINT',
+        finish: selectedCard.finish || initialFinishes[0] || 'NORMAL',
+      });
+    } else {
+      setEditFormData(null);
+    }
+  }, [selectedCard]);
+
   // Fetch cards within the collection
   useEffect(() => {
     const fetchCollectionItems = async () => {
@@ -140,6 +181,69 @@ function UserCollectionDetails({ collectionType }) {
 
     fetchCollectionItems()
   }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently, currentPage, pageSize, searchQuery, sortBy]);
+
+  const handleUpdateCard = async () => {
+    if (!selectedCard || !editFormData) return;
+    setIsUpdatingCard(true);
+    setUpdateCardError(null);
+    try {
+      const token = await getAccessTokenSilently();
+      const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards/${selectedCard.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editFormData),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update card.');
+      }
+      const updatedCard = await response.json();
+      setCollectionItems(prev => ({
+        ...prev,
+        items: prev.items.map(item => item.id === selectedCard.id ? updatedCard : item)
+      }));
+      toast({ title: "Success", description: "Card updated successfully." });
+      setIsUpdateCardDialogOpen(false);
+      setSelectedCard(null);
+    } catch (error) {
+      setUpdateCardError(error.message);
+    } finally {
+      setIsUpdatingCard(false);
+    }
+  };
+
+  const handleRemoveCard = (card) => {
+    setSelectedCard(card);
+    setIsRemoveDialogOpen(true);
+  };
+
+  const onConfirmRemove = async () => {
+    if (!selectedCard) return;
+    setIsRemoving(true);
+    setRemoveError(null);
+    try {
+      const token = await getAccessTokenSilently();
+      await fetch(`${apiBaseUrl}/collections/${collectionId}/cards/${selectedCard.id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      setCollectionItems(prev => ({
+        ...prev,
+        items: prev.items.filter(item => item.id !== selectedCard.id),
+        totalItems: prev.totalItems - 1
+      }));
+      toast({ title: "Success", description: "Card removed from list." });
+      setIsRemoveDialogOpen(false);
+      setSelectedCard(null);
+    } catch (err) {
+      setRemoveError(err.message || 'Failed to remove card.');
+    } finally {
+      setIsRemoving(false);
+    }
+  };
 
   const filteredItems = collectionItems?.items?.filter(item => {
     if (hideSoldCards) {
@@ -441,33 +545,46 @@ function UserCollectionDetails({ collectionType }) {
         ) : filteredItems?.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => {
-                  if (collectionType === 'portfolio') {
-                    navigate(
-                      `/collections/portfolios/${collectionId}/card/${item.id}`,
-                      { 
-                        state: { 
-                          cardId: item.card.id,
-                          quantity: item.quantity,
-                          condition: item.condition,
-                          finish: item.finish,
+              <div key={item.id} className="relative group">
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (collectionType === 'portfolio') {
+                      navigate(
+                        `/collections/portfolios/${collectionId}/card/${item.id}`,
+                        {
+                          state: {
+                            cardId: item.card.id,
+                            quantity: item.quantity,
+                            condition: item.condition,
+                            finish: item.finish,
+                          }
                         }
-                      }
-                    );
-                  }
-                }}
-              >
-                <RenderCard
-                  card={item.card}
-                  quantity={item.quantity}
-                  showDetails={true}
-                  finish={item.finish}
-                  condition={item.condition}
-                  stackValue={item.currentValue}
-                  preventDialogOnCardClick={true}
-                />
+                      );
+                    }
+                  }}
+                >
+                  <RenderCard
+                    card={item.card}
+                    quantity={item.quantity}
+                    showDetails={true}
+                    finish={item.finish}
+                    condition={item.condition}
+                    stackValue={item.currentValue}
+                    preventDialogOnCardClick={true}
+                  />
+                </div>
+                {collectionType === 'list' && (
+                  <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <ListCardSettingsMenu
+                      onEdit={() => {
+                        setSelectedCard(item);
+                        setIsUpdateCardDialogOpen(true);
+                      }}
+                      onRemove={() => handleRemoveCard(item)}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -530,6 +647,40 @@ function UserCollectionDetails({ collectionType }) {
           </div>
         )}
       </section>
+
+      {collectionType === 'list' && selectedCard && editFormData && (
+        <>
+          <UpdateListCardDialog
+            key={selectedCard.id}
+            isOpen={isUpdateCardDialogOpen}
+            onClose={() => {
+              setIsUpdateCardDialogOpen(false);
+              setSelectedCard(null);
+              setUpdateCardError(null);
+            }}
+            card={selectedCard}
+            prices={selectedCard?.card?.prices || []}
+            formData={editFormData}
+            onFormChange={handleFormChange}
+            onFormSelectChange={handleFormSelectChange}
+            onSubmit={handleUpdateCard}
+            isSubmitting={isUpdatingCard}
+            submissionError={updateCardError}
+          />
+          <RemoveCardDialog
+            isOpen={isRemoveDialogOpen}
+            onClose={() => {
+              setIsRemoveDialogOpen(false);
+              setSelectedCard(null);
+              setRemoveError(null);
+            }}
+            onConfirm={onConfirmRemove}
+            cardName={selectedCard?.card?.name}
+            isRemoving={isRemoving}
+            error={removeError}
+          />
+        </>
+      )}
     </div>
   );
 }
