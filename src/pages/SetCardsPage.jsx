@@ -7,10 +7,23 @@ import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
 import { useSets } from "@/hooks/useSets";
 import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters"
+import CardDetailsDialog from '../components/CardDetailsDialog';
+import CardCollectionEntryDialog from '../components/CardCollectionEntryDialog';
+import { useCardDialog } from '@/hooks/useCardDialog';
 
 const SetCardsPage = () => {
     const { setId } = useParams();
     const navigate = useNavigate();
+    const {
+        selectedCard,
+        isDetailsOpen,
+        setIsDetailsOpen,
+        collectionEntryState,
+        setCollectionEntryState,
+        handleCardClick,
+        handleAction,
+        handleSubmit,
+    } = useCardDialog();
     const PAGE_SIZE = 15; // Match backend pagination size
     const [cards, setCards] = useState([]);
     const [error, setError] = useState(null);
@@ -238,10 +251,12 @@ const SetCardsPage = () => {
                             <div 
                                 key={`${card.name}-${index}`}
                                 ref={index === cards.length - 1 ? lastCardRef : null}
+                                onClick={() => handleCardClick(card)}
                             >
                                 <RenderCard 
                                     card={card} 
                                     apiBaseUrl={apiBaseUrl}
+                                    preventDialogOnCardClick={true}
                                 />
                             </div>
                         ))}
@@ -272,6 +287,26 @@ const SetCardsPage = () => {
                         </div>
                     )}
                 </>
+            )}
+
+            {selectedCard && (
+                <CardDetailsDialog
+                    isOpen={isDetailsOpen}
+                    onOpenChange={setIsDetailsOpen}
+                    cardDetails={selectedCard}
+                    onAction={handleAction}
+                />
+            )}
+
+            {collectionEntryState.isOpen && (
+                <CardCollectionEntryDialog
+                    isOpen={collectionEntryState.isOpen}
+                    onOpenChange={(isOpen) => setCollectionEntryState({ ...collectionEntryState, isOpen })}
+                    type={collectionEntryState.type}
+                    prices={collectionEntryState.prices}
+                    cardId={collectionEntryState.cardDetails.id}
+                    onSubmit={handleSubmit}
+                />
             )}
         </div>
     );
