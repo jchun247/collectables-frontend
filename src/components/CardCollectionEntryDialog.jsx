@@ -194,7 +194,6 @@ const CardCollectionEntryDialog = ({
           <div className="space-y-2">
             <Label htmlFor="condition">Condition</Label>
             <Select
-              modal={false}
               name="condition" 
               required 
               value={selectedCondition}
@@ -217,7 +216,6 @@ const CardCollectionEntryDialog = ({
           <div className="space-y-2">
             <Label htmlFor="finish">Finish</Label>
             <Select
-              modal={false}
               name="finish" 
               required 
               value={selectedFinish}
