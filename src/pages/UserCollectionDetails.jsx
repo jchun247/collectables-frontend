@@ -508,7 +508,7 @@ function UserCollectionDetails({ collectionType }) {
             filters={filters}
             setFilters={setFilters}
             hideFilters={true}
-            showHideSoldCards={true}
+            showHideSoldCards={collectionType === 'portfolio'}
             hideSoldCards={hideSoldCards}
             setHideSoldCards={setHideSoldCards}
             customSortOptions={{
