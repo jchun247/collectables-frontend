@@ -561,6 +561,8 @@ function UserCollectionDetails({ collectionType }) {
                           }
                         }
                       );
+                    } else if (collectionType === 'list') {
+                      navigate(`/cards/${item.card.id}`);
                     }
                   }}
                 >
