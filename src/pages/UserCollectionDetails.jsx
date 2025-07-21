@@ -511,6 +511,7 @@ function UserCollectionDetails({ collectionType }) {
             showHideSoldCards={collectionType === 'portfolio'}
             hideSoldCards={hideSoldCards}
             setHideSoldCards={setHideSoldCards}
+            showDefaultSort={false}
             customSortOptions={{
               'calculatedTotalStackValue,desc': 'Value (High to Low)',
               'calculatedTotalStackValue,asc': 'Value (Low to High)',

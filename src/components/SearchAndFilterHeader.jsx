@@ -20,6 +20,7 @@ const SearchAndFilterHeader = ({
     customSortOptions,
     showHideSoldCards = false,
     hideSoldCards,
+    showDefaultSort = true,
     setHideSoldCards,
     selectedSets,
     setSelectedSets,
@@ -104,6 +105,7 @@ const SearchAndFilterHeader = ({
                                 sortBy={sortBy} 
                                 setSortBy={setSortBy}
                                 customSortOptions={customSortOptions}
+                                showDefaultSort={showDefaultSort}
                             />
                         </>
                     )}
@@ -145,6 +147,7 @@ SearchAndFilterHeader.propTypes = {
     hideFilters: PropTypes.bool,
     hideSortBy: PropTypes.bool,
     customSortOptions: PropTypes.objectOf(PropTypes.string),
+    showDefaultSort: PropTypes.bool,
     showHideSoldCards: PropTypes.bool,
     hideSoldCards: PropTypes.bool,
     setHideSoldCards: PropTypes.func,

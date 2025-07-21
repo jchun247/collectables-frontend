@@ -2,7 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowUpDown } from "lucide-react";
 import PropTypes from "prop-types";
 
-const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
+const FilterSortBy = ({ sortBy, setSortBy, customSortOptions, showDefaultSort = true }) => {
     const defaultFilterOptions = {
         'name-asc': 'Name (A-Z)',
         'name-desc': 'Name (Z-A)',
@@ -13,7 +13,7 @@ const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
     };
 
     const filterOptions = {
-        ...defaultFilterOptions,
+        ...(showDefaultSort ? defaultFilterOptions : {}),
         ...customSortOptions
     };
 
@@ -53,7 +53,8 @@ const FilterSortBy = ({ sortBy, setSortBy, customSortOptions }) => {
 FilterSortBy.propTypes = {
     sortBy: PropTypes.string.isRequired,
     setSortBy: PropTypes.func.isRequired,
-    customSortOptions: PropTypes.objectOf(PropTypes.string)
+    customSortOptions: PropTypes.objectOf(PropTypes.string),
+    showDefaultSort: PropTypes.bool
 }
 
 export default FilterSortBy;
