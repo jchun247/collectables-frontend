@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react"
 import LoadingCardGrid from '../components/LoadingCardGrid';
 import SearchAndFilterHeader from '../components/SearchAndFilterHeader';
 import RenderCard from '../components/RenderCard';
+import { CardSkeleton } from "@/components/ui/cardskeleton";
 import { useSets } from "@/hooks/useSets";
 import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters"
 import CardDetailsDialog from '../components/CardDetailsDialog';
@@ -159,7 +160,52 @@ const SetCardsPage = () => {
             {/* Set Header */}
             {setDetails && (
                 <div className="mb-8 bg-accent/50 rounded-lg p-6 shadow-md">
-                    <div className="flex flex-col md:flex-row items-center gap-6">
+                    {/* Mobile Layout */}
+                    <div className="md:hidden">
+                        {/* Logo and Title */}
+                        <div className="flex flex-col items-center text-center mb-4">
+                            <img 
+                                src={setDetails.images.find(img => img.imageType === "logo")?.url}
+                                alt={`${setDetails.name} logo`}
+                                className="max-w-[160px] mb-3"
+                            />
+                            <h1 className="text-2xl font-bold mb-1">{setDetails.name}</h1>
+                            <p className="text-muted-foreground">{formatDate(setDetails.releaseDate)}</p>
+                        </div>
+                        
+                        {/* Info Grid */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                            <div className="text-center">
+                                <p className="text-xs text-muted-foreground mb-1">Series</p>
+                                <button 
+                                    onClick={() => navigate(`/sets?series=${setDetails.series}`)}
+                                    className="text-sm hover:text-muted-foreground/80 hover:underline leading-tight"
+                                    title={CARD_SERIES_MAPPING[setDetails.series]}
+                                >
+                                    {CARD_SERIES_MAPPING[setDetails.series]}
+                                </button>
+                            </div>
+
+                            <div className="text-center">
+                                <p className="text-xs text-muted-foreground mb-1">Symbol</p>
+                                <img
+                                    src={setDetails.images.find(img => img.imageType === "symbol")?.url}
+                                    alt={`${setDetails.name} symbol`}
+                                    className="w-8 h-8 object-contain mx-auto"
+                                />
+                            </div>
+                            
+                            <div className="text-center">
+                                <p className="text-xs text-muted-foreground mb-1">Total Cards</p>
+                                <p className="text-sm">
+                                    {setDetails.printedTotal}{setDetails.total - setDetails.printedTotal === 0 ? '' : ` + ${setDetails.total - setDetails.printedTotal} secret`}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Desktop Layout */}
+                    <div className="hidden md:flex md:flex-row items-center gap-6">
                         {/* Logo and Name Section */}
                         <div className="flex items-center gap-4 flex-1 min-w-0">
                             <div className="flex flex-col items-center gap-2">
@@ -200,7 +246,7 @@ const SetCardsPage = () => {
                                 <img
                                     src={setDetails.images.find(img => img.imageType === "symbol")?.url}
                                     alt={`${setDetails.name} symbol`}
-                                    className="w-6 h-6"
+                                    className="w-6 h-6 object-contain mx-auto"
                                 />
                             </div>
                         </div>
@@ -211,7 +257,7 @@ const SetCardsPage = () => {
                                 <span className="text-muted-foreground">Total Cards</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <span>{setDetails.printedTotal}{setDetails.total - setDetails.printedTotal == 0 ? '' : " + " + (setDetails.total - setDetails.printedTotal) + " secret"}</span>
+                                <span>{setDetails.printedTotal}{setDetails.total - setDetails.printedTotal === 0 ? '' : ` + ${setDetails.total - setDetails.printedTotal} secret`}</span>
                             </div>
                         </div>
                     </div>
@@ -246,7 +292,7 @@ const SetCardsPage = () => {
             {/* Cards Grid */}
             {!loading && !error && (
                 <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 mt-6">
                         {cards.map((card, index) => (
                             <div 
                                 key={`${card.name}-${index}`}
@@ -264,13 +310,11 @@ const SetCardsPage = () => {
 
                     {/* Loading More State */}
                     {isLoadingMore && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
+                        <>
                             {[...Array(Math.min(PAGE_SIZE, 5))].map((_, i) => (
-                                <div key={`loading-${i}`}>
-                                    <LoadingCardGrid count={1} />
-                                </div>
+                                <CardSkeleton key={`loading-skeleton-${i}`} />
                             ))}
-                        </div>
+                        </>
                     )}
 
                     {/* End of results state */}

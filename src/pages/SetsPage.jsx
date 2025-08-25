@@ -2,12 +2,14 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSets } from "@/hooks/useSets";
 import { CARD_SERIES_MAPPING, formatDate } from "@/utils/textFormatters";
+import { Menu, X } from "lucide-react";
 
 const SetsPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { setsData, loading, error, getSetsForSeries } = useSets();
   const [selectedSeries, setSelectedSeries] = useState(null);
+  const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
 
   // Effect to set the initial selected series once data is loaded
   useEffect(() => {
@@ -54,6 +56,7 @@ const SetsPage = () => {
     setSelectedSeries(seriesName);
     setSearchParams({ series: seriesName });
     getSetsForSeries(seriesName);
+    setIsMobilePanelOpen(false);
   };
  
   const handleKeyDown = (e, seriesName) => {
@@ -94,10 +97,57 @@ const SetsPage = () => {
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Sets</h1>
       </div>
+
+      {/* Mobile Series Selector */}
+      <div className="md:hidden mb-6">
+        <button
+          onClick={() => setIsMobilePanelOpen(true)}
+          className="w-full flex items-center justify-between p-4 border rounded-lg bg-background hover:bg-accent/50 transition-colors"
+        >
+          <span className="font-medium">
+            {selectedSeries ? CARD_SERIES_MAPPING[selectedSeries] : 'Select Series'}
+          </span>
+          <Menu className="w-5 h-5" />
+        </button>
+
+        {/* Mobile Series Modal/Overlay */}
+        {isMobilePanelOpen && (
+          <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm">
+            <div className="container mx-auto px-4 py-8 h-full overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">Select Series</h2>
+                <button
+                  onClick={() => setIsMobilePanelOpen(false)}
+                  className="p-2 hover:bg-accent rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-2">
+                {series.map((seriesName) => (
+                  <button
+                    key={seriesName}
+                    onClick={() => handleSeriesClick(seriesName)}
+                    className={`w-full text-left p-4 rounded-lg transition-colors font-medium ${
+                      selectedSeries === seriesName 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'hover:bg-accent hover:text-accent-foreground border'
+                    }`}
+                  >
+                    {CARD_SERIES_MAPPING[seriesName]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       
-      <div className="grid grid-cols-[230px,1fr] gap-8">
+      {/* Desktop Layout */}
+      <div className="hidden md:grid md:grid-cols-[280px,1fr] gap-6">
         {/* Left Panel - Series Navigation */}
-        <div className="border rounded-lg p-4">
+        <div className="border rounded-lg p-4 h-fit sticky top-4">
           <h2 className="text-xl font-semibold mb-4">Series</h2>
           
           {/* Series List */}
@@ -132,7 +182,7 @@ const SetsPage = () => {
               </h2>
               {sets.length > 0 ? (
                 <div 
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+                  className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                   id={`${selectedSeries}-sets`}
                   role="tabpanel"
                   aria-label={`Sets in ${CARD_SERIES_MAPPING[selectedSeries]} series`}
@@ -154,7 +204,7 @@ const SetsPage = () => {
                             className="w-full h-full object-contain"
                           />
                         </div>
-                        <h3 className="font-medium mb-2">{set.name}</h3>
+                        <h3 className="font-medium mb-2 text-sm">{set.name}</h3>
                         <div className="flex justify-between items-end mt-auto">
                           <p className="text-sm text-muted-foreground group-hover:text-accent-foreground/75">
                             {formatDate(set.releaseDate)}
@@ -178,6 +228,53 @@ const SetsPage = () => {
           )}
         </div>
        </div>
+
+      {/* Mobile Sets Display */}
+      <div className="md:hidden">
+        {selectedSeries ? (
+          <>
+            <h2 className="text-xl font-semibold mb-4">
+              {CARD_SERIES_MAPPING[selectedSeries]}
+            </h2>
+            {sets.length > 0 ? (
+              <div className="grid grid-cols-2 gap-3">
+                {sets.map(set => (
+                  <button
+                    key={set.id}
+                    className="group border rounded-lg p-3 hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                    onClick={() => handleSetClick(set.id)}
+                  >
+                    <div className="flex flex-col h-full">
+                      <div className="aspect-[16/9] relative rounded-lg overflow-hidden mb-2">
+                        <img 
+                          src={set.images.find(img => img.imageType === "logo").url} 
+                          alt={set.name}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <h3 className="font-medium mb-2 text-sm leading-tight">{set.name}</h3>
+                      <div className="flex justify-between items-center mt-auto">
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(set.releaseDate)}
+                        </p>
+                        <img 
+                          src={set.images.find(img => img.imageType === "symbol")?.url} 
+                          alt={`${set.name} symbol`}
+                          className="w-4 h-4"
+                        />
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">No sets found in this series</p>
+            )}
+          </>
+        ) : (
+          <p className="text-muted-foreground text-center py-8">Select a series to view its sets</p>
+        )}
+      </div>
      </div>
    )
  }
