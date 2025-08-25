@@ -273,7 +273,7 @@ const UserCollection = () => {
             </Button>
           </div>
           {showPortfolioSkeletons ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[...Array(PORTFOLIO_PAGE_SIZE)].map((_, i) => <CollectionCardSkeleton key={`pfskel-${i}`} />)}
             </div>
           ) : portfoliosData.error ? (
@@ -290,7 +290,7 @@ const UserCollection = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {portfoliosData.items.map(portfolio => (
                   <CollectionCard key={portfolio.id} collection={portfolio} />
                 ))}
@@ -337,7 +337,7 @@ const UserCollection = () => {
             </Button>
           </div>
            {showListSkeletons ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[...Array(LIST_PAGE_SIZE)].map((_, i) => <CollectionCardSkeleton key={`listskel-${i}`} />)}
             </div>
           ) : listsData.error ? (
@@ -354,7 +354,7 @@ const UserCollection = () => {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {listsData.items.map(list => (
                   <CollectionCard key={list.id} collection={list} />
                 ))}
