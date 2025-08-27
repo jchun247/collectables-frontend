@@ -11,7 +11,6 @@ const CollectionCard = ({ collection }) => {
 
   const toggleFavorite = () => {
     setIsFavourite(!isFavourite);
-    // Here you would typically also make an API call to update the backend
     console.log('Toggling favorite status');
   };
 
@@ -27,7 +26,7 @@ const CollectionCard = ({ collection }) => {
       }}
     >
       <div className="flex justify-between items-start">
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-lg truncate">{name}</h3>
           <p className="text-sm text-gray-400 line-clamp-2 min-h-[2.5rem]">{description || " "}</p>
         </div>
