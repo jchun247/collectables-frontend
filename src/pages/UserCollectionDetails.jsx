@@ -436,7 +436,7 @@ function UserCollectionDetails({ collectionType }) {
       {/* Collection Details Section */}
       <section aria-labelledby="collection-details-heading">
         <h2 id="collection-details-heading" className="sr-only">{collectionTypeLabel} Details</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="shadow-md hover:shadow-lg transition-shadow dark:bg-slate-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-base font-semibold text-slate-700 dark:text-slate-200">Current Value</CardTitle>
@@ -527,7 +527,7 @@ function UserCollectionDetails({ collectionType }) {
                 Loading page {currentPage + 1}...
               </div>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
               {[...Array(pageSize)].map((_, index) => (
                 <div key={index} className="w-full aspect-[3/4] bg-slate-200 dark:bg-slate-700 animate-pulse rounded-lg"></div>
               ))}
@@ -544,7 +544,7 @@ function UserCollectionDetails({ collectionType }) {
             </p>
           </div>
         ) : filteredItems?.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
             {filteredItems.map((item) => (
               <div key={item.id} className="relative group">
                 <div
