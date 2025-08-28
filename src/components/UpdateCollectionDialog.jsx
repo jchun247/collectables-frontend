@@ -66,11 +66,11 @@ const UpdateCollectionDialog = ({
   }
 
   return (
-      <DialogContent className="sm:max-w-md md:max-w-lg">
+      <DialogContent className="sm:max-w-md md:max-w-lg flex flex-col max-h-[90vh]">
         <DialogHeader className="mb-1">
           <DialogTitle>Update {collectionTypeLabel} Settings</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 pt-2 pb-2">
+        <form onSubmit={handleSubmit} className="flex-grow overflow-y-auto space-y-6 py-4 px-6">
           {/* Name */}
           <div className="space-y-2">
             <Label htmlFor={`update-name-${collection.id}`} className="text-sm font-medium">
@@ -190,7 +190,7 @@ const UpdateCollectionDialog = ({
             </p>
           )}
 
-          <DialogFooter className="pt-6 flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2">
+          <DialogFooter className="pt-6 flex flex-col-reverse sm:flex-row sm:justify-between sm:space-x-2 flex-shrink-0">
             <div className="flex-grow-0 mb-2 sm:mb-0"> {/* Wrapper for delete button to align left */}
                 <Button
                     type="button"
