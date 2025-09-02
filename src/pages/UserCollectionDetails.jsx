@@ -64,7 +64,7 @@ function UserCollectionDetails({ collectionType }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(12);
 
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -111,12 +111,13 @@ function UserCollectionDetails({ collectionType }) {
 
       // If not in state or ID mismatch, fetch from API
       try {
-        const token = await getAccessTokenSilently();
+        const headers = { 'Content-Type': 'application/json' };
+        if (isAuthenticated) {
+          const token = await getAccessTokenSilently();
+          headers['Authorization'] = `Bearer ${token}`;
+        }
         const response = await fetch(`${apiBaseUrl}/collections/${collectionId}`, { // Endpoint to get a single collection's details
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers,
         });
 
         if (!response.ok) {
@@ -137,7 +138,7 @@ function UserCollectionDetails({ collectionType }) {
     };
 
     fetchDetails();
-  }, [collectionId, collectionType, location.state?.collection, apiBaseUrl, getAccessTokenSilently]);
+  }, [collectionId, collectionType, location.state?.collection, apiBaseUrl, getAccessTokenSilently, isAuthenticated]);
 
   useEffect(() => {
     if (selectedCard) {
@@ -158,14 +159,15 @@ function UserCollectionDetails({ collectionType }) {
     const fetchCollectionItems = async () => {
       if (!collectionId) return;
       try {
-        const token = await getAccessTokenSilently();
+        const headers = { 'Content-Type': 'application/json' };
+        if (isAuthenticated) {
+          const token = await getAccessTokenSilently();
+          headers['Authorization'] = `Bearer ${token}`;
+        }
         setIsLoadingItems(true);
         setFetchItemsError(null);
         const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/cards?page=${currentPage}&cardName=${searchQuery}&sort=${sortBy}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          headers,
         });
         if (!response.ok) {
           throw new Error(`Failed to fetch ${collectionType} items`);
@@ -180,7 +182,7 @@ function UserCollectionDetails({ collectionType }) {
     }
 
     fetchCollectionItems()
-  }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently, currentPage, pageSize, searchQuery, sortBy]);
+  }, [collectionId, collectionType, apiBaseUrl, getAccessTokenSilently, isAuthenticated, currentPage, pageSize, searchQuery, sortBy]);
 
   const handleUpdateCard = async () => {
     if (!selectedCard || !editFormData) return;
@@ -348,14 +350,16 @@ function UserCollectionDetails({ collectionType }) {
   return (
     <div className="container mx-auto p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen">
       {/* Back Button */}
-        <Button 
-          variant="ghost" 
+      {isAuthenticated && (
+        <Button
+          variant="ghost"
           onClick={() => navigate(`/collections`)}
           className="-ml-2 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
         >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Collections
-      </Button>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Collections
+        </Button>
+      )}
       {/* Collection Header Section */}
       <header className="mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -373,17 +377,17 @@ function UserCollectionDetails({ collectionType }) {
             )}
           </div>
           {/* Settings Dialog */}
-          <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-            <DialogDescription className="sr-only">
-              Collection settings dialog for {currentCollection.name} - {currentCollection.description}
-             </DialogDescription>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="icon" className="flex-shrink-0">
-                <Settings className="h-5 w-5" />
-                <span className="sr-only">{collectionTypeLabel} Settings</span>
-              </Button>
-            </DialogTrigger>
-            {currentCollection && (
+          {currentCollection.owner && (
+            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+              <DialogDescription className="sr-only">
+                Collection settings dialog for {currentCollection.name} - {currentCollection.description}
+              </DialogDescription>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="icon" className="flex-shrink-0">
+                  <Settings className="h-5 w-5" />
+                  <span className="sr-only">{collectionTypeLabel} Settings</span>
+                </Button>
+              </DialogTrigger>
               <UpdateCollectionDialog
                 isOpen={isSettingsOpen}
                 collection={currentCollection}
@@ -394,8 +398,8 @@ function UserCollectionDetails({ collectionType }) {
                 isDeleting={isDeletingCollection}
                 submissionError={dialogSubmissionError}
               />
-            )}
-          </Dialog>
+            </Dialog>
+          )}
           
           {/* Delete Confirmation Dialog */}
           <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
@@ -559,6 +563,7 @@ function UserCollectionDetails({ collectionType }) {
                             quantity: item.quantity,
                             condition: item.condition,
                             finish: item.finish,
+                            isOwner: currentCollection.owner,
                           }
                         }
                       );
@@ -577,7 +582,7 @@ function UserCollectionDetails({ collectionType }) {
                     preventDialogOnCardClick={true}
                   />
                 </div>
-                {collectionType === 'list' && (
+                {collectionType === 'list' && currentCollection.owner && (
                   <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     <ListCardSettingsMenu
                       onEdit={() => {

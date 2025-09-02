@@ -20,7 +20,7 @@ function UserPortfolioCardDetailsPage() {
   const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const { toast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,6 +40,7 @@ function UserPortfolioCardDetailsPage() {
   const [isSellDialogOpen, setIsSellDialogOpen] = useState(false);
 
   const cardId = location.state?.cardId;
+  const isOwner = location.state?.isOwner || false;
 
   // State for the transaction history table
   const [sorting, setSorting] = useState([]);
@@ -60,18 +61,22 @@ function UserPortfolioCardDetailsPage() {
   const finish = location.state?.finish;
 
   const fetchPortfolioStats = useCallback(async () => {
-    if (!params.portfolioId || !params.collectionCardId) return;
+    if (!params.portfolioId || !params.collectionCardId || !isOwner) return;
     
     // We can share the history loading/error state for simplicity
     setIsLoadingHistory(true);
     setHistoryError(null);
 
     try {
-      const token = await getAccessTokenSilently();
+      const headers = { 'Content-Type': 'application/json' };
+      if (isAuthenticated) {
+        const token = await getAccessTokenSilently();
+        headers['Authorization'] = `Bearer ${token}`;
+      }
       const response = await fetch(
         `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}`, 
         {
-          headers: {'Authorization': `Bearer ${token}` }
+          headers,
         }
       );
       if (!response.ok) throw new Error('Failed to fetch portfolio stats');
@@ -90,7 +95,7 @@ function UserPortfolioCardDetailsPage() {
     } finally {
       // Note: loading will be set to false by refreshTransactionHistory
     }
-  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl, isAuthenticated, isOwner]);
 
   const refreshTransactionHistory = useCallback(async () => {
     if (!params.portfolioId || !params.collectionCardId) return null;
@@ -99,11 +104,15 @@ function UserPortfolioCardDetailsPage() {
       setIsLoadingHistory(true);
       setHistoryError(null);
       
-      const token = await getAccessTokenSilently();
+      const headers = { 'Content-Type': 'application/json' };
+      if (isAuthenticated) {
+        const token = await getAccessTokenSilently();
+        headers['Authorization'] = `Bearer ${token}`;
+      }
       const response = await fetch(
         `${apiBaseUrl}/collections/${params.portfolioId}/cards/${params.collectionCardId}/transaction-history`, 
         {
-          headers: {'Authorization': `Bearer ${token}` },
+          headers,
           cache: 'no-store'
         }
       );
@@ -122,7 +131,7 @@ function UserPortfolioCardDetailsPage() {
     } finally {
       setIsLoadingHistory(false);
     }
-  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl]);
+  }, [params.portfolioId, params.collectionCardId, getAccessTokenSilently, apiBaseUrl, isAuthenticated]);
 
 
   // Fetch card details
@@ -131,7 +140,6 @@ function UserPortfolioCardDetailsPage() {
       if (!cardId) return;
       
       try {
-        const token = await getAccessTokenSilently();
         setIsLoadingCard(true);
         setCardError(null);
         
@@ -139,7 +147,6 @@ function UserPortfolioCardDetailsPage() {
           `${apiBaseUrl}/cards/${cardId}`, 
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
             },
           }
@@ -159,9 +166,11 @@ function UserPortfolioCardDetailsPage() {
     };
 
     fetchCardDetails();
-    fetchPortfolioStats();
+    if (isOwner) {
+      fetchPortfolioStats();
+    }
     refreshTransactionHistory();
-  }, [cardId, getAccessTokenSilently, apiBaseUrl, fetchPortfolioStats, refreshTransactionHistory]);
+  }, [cardId, getAccessTokenSilently, apiBaseUrl, fetchPortfolioStats, refreshTransactionHistory, isOwner]);
 
 
   const derivedStats = useMemo(() => {
@@ -173,8 +182,15 @@ function UserPortfolioCardDetailsPage() {
       const marketPrice = cardDetails?.prices.find(p => p.condition === condition && p.finish === finish)?.price || 0;
       const marketPriceUpdatedAt = cardDetails?.prices.find(p => p.condition === condition && p.finish === finish)?.updatedAt;
       
-      return { quantityHeld, avgCostPerCard, marketPrice, marketPriceUpdatedAt };
-    }, [transactions, portfolioStats.totalCostBasis, cardDetails, condition, finish]);
+    return { quantityHeld, avgCostPerCard, marketPrice, marketPriceUpdatedAt };
+  }, [transactions, portfolioStats.totalCostBasis, cardDetails, condition, finish]);
+
+  const totalMarketValue = useMemo(() => {
+    if (isOwner) {
+      return portfolioStats.currentValue;
+    }
+    return derivedStats.quantityHeld * derivedStats.marketPrice;
+  }, [isOwner, portfolioStats.currentValue, derivedStats.quantityHeld, derivedStats.marketPrice]);
 
   const handleBuySubmit = async (formData) => {
     try {
@@ -434,8 +450,9 @@ function UserPortfolioCardDetailsPage() {
     () => createTransactionLedgerColumns({
       onEdit: handleEditTransaction,
       onDelete: handleDeleteTransaction,
+      isOwner,
     }), 
-    [handleEditTransaction, handleDeleteTransaction]
+    [handleEditTransaction, handleDeleteTransaction, isOwner]
   );
 
   // Redirect if no cardId was passed
@@ -509,10 +526,12 @@ function UserPortfolioCardDetailsPage() {
                   <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">{cardDetails.setName} · #{cardDetails.setNumber}</p>
                   <p className="text-md font-semibold text-slate-700 dark:text-slate-300 mt-1">{formatCardCondition(condition)} · {formatCardFinish(finish)}</p>
                 </div>
-                <CardSettingsMenu 
-                  cardId={cardId}
-                  onRemove={handleRemoveCard}
-                />
+                {isOwner && (
+                  <CardSettingsMenu 
+                    cardId={cardId}
+                    onRemove={handleRemoveCard}
+                  />
+                )}
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div>
@@ -523,32 +542,40 @@ function UserPortfolioCardDetailsPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex gap-2">
-                  <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
-                  <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
-                </div>
+                {isOwner && (
+                  <div className="flex gap-2">
+                    <Button onClick={() => setIsAddDialogOpen(true)}><Plus className="h-4 w-4 mr-1" />Buy</Button>
+                    <Button variant="destructive" onClick={() => setIsSellDialogOpen(true)} disabled={derivedStats.quantityHeld <= 0}><Minus className="h-4 w-4 mr-1" />Sell</Button>
+                  </div>
+                )}
               </div>
             </div>
 
           {/* Holdings Summary */}
           <div className="pt-4 border-t">
-             <h3 className="text-xl font-semibold mb-3">Your Holdings</h3>
+             <h3 className="text-xl font-semibold mb-3">{isOwner ? "Your Holdings" : "Holdings Summary"}</h3>
              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard title="Quantity Held" value={derivedStats.quantityHeld} icon={<Hash />} />
-                <StatCard title="Avg Cost / Card" value={formatCurrency(derivedStats.avgCostPerCard)} icon={<DollarSign />} />
-                <StatCard title="Total Cost Basis" value={formatCurrency(portfolioStats.totalCostBasis)} icon={<DollarSign />} />
-                <StatCard title="Total Market Value" value={formatCurrency(portfolioStats.currentValue)} valueColorClass="text-green-500" icon={<DollarSign />} />
+                {isOwner && (
+                  <>
+                    <StatCard title="Avg Cost / Card" value={formatCurrency(derivedStats.avgCostPerCard)} icon={<DollarSign />} />
+                    <StatCard title="Total Cost Basis" value={formatCurrency(portfolioStats.totalCostBasis)} icon={<DollarSign />} />
+                  </>
+                )}
+                <StatCard title="Total Market Value" value={formatCurrency(totalMarketValue)} valueColorClass="text-green-500" icon={<DollarSign />} />
              </div>
           </div>
 
           {/* Performance Summary */}
-          <div className="pt-4 border-t">
-             <h3 className="text-xl font-semibold mb-3">Performance</h3>
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <StatCard title="Unrealized Gain/Loss" value={formatCurrency(portfolioStats.unrealizedGain)} valueColorClass={portfolioStats.unrealizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<TrendingUp />} />
-                <StatCard title="Realized Gain/Loss" value={formatCurrency(portfolioStats.realizedGain)} valueColorClass={portfolioStats.realizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<DollarSign />} />
-             </div>
-          </div>
+          {isOwner && (
+            <div className="pt-4 border-t">
+              <h3 className="text-xl font-semibold mb-3">Performance</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard title="Unrealized Gain/Loss" value={formatCurrency(portfolioStats.unrealizedGain)} valueColorClass={portfolioStats.unrealizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<TrendingUp />} />
+                  <StatCard title="Realized Gain/Loss" value={formatCurrency(portfolioStats.realizedGain)} valueColorClass={portfolioStats.realizedGain >= 0 ? 'text-green-500' : 'text-red-500'} icon={<DollarSign />} />
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -572,56 +599,60 @@ function UserPortfolioCardDetailsPage() {
         />
       </div>
 
-      {/* Add Card Dialog */}
-      <CardCollectionEntryDialog
-        isOpen={isAddDialogOpen}
-        onOpenChange={setIsAddDialogOpen}
-        type="portfolio"
-        prices={cardDetails?.prices || []}
-        cardId={cardId}
-        onSubmit={handleBuySubmit}
-        currentPortfolioId={params.portfolioId}
-        disableCollectionSelect={true}
-        selectedCardCondition={condition}
-        selectedCardFinish={finish}
-        disableConditionSelect={true}
-        disableFinishSelect={true}
-      />
+      {isOwner && (
+        <>
+          {/* Add Card Dialog */}
+          <CardCollectionEntryDialog
+            isOpen={isAddDialogOpen}
+            onOpenChange={setIsAddDialogOpen}
+            type="portfolio"
+            prices={cardDetails?.prices || []}
+            cardId={cardId}
+            onSubmit={handleBuySubmit}
+            currentPortfolioId={params.portfolioId}
+            disableCollectionSelect={true}
+            selectedCardCondition={condition}
+            selectedCardFinish={finish}
+            disableConditionSelect={true}
+            disableFinishSelect={true}
+          />
 
-      {/* Sell Card Dialog */}
-      <SellCardDialog
-        isOpen={isSellDialogOpen}
-        onOpenChange={setIsSellDialogOpen}
-        onSubmit={handleSellSubmit}
-        cardCondition={condition}
-        cardFinish={finish}
-        maxQuantity={derivedStats.quantityHeld}
-        marketPrice={derivedStats.marketPrice}
-      />
-      <UpdateTransactionDialog
-        isOpen={isUpdateDialogOpen}
-        onClose={() => setIsUpdateDialogOpen(false)}
-        transaction={selectedTransaction}
-        onSubmit={onUpdateSubmit}
-        isSubmitting={isSubmitting}
-        submissionError={dialogError}
-      />
-      <DeleteTransactionDialog
-        isOpen={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
-        onConfirm={onConfirmDelete}
-        isDeleting={isSubmitting}
-        transactionsCount={selectedTransactions.length}
-        error={dialogError}
-      />
-      <RemoveCardDialog
-        isOpen={isRemoveDialogOpen}
-        onClose={() => setIsRemoveDialogOpen(false)}
-        onConfirm={onConfirmRemove}
-        cardName={cardDetails.name}
-        isRemoving={isRemoving}
-        error={removeError}
-      />
+          {/* Sell Card Dialog */}
+          <SellCardDialog
+            isOpen={isSellDialogOpen}
+            onOpenChange={setIsSellDialogOpen}
+            onSubmit={handleSellSubmit}
+            cardCondition={condition}
+            cardFinish={finish}
+            maxQuantity={derivedStats.quantityHeld}
+            marketPrice={derivedStats.marketPrice}
+          />
+          <UpdateTransactionDialog
+            isOpen={isUpdateDialogOpen}
+            onClose={() => setIsUpdateDialogOpen(false)}
+            transaction={selectedTransaction}
+            onSubmit={onUpdateSubmit}
+            isSubmitting={isSubmitting}
+            submissionError={dialogError}
+          />
+          <DeleteTransactionDialog
+            isOpen={isDeleteDialogOpen}
+            onClose={() => setIsDeleteDialogOpen(false)}
+            onConfirm={onConfirmDelete}
+            isDeleting={isSubmitting}
+            transactionsCount={selectedTransactions.length}
+            error={dialogError}
+          />
+          <RemoveCardDialog
+            isOpen={isRemoveDialogOpen}
+            onClose={() => setIsRemoveDialogOpen(false)}
+            onConfirm={onConfirmRemove}
+            cardName={cardDetails.name}
+            isRemoving={isRemoving}
+            error={removeError}
+          />
+        </>
+      )}
     </div>
   );
 }

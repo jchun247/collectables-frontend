@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth0 } from "@auth0/auth0-react";
 
 export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m', fetchOnMount = true) => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
   const [valueHistory, setValueHistory] = useState([]);
@@ -32,14 +32,18 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
     }
   
     try {
-      const token = await getAccessTokenSilently();
+      const headers = { 'Content-Type': 'application/json' };
       const params = new URLSearchParams({
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
       });
+      if (isAuthenticated) {
+        const token = await getAccessTokenSilently();
+        headers['Authorization'] = `Bearer ${token}`;
+      };
 
       const response = await fetch(`${apiBaseUrl}/collections/${collectionId}/value-history/chart?${params.toString()}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers,
       });
 
       if (!response.ok) {
@@ -54,7 +58,7 @@ export const usePortfolioValueHistory = (collectionId, initialPriceRange = '3m',
     } finally {
       setIsLoadingValueHistory(false);
     }
-  }, [collectionId, selectedPriceRange, getAccessTokenSilently, apiBaseUrl]);
+  }, [collectionId, selectedPriceRange, getAccessTokenSilently, apiBaseUrl, isAuthenticated]);
 
   useEffect(() => {
     if (fetchOnMount && collectionId) {
