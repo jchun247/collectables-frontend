@@ -130,7 +130,7 @@ const Header = () => {
             {/* Mobile Menu */}
             <div className={`absolute top-16 left-0 right-0 bg-background border-b md:hidden transform transition-all duration-300 z-50 ${
                 isMobileMenuOpen ? 'translate-y-0 opacity-100' : 'translate-y-[-10px] opacity-0 pointer-events-none'
-            }`}> {/* Re-added z-50 */}
+            }`}>
                     <div className="container mx-auto px-4 py-4">
                         <nav className="flex flex-col space-y-4">
                             <Link
